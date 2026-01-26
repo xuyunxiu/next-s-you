@@ -8,165 +8,207 @@
         :root {
             --art-purple: #A29BFE;
             --art-deep: #6C5CE7;
-            --sky-blue: #D0EFFF;
-            --lavender: #E6D5FF;
-            --glass: rgba(255, 255, 255, 0.45);
+            --glass-white: rgba(255, 255, 255, 0.9);
+            --bg-color: #f0f2f5;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        
         body { 
             margin: 0; font-family: -apple-system, "PingFang TC", sans-serif;
-            background: linear-gradient(135deg, var(--lavender) 0%, #FFFFFF 50%, var(--sky-blue) 100%);
-            background-attachment: fixed; min-height: 100vh; color: #333;
+            background: #FFFFFF; height: 100vh; display: flex; flex-direction: column;
+            overflow: hidden;
         }
 
-        /* --- 視覺修正：對齊圖 2 的發光質感 --- */
-        .top-banner {
-            padding: 60px 25px 20px;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+        /* --- 頂部導航：圖 2 質感 Logo --- */
+        .header {
+            padding: 55px 20px 15px;
+            background: #fff; border-bottom: 1px solid #f0f0f0;
+            display: flex; align-items: center; justify-content: space-between;
+            position: relative; z-index: 100;
+        }
+        .header-logo {
+            font-family: "Arial Black", sans-serif; font-size: 22px; font-weight: 900; 
+            font-style: italic; color: #FFFFFF; letter-spacing: -1px;
+            text-shadow: 0 0 12px rgba(162, 155, 254, 0.8), 0 0 5px rgba(162, 155, 254, 1);
+        }
+        .header-icon { font-size: 20px; color: #333; cursor: pointer; }
+
+        /* --- 粉絲問題掛載區 (影片頂部) --- */
+        .fan-context {
+            background: #f8f9fa; padding: 15px 20px;
+            border-bottom: 1px solid #eee; font-size: 13px; color: #666;
+        }
+        .fan-tag { color: var(--art-deep); font-weight: bold; margin-bottom: 4px; display: block; }
+
+        /* --- 聊天動態區 --- */
+        #chatWall {
+            flex: 1; overflow-y: auto; padding: 20px;
+            background: #fff; display: flex; flex-direction: column;
+        }
+        .bubble-artist {
+            align-self: flex-end; background: var(--art-purple); color: #fff;
+            padding: 12px 18px; border-radius: 20px 20px 2px 20px;
+            font-size: 16px; line-height: 1.5; max-width: 80%;
+            margin-bottom: 15px; box-shadow: 0 4px 12px rgba(162, 155, 254, 0.2);
+            animation: bubblePop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes bubblePop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* --- 核心功能：即時打字預覽框 (同步影片效果) --- */
+        #livePreview {
+            position: fixed; bottom: 110px; left: 15px; right: 15px;
+            background: var(--glass-white); backdrop-filter: blur(15px);
+            padding: 15px; border-radius: 20px; border: 1px solid var(--art-purple);
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.05);
+            display: none; z-index: 90;
+        }
+        .preview-header { font-size: 10px; color: var(--art-purple); font-weight: 900; margin-bottom: 6px; letter-spacing: 1px; }
+        .preview-text { font-size: 15px; color: #333; white-space: pre-wrap; }
+
+        /* --- 底部輸入區 --- */
+        .input-container {
+            padding: 15px 15px 40px; background: #fff;
+            border-top: 1px solid #f0f0f0; display: flex; align-items: center; gap: 12px;
+        }
+        .btn-extra { font-size: 26px; color: #ccc; width: 30px; }
+        .input-box {
+            flex: 1; background: #f1f3f5; border: none; padding: 12px 20px;
+            border-radius: 25px; font-size: 16px; font-family: inherit;
+        }
+        .btn-send {
+            width: 42px; height: 42px; background: var(--art-purple);
+            border-radius: 50%; border: none; color: white; 
+            font-size: 20px; display: flex; align-items: center; justify-content: center;
         }
 
-        .studio-logo {
-            font-family: "Arial Black", sans-serif;
-            font-size: 28px; font-weight: 900; font-style: italic;
-            color: #FFFFFF;
-            text-shadow: 0 0 15px rgba(162, 155, 254, 0.8); /* 模擬圖 2 的發光感 */
-            letter-spacing: -1px;
-            margin-bottom: 5px;
+        /* --- 核心功能：確認彈窗 (同步影片黑白風格) --- */
+        #confirmModal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); display: none;
+            align-items: center; justify-content: center; z-index: 1000;
         }
-
-        /* --- 旗艦級容器 --- */
-        .container { padding: 0 20px 150px; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .glass-panel { 
-            background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255,255,255,0.7); border-radius: 35px; padding: 25px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.03); margin-bottom: 25px;
+        .modal-body {
+            background: #fff; width: 80%; border-radius: 28px; padding: 30px;
+            text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.1);
         }
-
-        /* --- 發文介面 --- */
-        .post-area { position: relative; }
-        .post-input {
-            width: 100%; height: 150px; border: none; background: rgba(255,255,255,0.5);
-            border-radius: 24px; padding: 20px; font-size: 17px; resize: none;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.02); line-height: 1.6;
+        .modal-text { font-size: 16px; color: #333; margin-bottom: 25px; line-height: 1.5; font-weight: 500; }
+        .modal-btns { display: flex; gap: 12px; }
+        .m-btn {
+            flex: 1; padding: 14px; border-radius: 16px; border: none; font-weight: bold; font-size: 15px;
         }
-        .btn-post {
-            margin-top: 15px; width: 100%; padding: 18px; border-radius: 35px; border: none;
-            font-weight: 900; font-size: 17px; color: #fff;
-            background: linear-gradient(45deg, var(--art-purple), var(--art-deep));
-            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.3); transition: 0.3s;
-        }
-        .btn-post:active { transform: scale(0.96); }
-
-        /* --- 動態清單 --- */
-        .feed-item {
-            background: rgba(255,255,255,0.8); padding: 22px; border-radius: 28px;
-            margin-bottom: 15px; border: 1px solid #fff;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.02);
-            animation: slideIn 0.4s ease-out;
-        }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-
-        .feed-text { font-size: 16px; color: #444; margin-bottom: 12px; }
-        .feed-meta { font-size: 11px; color: #bbb; font-weight: bold; }
-
-        /* --- 底部導航 (同步旗艦版) --- */
-        .nav-bar {
-            position: fixed; bottom: 25px; left: 5%; width: 90%; height: 75px;
-            background: rgba(255,255,255,0.85); backdrop-filter: blur(25px);
-            border-radius: 38px; border: 1px solid rgba(255,255,255,0.6);
-            display: flex; justify-content: space-around; align-items: center;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.08); z-index: 1000;
-        }
-        .nav-item { text-align: center; color: #ccc; font-weight: bold; flex: 1; }
-        .nav-item.active { color: var(--art-deep); }
+        .btn-no { background: #f5f5f5; color: #666; }
+        .btn-yes { background: #1a1a1a; color: #fff; }
     </style>
 </head>
 <body>
 
-    <div class="top-banner">
-        <div class="studio-logo">Studio</div>
-        <p style="margin:0; color:#888; font-size:14px; font-weight:600;">歡迎回來，藝人端工作室</p>
+    <header class="header">
+        <div class="header-icon">❮</div>
+        <div class="header-logo">NEXT’S YOU</div>
+        <div class="header-icon" onclick="logout()">⚙️</div>
+    </header>
+
+    <div class="fan-context">
+        <span class="fan-tag">FROM FAN</span>
+        <div>歐巴！打字速度真的很快耶，是在用手機拍影片嗎？❤️</div>
     </div>
 
-    <div class="container">
-        <div class="glass-panel post-area">
-            <textarea id="postContent" class="post-input" placeholder="分享此刻的心情..."></textarea>
-            <button class="btn-post" onclick="publishPost()">發布動態至星球</button>
+    <div id="chatWall">
         </div>
 
-        <div style="display:flex; justify-content:space-between; align-items:center; padding: 10px;">
-            <h3 style="margin: 0; font-weight: 900; font-size: 20px;">📜 我的發布紀錄</h3>
-            <span style="font-size: 12px; color: var(--art-deep); font-weight: bold;">即時同步中</span>
-        </div>
-        
-        <div id="historyWall" style="margin-top:15px;"></div>
+    <div id="livePreview">
+        <div class="preview-header">PREVIEW</div>
+        <div id="previewText" class="preview-text"></div>
     </div>
 
-    <nav class="nav-bar">
-        <div class="nav-item active">🎨<br><span style="font-size:10px;">工作室</span></div>
-        <div class="nav-item">📊<br><span style="font-size:10px;">數據</span></div>
-        <div class="nav-item">💬<br><span style="font-size:10px;">訊息</span></div>
-        <div class="nav-item" onclick="logout()">⚙️<br><span style="font-size:10px;">登出</span></div>
-    </nav>
+    <div class="input-container">
+        <div class="btn-extra">＋</div>
+        <input type="text" id="mainInput" class="input-box" placeholder="輸入訊息..." oninput="syncPreview()">
+        <button class="btn-send" onclick="showModal()">↑</button>
+    </div>
+
+    <div id="confirmModal">
+        <div class="modal-body">
+            <div class="modal-text">要發送 bubble 嗎？<br><span style="font-size:12px; color:#999; font-weight:normal;">訊息將同步至所有粉絲星球</span></div>
+            <div class="modal-btns">
+                <button class="m-btn btn-no" onclick="closeModal()">取消</button>
+                <button class="m-btn btn-yes" onclick="finalSend()">確定</button>
+            </div>
+        </div>
+    </div>
 
 <script>
-    const CURRENT_ARTIST = "BTS"; // 預設身分
+    const input = document.getElementById('mainInput');
+    const preview = document.getElementById('livePreview');
+    const previewText = document.getElementById('previewText');
+    const modal = document.getElementById('confirmModal');
+    const chatWall = document.getElementById('chatWall');
 
-    // 頁面加載直接渲染，不跑重複動畫
-    window.onload = () => { renderHistory(); };
+    // 初始化：載入歷史紀錄
+    window.onload = () => { renderChat(); };
 
-    function publishPost() {
-        const txt = document.getElementById('postContent').value.trim();
-        if (!txt) {
-            alert("請輸入內容！");
-            return;
+    // 1. 即時同步預覽 (同步影片打字效果)
+    function syncPreview() {
+        const val = input.value;
+        if (val.length > 0) {
+            preview.style.display = 'block';
+            previewText.innerText = val;
+        } else {
+            preview.style.display = 'none';
         }
+    }
 
+    // 2. 顯示發送確認框
+    function showModal() {
+        if (!input.value.trim()) return;
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+        modal.style.display = 'none';
+    }
+
+    // 3. 確定發送 (寫入資料庫並同步粉絲端)
+    function finalSend() {
+        const text = input.value.trim();
         const feeds = JSON.parse(localStorage.getItem("NEXTS_YOU_DATA") || "[]");
+        
         const newPost = {
             id: Date.now(),
-            artist: CURRENT_ARTIST,
-            text: txt,
-            time: new Date().toLocaleString('zh-TW', { hour12: false })
+            artist: "BTS", // 預設身分
+            text: text,
+            time: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
         };
 
         feeds.unshift(newPost);
         localStorage.setItem("NEXTS_YOU_DATA", JSON.stringify(feeds));
-        
-        document.getElementById('postContent').value = "";
-        renderHistory();
-        
-        // 輕微震動回饋 (如果手機支援)
-        if (window.navigator.vibrate) window.navigator.vibrate(50);
+
+        // 清空介面
+        input.value = "";
+        preview.style.display = 'none';
+        closeModal();
+        renderChat();
+
+        // 滾動到底部
+        chatWall.scrollTop = chatWall.scrollHeight;
     }
 
-    function renderHistory() {
+    function renderChat() {
         const feeds = JSON.parse(localStorage.getItem("NEXTS_YOU_DATA") || "[]");
-        const myFeeds = feeds.filter(f => f.artist === CURRENT_ARTIST);
-        const wall = document.getElementById('historyWall');
-
-        if (myFeeds.length === 0) {
-            wall.innerHTML = `
-                <div class="glass-panel" style="text-align:center; color:#ccc;">
-                    <p>目前還沒有發布過動態喔！</p>
-                </div>`;
-            return;
-        }
-
-        wall.innerHTML = myFeeds.map(f => `
-            <div class="feed-item">
-                <div class="feed-text">${f.text}</div>
-                <div class="feed-meta">發布於 ${f.time}</div>
-            </div>
+        const myFeeds = feeds.filter(f => f.artist === "BTS").reverse(); // 聊天由舊到新
+        
+        chatWall.innerHTML = myFeeds.map(f => `
+            <div class="bubble-artist">${f.text}</div>
         `).join('');
+        chatWall.scrollTop = chatWall.scrollHeight;
     }
 
     function logout() {
-        localStorage.clear();
-        window.location.href = 'index.html';
+        if(confirm("確定登出工作室？")) {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
     }
 </script>
 </body>
