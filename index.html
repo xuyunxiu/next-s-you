@@ -3,143 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>NEXT’S YOU | Fan Universe</title>
+    <title>NEXT’S YOU | Universe</title>
     <style>
         :root {
             --sky-blue: #D0EFFF;
             --lavender: #E6D5FF;
             --main-theme: #5D9CEC;
-            --glass: rgba(255, 255, 255, 0.4);
-            --glass-border: rgba(255, 255, 255, 0.6);
+            --glass: rgba(255, 255, 255, 0.45);
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { 
-            margin: 0; font-family: -apple-system, "PingFang TC", sans-serif;
+            margin: 0; font-family: -apple-system, sans-serif;
             background: linear-gradient(160deg, var(--sky-blue) 0%, #FFFFFF 50%, var(--lavender) 100%);
-            background-attachment: fixed; min-height: 100vh; overflow-x: hidden; color: #444;
+            background-attachment: fixed; min-height: 100vh; overflow-x: hidden;
         }
 
-        /* --- 1. SVG 高級 LOGO --- */
+        /* --- 💎 旗艦級 SVG 流光 LOGO --- */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: linear-gradient(135deg, var(--sky-blue), var(--lavender));
             display: flex; align-items: center; justify-content: center; z-index: 99999;
-            transition: opacity 0.8s ease;
+            transition: opacity 0.8s ease-in-out;
         }
-        .logo-svg {
-            width: 280px;
-            filter: drop-shadow(0 0 15px rgba(255,255,255,0.8));
-            animation: logoFadeIn 1s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-        @keyframes logoFadeIn {
-            from { opacity: 0; transform: scale(0.9) translateY(10px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
+        .logo-svg { width: 320px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.05)); }
+        
+        .shimmer-text {
+            font-family: "Arial Black", sans-serif; font-size: 42px; font-weight: 900; 
+            font-style: italic; letter-spacing: -1.5px;
+            fill: url(#shimmerGrad);
         }
 
-        /* --- 2. 視圖與彈窗 --- */
-        .view { display: none; min-height: 100vh; animation: fadeIn 0.5s ease; }
+        /* --- 介面控制 --- */
+        .view { display: none; min-height: 100vh; animation: fadeIn 0.6s ease forwards; }
         .active-view { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .custom-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); backdrop-filter: blur(8px);
-            display: none; align-items: center; justify-content: center; z-index: 30000;
-        }
-        .modal-content {
-            background: #fff; width: 80%; max-width: 300px; border-radius: 28px;
-            padding: 30px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-            transform: scale(0.85); transition: 0.3s;
-        }
-        .modal-active .modal-content { transform: scale(1); }
-        .modal-btn { margin-top: 25px; width: 100%; padding: 14px; border-radius: 16px; border: none; background: #222; color: #fff; font-weight: bold; }
-
-        /* --- 3. 登入與卡片 --- */
         .glass-card { 
-            background: var(--glass); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); 
-            border-radius: 32px; padding: 35px; margin: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.7); border-radius: 32px; padding: 35px; margin: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.02);
         }
-        .input-box { width: 100%; padding: 18px; margin-bottom: 15px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.6); background: rgba(255,255,255,0.3); font-size: 16px; }
-        .btn-main { width: 100%; padding: 18px; border-radius: 35px; border: none; font-weight: bold; font-size: 17px; background: linear-gradient(45deg, #5D9CEC, #A29BFE); color: #fff; box-shadow: 0 10px 25px rgba(93, 156, 236, 0.2); }
 
-        /* --- 4. 底部導航 --- */
+        .btn-main { 
+            width: 100%; padding: 18px; border-radius: 35px; border: none; font-weight: bold; font-size: 17px;
+            background: linear-gradient(45deg, #5D9CEC, #A29BFE); color: #fff;
+            box-shadow: 0 10px 25px rgba(93, 156, 236, 0.3);
+        }
+
+        /* --- 導航欄 --- */
         .nav-bar {
             position: fixed; bottom: 25px; left: 5%; width: 90%; height: 75px;
-            background: rgba(255,255,255,0.75); backdrop-filter: blur(25px);
-            border-radius: 38px; border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,0.8); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border-radius: 38px; border: 1px solid rgba(255,255,255,0.6);
             display: flex; justify-content: space-around; align-items: center;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.08); z-index: 1000;
         }
-        .nav-item { text-align: center; color: #bbb; font-weight: bold; transition: 0.3s; }
+        .nav-item { text-align: center; color: #ccc; font-weight: bold; flex: 1; }
         .nav-item.active { color: var(--main-theme); }
 
-        /* --- 5. 藝人動態卡片 --- */
-        .feed-item { margin-bottom: 18px; padding: 22px; background: rgba(255,255,255,0.6); border-radius: 28px; border: 1px solid rgba(255,255,255,0.8); }
-        .feed-artist { font-weight: 900; color: var(--main-theme); font-size: 15px; margin-bottom: 8px; }
-
-        .artist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; padding-bottom: 120px; }
-        .artist-card { aspect-ratio: 1/1.35; border-radius: 28px; background-size: cover; background-position: center; position: relative; border: 4px solid transparent; overflow: hidden; transition: 0.3s; }
+        /* 動態牆樣式 */
+        .feed-item { margin-bottom: 18px; padding: 25px; background: rgba(255,255,255,0.7); border-radius: 30px; border: 1px solid #fff; }
+        .artist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; padding-bottom: 150px; }
+        .artist-card { aspect-ratio: 1/1.3; border-radius: 28px; background-size: cover; position: relative; border: 4px solid transparent; transition: 0.3s; }
         .artist-card.selected { border-color: var(--main-theme); transform: scale(0.96); }
-        .card-name { position: absolute; bottom: 18px; left: 18px; color: #fff; font-weight: bold; font-size: 18px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
 
     <div id="splash-screen">
-        <svg class="logo-svg" viewBox="0 0 400 60">
+        <svg class="logo-svg" viewBox="0 0 400 80">
             <defs>
-                <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" style="stop-color:#fff" />
-                    <stop offset="50%" style="stop-color:#f0f0f0" />
-                    <stop offset="100%" style="stop-color:#fff" />
+                <linearGradient id="shimmerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#5D9CEC">
+                        <animate attributeName="offset" values="-1; 2" dur="2s" repeatCount="indefinite" />
+                    </stop>
+                    <stop offset="50%" stop-color="#FFFFFF">
+                        <animate attributeName="offset" values="-0.5; 2.5" dur="2s" repeatCount="indefinite" />
+                    </stop>
+                    <stop offset="100%" stop-color="#A29BFE">
+                        <animate attributeName="offset" values="0; 3" dur="2s" repeatCount="indefinite" />
+                    </stop>
                 </linearGradient>
             </defs>
-            <text x="50%" y="45" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="42" font-weight="900" font-style="italic" fill="url(#logoGrad)" letter-spacing="-2">
-                NEXT’S YOU
-            </text>
+            <text x="50%" y="55" text-anchor="middle" class="shimmer-text">NEXT’S YOU</text>
         </svg>
     </div>
 
     <section id="view-login" class="view">
-        <div style="text-align:center; margin-top:80px;">
-            <h1 style="color: var(--main-theme); font-size: 36px; font-weight: 900; font-style: italic;">Login</h1>
-            <p style="color:#aaa;">開啟您的星球旅程</p>
+        <div style="text-align:center; margin: 100px 0 30px;">
+            <h1 style="color:var(--main-theme); font-style:italic; font-weight:900; font-size:38px; margin:0;">Login</h1>
+            <p style="color:#aaa; font-size:14px;">輸入帳號密碼開啟星球旅程</p>
         </div>
         <div class="glass-card">
-            <input type="text" id="acc" class="input-box" placeholder="帳號 (fan)">
-            <input type="password" id="pwd" class="input-box" placeholder="密碼">
+            <input type="text" id="acc" style="width:100%; padding:18px; margin-bottom:15px; border-radius:18px; border:1px solid #eee; background:rgba(255,255,255,0.5);" placeholder="帳號 (fan)">
+            <input type="password" id="pwd" style="width:100%; padding:18px; margin-bottom:20px; border-radius:18px; border:1px solid #eee; background:rgba(255,255,255,0.5);" placeholder="密碼">
             <button class="btn-main" onclick="handleLogin()">登入星球</button>
         </div>
     </section>
 
     <section id="view-onboarding" class="view">
-        <div style="padding: 50px 25px 15px;">
-            <h2 style="font-size:28px; font-weight:900;">追蹤藝人</h2>
+        <div style="padding: 60px 25px 15px;">
+            <h2 style="font-size:30px; font-weight:900;">追蹤藝人</h2>
             <p style="color:#888;">選擇您想加入的社群星球</p>
         </div>
         <div class="artist-grid" id="onboardingGrid"></div>
-        <div style="position:fixed; bottom:35px; width:100%; padding:0 25px;">
+        <div style="position:fixed; bottom:35px; width:100%; padding:0 25px; z-index:2000;">
             <button class="btn-main" onclick="saveOnboarding()">進入首頁</button>
         </div>
     </section>
 
     <section id="view-home" class="view">
-        <div class="home-header" style="padding: 25px; display: flex; justify-content: space-between; align-items: center;">
+        <div style="padding: 25px; display: flex; justify-content: space-between; align-items: center;">
             <div style="font-weight:900; color:var(--main-theme); font-size:28px; font-style:italic;">weverse</div>
             <div style="font-size:24px;">🔔</div>
         </div>
-        
-        <div class="glass-card" style="margin-top:0; padding: 18px;">
+        <div class="glass-card" style="margin-top:0; padding: 20px; overflow:hidden;">
             <div id="homeBar" style="display:flex; gap:18px; overflow-x:auto;"></div>
         </div>
-
-        <div style="padding: 0 20px 120px;">
-            <h3 style="margin: 25px 0 18px; font-weight:900;">🪐 星球廣播</h3>
+        <div style="padding: 0 20px 150px;">
+            <h3 style="margin: 25px 0 15px; font-weight:900;">🪐 星球廣播</h3>
             <div id="feedWall"></div>
-            <button onclick="logout()" style="margin-top:50px; border:none; background:none; color:#ccc; width:100%;">登出帳號</button>
+            <p onclick="logout()" style="text-align:center; color:#ccc; font-size:12px; margin-top:40px;">登出帳號</p>
         </div>
-
         <nav class="nav-bar">
             <div class="nav-item active">🏠<br><span style="font-size:10px;">首頁</span></div>
             <div class="nav-item">🛍️<br><span style="font-size:10px;">Shop</span></div>
@@ -148,119 +134,76 @@
         </nav>
     </section>
 
-    <div id="customAlert" class="custom-modal">
-        <div class="modal-content">
-            <p id="alertMsg" style="font-size:17px; font-weight:bold; color:#333;"></p>
-            <button class="modal-btn" onclick="closeAlert()">知道了</button>
-        </div>
-    </div>
+    <script>
+        const ARTISTS = [
+            { id: 1, name: "BTS", card: "https://placehold.co/400x600/ff0080/fff?text=BTS", img: "https://placehold.co/200/ff0080/fff?text=B" },
+            { id: 2, name: "SEVENTEEN", card: "https://placehold.co/400x600/87ceeb/fff?text=SVT", img: "https://placehold.co/200/87ceeb/fff?text=S" },
+            { id: 3, name: "ENHYPEN", card: "https://placehold.co/400x600/00008b/fff?text=EN-", img: "https://placehold.co/200/00008b/fff?text=E" },
+            { id: 4, name: "TXT", card: "https://placehold.co/400x600/00ffcc/000?text=TXT", img: "https://placehold.co/200/00ffcc/000?text=T" }
+        ];
 
-<script>
-    const ARTISTS = [
-        { id: 1, name: "BTS", img: "https://placehold.co/200/ff0080/fff?text=BTS", card: "https://placehold.co/400x600/ff0080/fff?text=BTS" },
-        { id: 2, name: "SEVENTEEN", img: "https://placehold.co/200/87ceeb/fff?text=SVT", card: "https://placehold.co/400x600/87ceeb/fff?text=SVT" },
-        { id: 3, name: "ENHYPEN", img: "https://placehold.co/200/00008b/fff?text=EN-", card: "https://placehold.co/400x600/00008b/fff?text=ENHYPEN" },
-        { id: 4, name: "TXT", img: "https://placehold.co/200/00ffcc/000?text=TXT", card: "https://placehold.co/400x600/00ffcc/000?text=TXT" }
-    ];
+        let selectedIds = JSON.parse(localStorage.getItem("fan_joined") || "[]");
 
-    let selectedIds = JSON.parse(localStorage.getItem("fan_joined") || "[]");
+        window.onload = () => {
+            setTimeout(() => {
+                const ss = document.getElementById('splash-screen');
+                ss.style.opacity = '0';
+                setTimeout(() => { 
+                    ss.style.display = 'none';
+                    if (!localStorage.getItem("fan_logged")) show('view-login');
+                    else checkRoute();
+                }, 800);
+            }, 2200); // 延長啟動時間感受流光
+        };
 
-    window.onload = () => {
-        setTimeout(() => {
-            const ss = document.getElementById('splash-screen');
-            ss.style.opacity = '0';
-            setTimeout(() => { ss.style.display = 'none'; checkRoute(); }, 800);
-        }, 1500);
-    };
-
-    // --- 核心修改：移除對藝人的判斷與跳轉 ---
-    function checkRoute() {
-        if (!localStorage.getItem("fan_logged")) {
-            show('view-login');
-        } else {
-            if (selectedIds.length === 0) {
-                show('view-onboarding');
-                renderOnboarding();
-            } else {
-                renderHome();
-                renderFeeds();
-                show('view-home');
-            }
+        function checkRoute() {
+            if (selectedIds.length === 0) { show('view-onboarding'); renderOnboarding(); }
+            else { renderHome(); renderFeeds(); show('view-home'); }
         }
-    }
 
-    function handleLogin() {
-        const acc = document.getElementById('acc').value.trim().toLowerCase();
-        const pwd = document.getElementById('pwd').value;
-        if (acc === 'fan' && pwd === '123') {
-            localStorage.setItem("fan_logged", "true");
+        function handleLogin() {
+            if (document.getElementById('acc').value === 'fan') {
+                localStorage.setItem("fan_logged", "true");
+                checkRoute();
+            } else alert("帳號請輸入 fan");
+        }
+
+        function renderOnboarding() {
+            document.getElementById('onboardingGrid').innerHTML = ARTISTS.map(a => `
+                <div class="artist-card ${selectedIds.includes(a.id)?'selected':''}" onclick="toggleSelect(${a.id})" style="background-image: url('${a.card}')">
+                    <div style="position:absolute; bottom:15px; left:15px; color:#fff; font-weight:bold; font-size:18px;">${a.name}</div>
+                </div>`).join('');
+        }
+
+        function toggleSelect(id) {
+            const i = selectedIds.indexOf(id);
+            if(i === -1) selectedIds.push(id); else selectedIds.splice(i, 1);
+            renderOnboarding();
+        }
+
+        function saveOnboarding() {
+            if(selectedIds.length === 0) return alert("請至少選擇一個團體！");
+            localStorage.setItem("fan_joined", JSON.stringify(selectedIds));
             checkRoute();
-        } else {
-            myAlert("帳號或密碼錯誤！");
         }
-    }
 
-    function renderOnboarding() {
-        const grid = document.getElementById('onboardingGrid');
-        grid.innerHTML = ARTISTS.map(a => `
-            <div class="artist-card ${selectedIds.includes(a.id)?'selected':''}" onclick="toggleSelect(${a.id})" style="background-image: url('${a.card}')">
-                <div class="card-name">${a.name}</div>
-            </div>`).join('');
-    }
-
-    function toggleSelect(id) {
-        const i = selectedIds.indexOf(id);
-        if(i === -1) selectedIds.push(id); else selectedIds.splice(i, 1);
-        renderOnboarding();
-    }
-
-    function saveOnboarding() {
-        if(selectedIds.length === 0) return myAlert("請至少選擇一個團體！");
-        localStorage.setItem("fan_joined", JSON.stringify(selectedIds));
-        checkRoute();
-    }
-
-    function renderFeeds() {
-        const wall = document.getElementById('feedWall');
-        const feeds = JSON.parse(localStorage.getItem("NEXTS_YOU_DATA") || "[]");
-        if (feeds.length === 0) {
-            wall.innerHTML = `<p style="text-align:center; color:#999; padding:20px;">暫無動態</p>`;
-            return;
+        function renderFeeds() {
+            const feeds = JSON.parse(localStorage.getItem("NEXTS_YOU_DATA") || "[]");
+            document.getElementById('feedWall').innerHTML = feeds.length === 0 ? '<p style="text-align:center; color:#999; margin-top:40px;">暫無動態</p>' :
+                feeds.map(f => `<div class="feed-item"><div style="color:var(--main-theme); font-weight:900; margin-bottom:10px;">🌟 ${f.artist}</div><div style="font-size:16px;">${f.text}</div><div style="font-size:11px; color:#bbb; margin-top:15px;">${f.time}</div></div>`).join('');
         }
-        wall.innerHTML = feeds.map(f => `
-            <div class="feed-item">
-                <div class="feed-artist">🌟 ${f.artist}</div>
-                <div style="font-size:16px; line-height:1.6;">${f.text}</div>
-                <div style="font-size:11px; color:#bbb; margin-top:10px;">${f.time}</div>
-            </div>`).join('');
-    }
 
-    function renderHome() {
-        const bar = document.getElementById('homeBar');
-        const joined = ARTISTS.filter(a => selectedIds.includes(a.id));
-        bar.innerHTML = joined.map(a => `
-            <div style="text-align:center; flex-shrink:0;">
-                <img src="${a.img}" style="width:68px; height:68px; border-radius:24px; border:2px solid #fff; object-fit:cover;">
-                <div style="font-size:12px; margin-top:5px; font-weight:600;">${a.name}</div>
-            </div>`).join('');
-    }
+        function renderHome() {
+            const joined = ARTISTS.filter(a => selectedIds.includes(a.id));
+            document.getElementById('homeBar').innerHTML = joined.map(a => `<div style="text-align:center; flex-shrink:0;"><img src="${a.img}" style="width:70px; height:70px; border-radius:25px; border:2px solid #fff;"><div style="font-size:11px; margin-top:8px; font-weight:600;">${a.name}</div></div>`).join('');
+        }
 
-    function myAlert(msg) {
-        document.getElementById('alertMsg').innerText = msg;
-        const m = document.getElementById('customAlert');
-        m.style.display = 'flex';
-        setTimeout(() => m.classList.add('modal-active'), 10);
-    }
-    function closeAlert() {
-        const m = document.getElementById('customAlert');
-        m.classList.remove('modal-active');
-        setTimeout(() => m.style.display = 'none', 300);
-    }
-    function show(id) {
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
-        document.getElementById(id).classList.add('active-view');
-    }
-    function logout() { localStorage.removeItem("fan_logged"); location.reload(); }
-</script>
+        function show(id) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
+            document.getElementById(id).classList.add('active-view');
+        }
+
+        function logout() { localStorage.removeItem("fan_logged"); location.reload(); }
+    </script>
 </body>
 </html>
