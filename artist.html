@@ -5,129 +5,130 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>NEXT’S YOU | Artist Studio</title>
     <style>
-        /* --- 核心配色：專業創作版 --- */
         :root {
             --sky-blue: #D0EFFF;
             --lavender: #E6D5FF;
             --art-purple: #A29BFE;
             --glass: rgba(255, 255, 255, 0.3);
             --glass-border: rgba(255, 255, 255, 0.5);
-            --text-dark: #333;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
             margin: 0; font-family: -apple-system, sans-serif; 
             background: linear-gradient(160deg, var(--lavender) 0%, #FFFFFF 50%, var(--sky-blue) 100%);
-            background-attachment: fixed; min-height: 100vh; color: var(--text-dark);
+            background-attachment: fixed; min-height: 100vh; color: #333;
         }
 
-        /* --- 頂部標題列 --- */
         .studio-header {
-            padding: 50px 25px 30px;
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--glass-border);
+            padding: 50px 25px 30px; background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(10px); border-bottom: 1px solid var(--glass-border);
             border-radius: 0 0 35px 35px;
         }
-        .studio-header h1 { margin: 0; font-size: 28px; font-weight: 900; color: var(--art-purple); letter-spacing: -1px; }
-        .studio-header p { margin: 5px 0 0; color: #888; font-size: 14px; font-weight: 500; }
+        .studio-header h1 { margin: 0; font-size: 28px; font-weight: 900; color: var(--art-purple); }
 
-        /* --- 數據卡片 --- */
-        .stats-container {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px;
-        }
-        .stat-card {
-            background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border); border-radius: 24px; padding: 20px; text-align: center;
-        }
-        .stat-card span { display: block; font-size: 22px; font-weight: 900; color: var(--art-purple); }
-        .stat-card small { color: #999; font-size: 11px; font-weight: bold; text-transform: uppercase; }
-
-        /* --- 功能區塊 --- */
         .glass-panel {
             background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border); border-radius: 30px; padding: 25px; margin: 0 20px 20px;
+            border: 1px solid var(--glass-border); border-radius: 30px; padding: 25px; margin: 20px;
         }
-        .section-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; color: #555; display: flex; align-items: center; }
-        .section-title::before { content: ''; width: 4px; height: 18px; background: var(--art-purple); margin-right: 10px; border-radius: 2px; }
 
         .tool-btn {
             width: 100%; padding: 18px; border-radius: 20px; border: none; margin-bottom: 12px;
-            font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center;
-            transition: 0.3s; color: #fff;
+            font-size: 16px; font-weight: bold; cursor: pointer; color: #fff; transition: 0.3s;
         }
-        .btn-feed { background: linear-gradient(45deg, #A29BFE, #6C5CE7); box-shadow: 0 8px 20px rgba(162, 155, 254, 0.3); }
-        .btn-media { background: linear-gradient(45deg, #81ECEC, #00CEC9); box-shadow: 0 8px 20px rgba(129, 236, 236, 0.3); }
-        .btn-live { background: linear-gradient(45deg, #FF7675, #D63031); box-shadow: 0 8px 20px rgba(255, 118, 117, 0.3); }
-        .tool-btn i { font-style: normal; margin-right: 15px; font-size: 20px; }
+        .btn-feed { background: linear-gradient(45deg, #A29BFE, #6C5CE7); }
 
-        /* --- 底部資訊 --- */
-        .footer-action { text-align: center; margin-top: 30px; padding-bottom: 50px; }
-        .logout-btn { background: none; border: 1px solid #ddd; padding: 10px 25px; border-radius: 15px; color: #bbb; font-size: 13px; }
+        /* 發文紀錄樣式 */
+        .history-item {
+            background: rgba(255,255,255,0.5); padding: 15px; border-radius: 15px;
+            margin-bottom: 10px; border-left: 5px solid var(--art-purple);
+        }
+        .history-time { font-size: 10px; color: #aaa; margin-top: 5px; }
 
+        .logout-btn { background: none; border: 1px solid #ddd; padding: 10px 25px; border-radius: 15px; color: #bbb; }
     </style>
 </head>
 <body>
 
     <header class="studio-header">
-        <h1>Artist Studio</h1>
-        <p id="artistName">歡迎回來，創作星人</p>
+        <h1 id="artistTitle">Artist Studio</h1>
+        <p>歡迎回來，<span id="display-name">創作者</span></p>
     </header>
 
-    <div class="stats-container">
-        <div class="stat-card">
-            <span id="fanCount">12.5K</span>
-            <small>總追蹤人數</small>
-        </div>
-        <div class="stat-card">
-            <span id="postCount">342</span>
-            <small>累計貼文</small>
-        </div>
-    </div>
-
     <div class="glass-panel">
-        <div class="section-title">創作工具箱</div>
-        <button class="tool-btn btn-feed" onclick="alert('開啟 Feed 編輯器')"><i>✍️</i>發布文字動態</button>
-        <button class="tool-btn btn-media" onclick="alert('選擇照片或影片')"><i>📸</i>上傳媒體內容</button>
-        <button class="tool-btn btn-live" onclick="alert('準備開啟直播直播鏡頭...')"><i>🎥</i>開啟 LIVE 直播</button>
+        <h3 style="margin-top:0;">🚀 快速創作</h3>
+        <button class="tool-btn btn-feed" onclick="publishFeed()">✍️ 撰寫新動態 (Feed)</button>
+        <p style="font-size: 12px; color: #888;">發布後，所有追蹤您的粉絲將會收到通知。</p>
     </div>
 
-    <div class="glass-panel" style="background: rgba(255,255,255,0.1); border: 1px dashed #ccc;">
-        <div class="section-title">管理中心</div>
-        <div style="color: #888; font-size: 14px; line-height: 1.6;">
-            • 查看社群守則<br>
-            • 留言關鍵字過濾<br>
-            • 收益統計報告
+    <div class="glass-panel" id="history-panel">
+        <h3 style="margin-top:0;">📜 最近發布</h3>
+        <div id="feed-history">
+            <p style="color:#999; font-size:14px;">尚無發布紀錄</p>
         </div>
     </div>
 
-    <div class="footer-action">
-        <button class="logout-btn" onclick="logout()">安全登出系統</button>
+    <div style="text-align: center; margin-bottom: 50px;">
+        <button class="logout-btn" onclick="logout()">安全登出</button>
     </div>
 
 <script>
-    // --- 安全驗證：如果不是藝人，強行踢回 index.html ---
+    // 取得當前藝人身分
+    const currentArtist = localStorage.getItem("user") || "藝人";
+
     window.onload = () => {
-        const role = localStorage.getItem("user_role");
-        if (role !== 'artist') {
-            alert("⚠️ 權限不足，請重新登入。");
+        if (localStorage.getItem("user_role") !== 'artist') {
             window.location.href = 'index.html';
         }
-        
-        // 模擬載入動畫
-        document.body.style.opacity = '0';
-        setTimeout(() => {
-            document.body.style.transition = 'opacity 0.8s';
-            document.body.style.opacity = '1';
-        }, 100);
+        document.getElementById('display-name').innerText = currentArtist;
+        renderHistory();
     };
 
-    function logout() {
-        if(confirm("確定要登出藝人管理後台嗎？")) {
-            localStorage.clear();
-            window.location.href = 'index.html';
+    function publishFeed() {
+        const content = prompt("想對粉絲說點什麼？");
+        if (content && content.trim() !== "") {
+            // 讀取舊動態
+            let feeds = JSON.parse(localStorage.getItem("wv_feeds") || "[]");
+            
+            // 建立新動態
+            const newPost = {
+                id: Date.now(),
+                artist: currentArtist.toUpperCase(),
+                text: content,
+                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+            };
+
+            feeds.unshift(newPost); // 把最新的一則放最前面
+            localStorage.setItem("wv_feeds", JSON.stringify(feeds));
+            
+            alert("✨ 發布成功！粉絲端已同步。");
+            renderHistory();
         }
+    }
+
+    function renderHistory() {
+        const container = document.getElementById('feed-history');
+        const feeds = JSON.parse(localStorage.getItem("wv_feeds") || "[]");
+        
+        // 僅篩選屬於「自己」的發文
+        const myFeeds = feeds.filter(f => f.artist === currentArtist.toUpperCase());
+
+        if (myFeeds.length === 0) {
+            container.innerHTML = `<p style="color:#999; font-size:14px;">尚無發布紀錄</p>`;
+            return;
+        }
+
+        container.innerHTML = myFeeds.map(f => `
+            <div class="history-item">
+                <div style="font-size:14px;">${f.text}</div>
+                <div class="history-time">${f.time} · 已同步至粉絲端</div>
+            </div>
+        `).join('');
+    }
+
+    function logout() {
+        localStorage.clear();
+        window.location.href = 'index.html';
     }
 </script>
 </body>
