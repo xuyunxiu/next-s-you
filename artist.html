@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>NEXT’S YOU | Artist Studio</title>
+    <style>
+        /* --- 核心配色：專業創作版 --- */
+        :root {
+            --sky-blue: #D0EFFF;
+            --lavender: #E6D5FF;
+            --art-purple: #A29BFE;
+            --glass: rgba(255, 255, 255, 0.3);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --text-dark: #333;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { 
+            margin: 0; font-family: -apple-system, sans-serif; 
+            background: linear-gradient(160deg, var(--lavender) 0%, #FFFFFF 50%, var(--sky-blue) 100%);
+            background-attachment: fixed; min-height: 100vh; color: var(--text-dark);
+        }
+
+        /* --- 頂部標題列 --- */
+        .studio-header {
+            padding: 50px 25px 30px;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            border-radius: 0 0 35px 35px;
+        }
+        .studio-header h1 { margin: 0; font-size: 28px; font-weight: 900; color: var(--art-purple); letter-spacing: -1px; }
+        .studio-header p { margin: 5px 0 0; color: #888; font-size: 14px; font-weight: 500; }
+
+        /* --- 數據卡片 --- */
+        .stats-container {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px;
+        }
+        .stat-card {
+            background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border); border-radius: 24px; padding: 20px; text-align: center;
+        }
+        .stat-card span { display: block; font-size: 22px; font-weight: 900; color: var(--art-purple); }
+        .stat-card small { color: #999; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+
+        /* --- 功能區塊 --- */
+        .glass-panel {
+            background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border); border-radius: 30px; padding: 25px; margin: 0 20px 20px;
+        }
+        .section-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; color: #555; display: flex; align-items: center; }
+        .section-title::before { content: ''; width: 4px; height: 18px; background: var(--art-purple); margin-right: 10px; border-radius: 2px; }
+
+        .tool-btn {
+            width: 100%; padding: 18px; border-radius: 20px; border: none; margin-bottom: 12px;
+            font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center;
+            transition: 0.3s; color: #fff;
+        }
+        .btn-feed { background: linear-gradient(45deg, #A29BFE, #6C5CE7); box-shadow: 0 8px 20px rgba(162, 155, 254, 0.3); }
+        .btn-media { background: linear-gradient(45deg, #81ECEC, #00CEC9); box-shadow: 0 8px 20px rgba(129, 236, 236, 0.3); }
+        .btn-live { background: linear-gradient(45deg, #FF7675, #D63031); box-shadow: 0 8px 20px rgba(255, 118, 117, 0.3); }
+        .tool-btn i { font-style: normal; margin-right: 15px; font-size: 20px; }
+
+        /* --- 底部資訊 --- */
+        .footer-action { text-align: center; margin-top: 30px; padding-bottom: 50px; }
+        .logout-btn { background: none; border: 1px solid #ddd; padding: 10px 25px; border-radius: 15px; color: #bbb; font-size: 13px; }
+
+    </style>
+</head>
+<body>
+
+    <header class="studio-header">
+        <h1>Artist Studio</h1>
+        <p id="artistName">歡迎回來，創作星人</p>
+    </header>
+
+    <div class="stats-container">
+        <div class="stat-card">
+            <span id="fanCount">12.5K</span>
+            <small>總追蹤人數</small>
+        </div>
+        <div class="stat-card">
+            <span id="postCount">342</span>
+            <small>累計貼文</small>
+        </div>
+    </div>
+
+    <div class="glass-panel">
+        <div class="section-title">創作工具箱</div>
+        <button class="tool-btn btn-feed" onclick="alert('開啟 Feed 編輯器')"><i>✍️</i>發布文字動態</button>
+        <button class="tool-btn btn-media" onclick="alert('選擇照片或影片')"><i>📸</i>上傳媒體內容</button>
+        <button class="tool-btn btn-live" onclick="alert('準備開啟直播直播鏡頭...')"><i>🎥</i>開啟 LIVE 直播</button>
+    </div>
+
+    <div class="glass-panel" style="background: rgba(255,255,255,0.1); border: 1px dashed #ccc;">
+        <div class="section-title">管理中心</div>
+        <div style="color: #888; font-size: 14px; line-height: 1.6;">
+            • 查看社群守則<br>
+            • 留言關鍵字過濾<br>
+            • 收益統計報告
+        </div>
+    </div>
+
+    <div class="footer-action">
+        <button class="logout-btn" onclick="logout()">安全登出系統</button>
+    </div>
+
+<script>
+    // --- 安全驗證：如果不是藝人，強行踢回 index.html ---
+    window.onload = () => {
+        const role = localStorage.getItem("user_role");
+        if (role !== 'artist') {
+            alert("⚠️ 權限不足，請重新登入。");
+            window.location.href = 'index.html';
+        }
+        
+        // 模擬載入動畫
+        document.body.style.opacity = '0';
+        setTimeout(() => {
+            document.body.style.transition = 'opacity 0.8s';
+            document.body.style.opacity = '1';
+        }, 100);
+    };
+
+    function logout() {
+        if(confirm("確定要登出藝人管理後台嗎？")) {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+    }
+</script>
+</body>
+</html>
