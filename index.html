@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>NEXT’S YOU | Fan Universe</title>
     <style>
-        /* --- 配色與液態玻璃核心 --- */
         :root {
             --sky-blue: #D0EFFF;
             --lavender: #E6D5FF;
@@ -36,34 +35,38 @@
             100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0px); }
         }
 
-        /* --- 2. 視圖控制器 --- */
         .view { display: none; min-height: 100vh; animation: fadeIn 0.5s ease; }
         .active-view { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- 3. 登入介面 --- */
-        .login-container { padding: 40px 30px; text-align: center; margin-top: 60px; }
+        /* --- 2. 登入介面 --- */
         .glass-card { 
             background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border); border-radius: 30px; padding: 30px; margin: 20px;
+            border: 1px solid var(--glass-border); border-radius: 30px; padding: 25px; margin: 20px;
         }
         .input-box { width: 100%; padding: 16px; margin-bottom: 12px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.5); background: rgba(255,255,255,0.2); outline: none; font-size: 16px; }
         .btn-main { width: 100%; padding: 16px; border-radius: 32px; border: none; font-weight: bold; font-size: 16px; background: linear-gradient(45deg, #5D9CEC, #A29BFE); color: #fff; box-shadow: 0 8px 20px rgba(93, 156, 236, 0.3); }
 
-        /* --- 4. 粉絲新人牆 (截圖二風格) --- */
+        /* --- 3. 粉絲端 UI 組件 --- */
         .artist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; padding-bottom: 100px; }
         .artist-card { aspect-ratio: 1 / 1.3; border-radius: 24px; background-size: cover; background-position: center; position: relative; border: 3px solid transparent; transition: 0.3s; overflow: hidden; }
         .artist-card.selected { border-color: #fff; transform: translateY(-5px); }
         .card-name { position: absolute; bottom: 15px; left: 15px; color: #fff; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 
-        /* --- 5. 粉絲首頁 (截圖一風格) --- */
-        .home-header { padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; }
-        .logo-small { font-weight: 900; color: var(--main-theme); font-size: 24px; font-style: italic; }
         .circle-bar { display: flex; gap: 15px; overflow-x: auto; padding: 10px 5px; }
         .circle-bar::-webkit-scrollbar { display: none; }
-        .avatar-circle { width: 66px; height: 66px; border-radius: 22px; border: 2px solid #fff; object-fit: cover; background: #fff; }
+        .avatar-circle { width: 66px; height: 66px; border-radius: 22px; border: 2px solid #fff; object-fit: cover; background: #fff; box-shadow: 0 5px 10px rgba(0,0,0,0.05); }
 
-        .nav-bar { position: fixed; bottom: 20px; left: 5%; width: 90%; height: 70px; background: rgba(255,255,255,0.4); backdrop-filter: blur(25px); border-radius: 35px; border: 1px solid var(--glass-border); display: flex; justify-content: space-around; align-items: center; }
+        /* --- 動態牆樣式 --- */
+        .feed-item {
+            margin-bottom: 15px; padding: 20px; background: rgba(255,255,255,0.4); border-radius: 24px;
+            border-left: 4px solid var(--main-theme);
+        }
+        .feed-artist { font-weight: 900; color: var(--main-theme); font-size: 14px; margin-bottom: 5px; }
+        .feed-text { font-size: 15px; line-height: 1.5; color: #333; }
+        .feed-time { font-size: 10px; color: #aaa; margin-top: 10px; }
+
+        .nav-bar { position: fixed; bottom: 20px; left: 5%; width: 90%; height: 70px; background: rgba(255,255,255,0.4); backdrop-filter: blur(25px); border-radius: 35px; border: 1px solid var(--glass-border); display: flex; justify-content: space-around; align-items: center; z-index: 100; }
         .nav-item { font-size: 10px; color: #888; text-align: center; font-weight: bold; }
         .nav-item.active { color: var(--main-theme); }
     </style>
@@ -79,46 +82,40 @@
     </div>
 
     <section id="view-login" class="view">
-        <div class="login-container">
-            <h1 style="color: var(--main-theme);">Login</h1>
-            <p style="color: #999; font-size: 14px;">輸入帳號密碼開啟星球旅程</p>
+        <div style="text-align:center; margin-top:100px;">
+            <h1 style="color: var(--main-theme); font-size:32px;">Login</h1>
+            <p style="color: #999;">開啟星球旅程</p>
         </div>
         <div class="glass-card">
             <input type="text" id="acc" class="input-box" placeholder="帳號">
             <input type="password" id="pwd" class="input-box" placeholder="密碼">
             <button class="btn-main" onclick="handleLogin()">登入系統</button>
-            <div style="margin-top: 20px; font-size: 12px; color: #bbb;">
-                粉絲帳號請輸入: fan / 密碼: 123<br>藝人帳號請輸入: artist / 密碼: 123
-            </div>
         </div>
     </section>
 
     <section id="view-onboarding" class="view">
-        <div style="padding: 40px 25px 10px;">
-            <h2 style="margin:0;">追蹤藝人</h2>
-            <p style="color:#888; font-size:14px;">選擇您想加入的社群星球</p>
-        </div>
+        <div style="padding: 40px 25px 10px;"><h2>追蹤藝人</h2><p style="color:#888;">選擇加入星球</p></div>
         <div class="artist-grid" id="onboardingGrid"></div>
-        <div style="position:fixed; bottom:30px; width:100%; padding:0 25px;">
-            <button class="btn-main" onclick="saveOnboarding()">選好了，進入首頁</button>
-        </div>
+        <div style="position:fixed; bottom:30px; width:100%; padding:0 25px;"><button class="btn-main" onclick="saveOnboarding()">選好了，進入首頁</button></div>
     </section>
 
     <section id="view-home" class="view">
-        <div class="home-header">
-            <div class="logo-small">weverse</div>
+        <div style="padding: 25px; display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-weight:900; color:var(--main-theme); font-size:26px; font-style:italic;">weverse</div>
             <div style="font-size:22px;">🔔</div>
         </div>
+        
         <div class="glass-card" style="margin-top:0; padding: 15px;">
             <div class="circle-bar" id="homeBar"></div>
         </div>
-        <div style="padding: 20px;">
-            <div class="glass-card" style="margin:0; background:rgba(255,255,255,0.4); border:none;">
-                <h3 style="margin:0;">✨ 星球快報</h3>
-                <p style="color:#777; font-size:13px; margin-top:10px;">歡迎來到 NEXT’S YOU！這裡目前還沒有新動態，快去探索其他星球吧。</p>
-            </div>
+
+        <div style="padding: 0 20px 100px;">
+            <h3 style="margin: 20px 0 15px;">🪐 星球廣播 (Feeds)</h3>
+            <div id="feedWall">
+                </div>
             <button onclick="logout()" style="margin-top:40px; border:none; background:none; color:#bbb; width:100%;">登出帳號</button>
         </div>
+
         <nav class="nav-bar">
             <div class="nav-item active">🏠<br>首頁</div>
             <div class="nav-item">🛍️<br>Shop</div>
@@ -128,7 +125,6 @@
     </section>
 
 <script>
-    // --- 資料設定 ---
     const ARTISTS = [
         { id: 1, name: "BTS", img: "https://placehold.co/200/ff0080/fff?text=BTS", card: "https://placehold.co/400x600/ff0080/fff?text=BTS" },
         { id: 2, name: "SEVENTEEN", img: "https://placehold.co/200/87ceeb/fff?text=SVT", card: "https://placehold.co/400x600/87ceeb/fff?text=SVT" },
@@ -136,15 +132,9 @@
         { id: 4, name: "TXT", img: "https://placehold.co/200/00ffcc/000?text=TXT", card: "https://placehold.co/400x600/00ffcc/000?text=TXT" }
     ];
 
-    // 模擬後台帳號 (未來你可以在這裡增加)
-    const ACCOUNTS = {
-        "fan": { pwd: "123", role: "fan" },
-        "artist": { pwd: "123", role: "artist" }
-    };
-
+    const ACCOUNTS = { "fan": { pwd: "123", role: "fan" }, "artist": { pwd: "123", role: "artist" } };
     let selectedIds = JSON.parse(localStorage.getItem("fan_joined") || "[]");
 
-    // --- 啟動與自動跳轉 ---
     window.onload = () => {
         setTimeout(() => {
             document.getElementById('splash-screen').style.opacity = '0';
@@ -157,21 +147,11 @@
 
     function checkRoute() {
         const role = localStorage.getItem("user_role");
-        if (!role) {
-            show('view-login');
-        } else if (role === 'artist') {
-            // --- 關鍵：如果是藝人，直接跳轉到另一個 HTML ---
-            alert("正在進入藝人後台...");
-            window.location.href = 'artist.html'; 
-        } else {
-            // 粉絲路徑
-            if (selectedIds.length === 0) {
-                show('view-onboarding');
-                renderOnboarding();
-            } else {
-                renderHome();
-                show('view-home');
-            }
+        if (!role) { show('view-login'); } 
+        else if (role === 'artist') { window.location.href = 'artist.html'; } 
+        else {
+            if (selectedIds.length === 0) { show('view-onboarding'); renderOnboarding(); } 
+            else { renderHome(); renderFeeds(); show('view-home'); }
         }
     }
 
@@ -185,13 +165,11 @@
         const pwd = document.getElementById('pwd').value;
         if (ACCOUNTS[acc] && ACCOUNTS[acc].pwd === pwd) {
             localStorage.setItem("user_role", ACCOUNTS[acc].role);
+            localStorage.setItem("user", acc);
             checkRoute();
-        } else {
-            alert("帳號密碼錯誤！");
-        }
+        } else { alert("帳號密碼錯誤！"); }
     }
 
-    // --- 粉絲端渲染 ---
     function renderOnboarding() {
         const grid = document.getElementById('onboardingGrid');
         grid.innerHTML = ARTISTS.map(a => `
@@ -216,18 +194,32 @@
     function renderHome() {
         const bar = document.getElementById('homeBar');
         const joined = ARTISTS.filter(a => selectedIds.includes(a.id));
-        bar.innerHTML = joined.map(a => `
-            <div style="text-align:center; flex-shrink:0; width:70px;">
-                <img src="${a.img}" class="avatar-circle">
-                <div style="font-size:11px; margin-top:5px; font-weight:600;">${a.name}</div>
+        bar.innerHTML = joined.map(a => `<div style="text-align:center; flex-shrink:0; width:70px;"><img src="${a.img}" class="avatar-circle"><div style="font-size:11px; margin-top:5px; font-weight:600;">${a.name}</div></div>`).join('');
+    }
+
+    // --- 核心：渲染藝人動態牆 ---
+    function renderFeeds() {
+        const wall = document.getElementById('feedWall');
+        const feeds = JSON.parse(localStorage.getItem("wv_feeds") || "[]");
+
+        if (feeds.length === 0) {
+            wall.innerHTML = `
+                <div class="glass-card" style="margin:0; background:rgba(255,255,255,0.4); border:none; text-align:center;">
+                    <p style="color:#777; font-size:13px;">目前尚無藝人發布動態。</p>
+                </div>`;
+            return;
+        }
+
+        wall.innerHTML = feeds.map(f => `
+            <div class="feed-item">
+                <div class="feed-artist">🌟 ${f.artist}</div>
+                <div class="feed-text">${f.text}</div>
+                <div class="feed-time">${f.time}</div>
             </div>
         `).join('');
     }
 
-    function logout() {
-        localStorage.clear();
-        location.reload();
-    }
+    function logout() { localStorage.clear(); location.reload(); }
 </script>
 </body>
 </html>
