@@ -9,39 +9,39 @@
             --sky-blue: #D0EFFF;
             --lavender: #E6D5FF;
             --main-theme: #5D9CEC;
-            --glass: rgba(255, 255, 255, 0.35);
-            --glass-border: rgba(255, 255, 255, 0.5);
+            --glass: rgba(255, 255, 255, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.6);
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
-            margin: 0; font-family: "PingFang TC", "STHeiti", sans-serif;
+            margin: 0; font-family: -apple-system, "PingFang TC", sans-serif;
             background: linear-gradient(160deg, var(--sky-blue) 0%, #FFFFFF 50%, var(--lavender) 100%);
             background-attachment: fixed; min-height: 100vh; overflow-x: hidden; color: #444;
         }
 
-        /* --- 1. NEXT’S YOU 流光啟動動畫 --- */
+        /* --- 1. SVG 高級 LOGO --- */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: linear-gradient(135deg, var(--sky-blue), var(--lavender));
             display: flex; align-items: center; justify-content: center; z-index: 99999;
-            transition: opacity 0.6s ease;
+            transition: opacity 0.8s ease;
         }
-        .logo-main {
-            font-size: 42px; font-weight: 900; letter-spacing: -1px; font-style: italic;
-            background: linear-gradient(120deg, #fff 30%, #f0f0f0 50%, #fff 70%);
-            background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            animation: shine 1.5s linear infinite, logoPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        .logo-svg {
+            width: 280px;
+            filter: drop-shadow(0 0 15px rgba(255,255,255,0.8));
+            animation: logoFadeIn 1s cubic-bezier(0.22, 1, 0.36, 1);
         }
-        @keyframes shine { to { background-position: 200% center; } }
-        @keyframes logoPop { 0% { transform: scale(0.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes logoFadeIn {
+            from { opacity: 0; transform: scale(0.9) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
 
-        /* --- 2. 視圖控制器 --- */
+        /* --- 2. 視圖與彈窗 --- */
         .view { display: none; min-height: 100vh; animation: fadeIn 0.5s ease; }
         .active-view { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- 3. 自定義漂亮彈窗 --- */
         .custom-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.4); backdrop-filter: blur(8px);
@@ -53,88 +53,91 @@
             transform: scale(0.85); transition: 0.3s;
         }
         .modal-active .modal-content { transform: scale(1); }
-        .modal-btn { 
-            margin-top: 25px; width: 100%; padding: 14px; border-radius: 16px; 
-            border: none; background: #222; color: #fff; font-weight: bold; font-size: 15px;
-        }
+        .modal-btn { margin-top: 25px; width: 100%; padding: 14px; border-radius: 16px; border: none; background: #222; color: #fff; font-weight: bold; }
 
-        /* --- 4. 登入介面 --- */
-        .login-header { text-align: center; margin-top: 80px; margin-bottom: 20px; }
+        /* --- 3. 登入與卡片 --- */
         .glass-card { 
             background: var(--glass); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); 
-            border-radius: 32px; padding: 35px; margin: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            border-radius: 32px; padding: 35px; margin: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.02);
         }
-        .input-box { width: 100%; padding: 18px; margin-bottom: 15px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.6); background: rgba(255,255,255,0.3); font-size: 16px; transition: 0.3s; }
-        .input-box:focus { background: rgba(255,255,255,0.5); border-color: var(--main-theme); }
-        .btn-main { width: 100%; padding: 18px; border-radius: 35px; border: none; font-weight: bold; font-size: 17px; background: linear-gradient(45deg, #5D9CEC, #A29BFE); color: #fff; box-shadow: 0 10px 25px rgba(93, 156, 236, 0.3); }
+        .input-box { width: 100%; padding: 18px; margin-bottom: 15px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.6); background: rgba(255,255,255,0.3); font-size: 16px; }
+        .btn-main { width: 100%; padding: 18px; border-radius: 35px; border: none; font-weight: bold; font-size: 17px; background: linear-gradient(45deg, #5D9CEC, #A29BFE); color: #fff; box-shadow: 0 10px 25px rgba(93, 156, 236, 0.2); }
 
-        /* --- 5. 新人牆 (Onboarding) --- */
-        .artist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; padding-bottom: 120px; }
-        .artist-card { aspect-ratio: 1 / 1.35; border-radius: 28px; background-size: cover; background-position: center; position: relative; border: 4px solid transparent; transition: 0.3s; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-        .artist-card.selected { border-color: var(--main-theme); transform: scale(0.96); }
-        .card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.5), transparent); }
-        .card-name { position: absolute; bottom: 18px; left: 18px; color: #fff; font-weight: bold; font-size: 18px; }
-
-        /* --- 6. 首頁介面 --- */
-        .home-header { padding: 25px; display: flex; justify-content: space-between; align-items: center; }
-        .circle-bar { display: flex; gap: 18px; overflow-x: auto; padding: 5px; }
-        .circle-bar::-webkit-scrollbar { display: none; }
-        .avatar-circle { width: 68px; height: 68px; border-radius: 24px; border: 2px solid #fff; object-fit: cover; box-shadow: 0 6px 15px rgba(0,0,0,0.08); }
-
-        .feed-wall-container { padding: 0 20px 120px; }
-        .feed-item { margin-bottom: 18px; padding: 22px; background: rgba(255,255,255,0.55); border-radius: 28px; border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
-        .feed-artist { font-weight: 900; color: var(--main-theme); font-size: 15px; margin-bottom: 10px; }
-        .feed-text { font-size: 16px; line-height: 1.6; color: #333; }
-        .feed-time { font-size: 11px; color: #bbb; margin-top: 12px; }
-
-        .nav-bar { position: fixed; bottom: 25px; left: 5%; width: 90%; height: 75px; background: rgba(255,255,255,0.7); backdrop-filter: blur(25px); border-radius: 38px; border: 1px solid var(--glass-border); display: flex; justify-content: space-around; align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.05); }
+        /* --- 4. 底部導航 --- */
+        .nav-bar {
+            position: fixed; bottom: 25px; left: 5%; width: 90%; height: 75px;
+            background: rgba(255,255,255,0.75); backdrop-filter: blur(25px);
+            border-radius: 38px; border: 1px solid var(--glass-border);
+            display: flex; justify-content: space-around; align-items: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+        }
         .nav-item { text-align: center; color: #bbb; font-weight: bold; transition: 0.3s; }
         .nav-item.active { color: var(--main-theme); }
+
+        /* --- 5. 藝人動態卡片 --- */
+        .feed-item { margin-bottom: 18px; padding: 22px; background: rgba(255,255,255,0.6); border-radius: 28px; border: 1px solid rgba(255,255,255,0.8); }
+        .feed-artist { font-weight: 900; color: var(--main-theme); font-size: 15px; margin-bottom: 8px; }
+
+        .artist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; padding-bottom: 120px; }
+        .artist-card { aspect-ratio: 1/1.35; border-radius: 28px; background-size: cover; background-position: center; position: relative; border: 4px solid transparent; overflow: hidden; transition: 0.3s; }
+        .artist-card.selected { border-color: var(--main-theme); transform: scale(0.96); }
+        .card-name { position: absolute; bottom: 18px; left: 18px; color: #fff; font-weight: bold; font-size: 18px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
 
     <div id="splash-screen">
-        <div class="logo-main">NEXT’S YOU</div>
+        <svg class="logo-svg" viewBox="0 0 400 60">
+            <defs>
+                <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#fff" />
+                    <stop offset="50%" style="stop-color:#f0f0f0" />
+                    <stop offset="100%" style="stop-color:#fff" />
+                </linearGradient>
+            </defs>
+            <text x="50%" y="45" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="42" font-weight="900" font-style="italic" fill="url(#logoGrad)" letter-spacing="-2">
+                NEXT’S YOU
+            </text>
+        </svg>
     </div>
 
     <section id="view-login" class="view">
-        <div class="login-header">
+        <div style="text-align:center; margin-top:80px;">
             <h1 style="color: var(--main-theme); font-size: 36px; font-weight: 900; font-style: italic;">Login</h1>
-            <p style="color:#aaa; font-weight: 500;">開啟您的星球旅程</p>
+            <p style="color:#aaa;">開啟您的星球旅程</p>
         </div>
         <div class="glass-card">
-            <input type="text" id="acc" class="input-box" placeholder="帳號 (fan / artist)">
+            <input type="text" id="acc" class="input-box" placeholder="帳號 (fan)">
             <input type="password" id="pwd" class="input-box" placeholder="密碼">
-            <button class="btn-main" onclick="handleLogin()">登入系統</button>
+            <button class="btn-main" onclick="handleLogin()">登入星球</button>
         </div>
     </section>
 
     <section id="view-onboarding" class="view">
         <div style="padding: 50px 25px 15px;">
-            <h2 style="margin:0; font-size: 28px; font-weight: 900;">追蹤藝人</h2>
-            <p style="color:#888; font-weight: 500; margin-top: 8px;">選擇您想加入的社群星球</p>
+            <h2 style="font-size:28px; font-weight:900;">追蹤藝人</h2>
+            <p style="color:#888;">選擇您想加入的社群星球</p>
         </div>
         <div class="artist-grid" id="onboardingGrid"></div>
         <div style="position:fixed; bottom:35px; width:100%; padding:0 25px;">
-            <button class="btn-main" onclick="saveOnboarding()">完成選取，進入首頁</button>
+            <button class="btn-main" onclick="saveOnboarding()">進入首頁</button>
         </div>
     </section>
 
     <section id="view-home" class="view">
-        <div class="home-header">
-            <div style="font-weight:900; color:var(--main-theme); font-size:28px; font-style:italic; letter-spacing:-1px;">weverse</div>
+        <div class="home-header" style="padding: 25px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-weight:900; color:var(--main-theme); font-size:28px; font-style:italic;">weverse</div>
             <div style="font-size:24px;">🔔</div>
         </div>
         
-        <div class="glass-card" style="margin-top:0; padding: 18px; border-radius: 28px;">
-            <div class="circle-bar" id="homeBar"></div>
+        <div class="glass-card" style="margin-top:0; padding: 18px;">
+            <div id="homeBar" style="display:flex; gap:18px; overflow-x:auto;"></div>
         </div>
 
-        <div class="feed-wall-container">
-            <h3 style="margin: 25px 0 18px; font-size: 20px; font-weight: 900;">🪐 星球廣播 (Feeds)</h3>
+        <div style="padding: 0 20px 120px;">
+            <h3 style="margin: 25px 0 18px; font-weight:900;">🪐 星球廣播</h3>
             <div id="feedWall"></div>
-            <button onclick="logout()" style="margin-top:50px; border:none; background:none; color:#ccc; width:100%; font-size: 13px;">登出帳號</button>
+            <button onclick="logout()" style="margin-top:50px; border:none; background:none; color:#ccc; width:100%;">登出帳號</button>
         </div>
 
         <nav class="nav-bar">
@@ -147,7 +150,7 @@
 
     <div id="customAlert" class="custom-modal">
         <div class="modal-content">
-            <p id="alertMsg" style="font-size:17px; font-weight:bold; color:#333; line-height:1.4;"></p>
+            <p id="alertMsg" style="font-size:17px; font-weight:bold; color:#333;"></p>
             <button class="modal-btn" onclick="closeAlert()">知道了</button>
         </div>
     </div>
@@ -155,7 +158,7 @@
 <script>
     const ARTISTS = [
         { id: 1, name: "BTS", img: "https://placehold.co/200/ff0080/fff?text=BTS", card: "https://placehold.co/400x600/ff0080/fff?text=BTS" },
-        { id: 2, name: "SEVENTEEN", img: "https://placehold.co/200/87ceeb/fff?text=SVT", card: "https://placehold.co/400x600/87ceeb/fff?text=SEVENTEEN" },
+        { id: 2, name: "SEVENTEEN", img: "https://placehold.co/200/87ceeb/fff?text=SVT", card: "https://placehold.co/400x600/87ceeb/fff?text=SVT" },
         { id: 3, name: "ENHYPEN", img: "https://placehold.co/200/00008b/fff?text=EN-", card: "https://placehold.co/400x600/00008b/fff?text=ENHYPEN" },
         { id: 4, name: "TXT", img: "https://placehold.co/200/00ffcc/000?text=TXT", card: "https://placehold.co/400x600/00ffcc/000?text=TXT" }
     ];
@@ -163,39 +166,37 @@
     let selectedIds = JSON.parse(localStorage.getItem("fan_joined") || "[]");
 
     window.onload = () => {
-        // 1.5 秒後關閉開屏動畫
         setTimeout(() => {
             const ss = document.getElementById('splash-screen');
             ss.style.opacity = '0';
-            setTimeout(() => {
-                ss.style.display = 'none';
-                checkRoute();
-            }, 600);
+            setTimeout(() => { ss.style.display = 'none'; checkRoute(); }, 800);
         }, 1500);
     };
 
+    // --- 核心修改：移除對藝人的判斷與跳轉 ---
     function checkRoute() {
-        const role = localStorage.getItem("user_role");
-        if (!role) { show('view-login'); } 
-        else if (role === 'artist') { 
-            myAlert("偵測到藝人權限，正在前往工作室...");
-            setTimeout(()=> window.location.href = 'artist.html', 1000); 
-        } 
-        else {
-            if (selectedIds.length === 0) { show('view-onboarding'); renderOnboarding(); } 
-            else { renderHome(); renderFeeds(); show('view-home'); }
+        if (!localStorage.getItem("fan_logged")) {
+            show('view-login');
+        } else {
+            if (selectedIds.length === 0) {
+                show('view-onboarding');
+                renderOnboarding();
+            } else {
+                renderHome();
+                renderFeeds();
+                show('view-home');
+            }
         }
     }
 
     function handleLogin() {
         const acc = document.getElementById('acc').value.trim().toLowerCase();
         const pwd = document.getElementById('pwd').value;
-        if ((acc === 'fan' || acc === 'artist') && pwd === '123') {
-            localStorage.setItem("user_role", acc);
-            localStorage.setItem("user", acc);
+        if (acc === 'fan' && pwd === '123') {
+            localStorage.setItem("fan_logged", "true");
             checkRoute();
-        } else { 
-            myAlert("帳號或密碼錯誤！\n(請試試 fan / 123)"); 
+        } else {
+            myAlert("帳號或密碼錯誤！");
         }
     }
 
@@ -203,10 +204,8 @@
         const grid = document.getElementById('onboardingGrid');
         grid.innerHTML = ARTISTS.map(a => `
             <div class="artist-card ${selectedIds.includes(a.id)?'selected':''}" onclick="toggleSelect(${a.id})" style="background-image: url('${a.card}')">
-                <div class="card-overlay"></div>
                 <div class="card-name">${a.name}</div>
-            </div>
-        `).join('');
+            </div>`).join('');
     }
 
     function toggleSelect(id) {
@@ -216,7 +215,7 @@
     }
 
     function saveOnboarding() {
-        if(selectedIds.length === 0) return myAlert("請至少追蹤一個團體星球！");
+        if(selectedIds.length === 0) return myAlert("請至少選擇一個團體！");
         localStorage.setItem("fan_joined", JSON.stringify(selectedIds));
         checkRoute();
     }
@@ -225,32 +224,27 @@
         const wall = document.getElementById('feedWall');
         const feeds = JSON.parse(localStorage.getItem("NEXTS_YOU_DATA") || "[]");
         if (feeds.length === 0) {
-            wall.innerHTML = `
-                <div class="feed-item" style="text-align:center; padding: 40px 20px;">
-                    <p style="color:#999; font-size:14px; margin:0;">🌌 暫無星球動態</p>
-                </div>`;
+            wall.innerHTML = `<p style="text-align:center; color:#999; padding:20px;">暫無動態</p>`;
             return;
         }
         wall.innerHTML = feeds.map(f => `
             <div class="feed-item">
                 <div class="feed-artist">🌟 ${f.artist}</div>
-                <div class="feed-text">${f.text}</div>
-                <div class="feed-time">${f.time}</div>
-            </div>
-        `).join('');
+                <div style="font-size:16px; line-height:1.6;">${f.text}</div>
+                <div style="font-size:11px; color:#bbb; margin-top:10px;">${f.time}</div>
+            </div>`).join('');
     }
 
     function renderHome() {
         const bar = document.getElementById('homeBar');
         const joined = ARTISTS.filter(a => selectedIds.includes(a.id));
         bar.innerHTML = joined.map(a => `
-            <div style="text-align:center; flex-shrink:0; width:75px;">
-                <img src="${a.img}" class="avatar-circle">
-                <div style="font-size:12px; margin-top:8px; font-weight:600; color:#555;">${a.name}</div>
+            <div style="text-align:center; flex-shrink:0;">
+                <img src="${a.img}" style="width:68px; height:68px; border-radius:24px; border:2px solid #fff; object-fit:cover;">
+                <div style="font-size:12px; margin-top:5px; font-weight:600;">${a.name}</div>
             </div>`).join('');
     }
 
-    // --- 自定義彈窗控制 ---
     function myAlert(msg) {
         document.getElementById('alertMsg').innerText = msg;
         const m = document.getElementById('customAlert');
@@ -262,13 +256,11 @@
         m.classList.remove('modal-active');
         setTimeout(() => m.style.display = 'none', 300);
     }
-
     function show(id) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
         document.getElementById(id).classList.add('active-view');
     }
-
-    function logout() { localStorage.clear(); location.reload(); }
+    function logout() { localStorage.removeItem("fan_logged"); location.reload(); }
 </script>
 </body>
 </html>
