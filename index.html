@@ -14,43 +14,66 @@
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { 
-            margin: 0; font-family: -apple-system, sans-serif;
+            margin: 0; font-family: -apple-system, "PingFang TC", sans-serif;
             background: linear-gradient(160deg, var(--sky-blue) 0%, #FFFFFF 50%, var(--lavender) 100%);
             background-attachment: fixed; min-height: 100vh; overflow-x: hidden;
         }
 
-        /* --- 💎 旗艦級 SVG 流光 LOGO --- */
+        /* --- 💎 視覺修正：對齊圖 2 的強烈白光發光 Logo --- */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: linear-gradient(135deg, var(--sky-blue), var(--lavender));
             display: flex; align-items: center; justify-content: center; z-index: 99999;
             transition: opacity 0.8s ease-in-out;
         }
-        .logo-svg { width: 320px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.05)); }
-        
-        .shimmer-text {
-            font-family: "Arial Black", sans-serif; font-size: 42px; font-weight: 900; 
-            font-style: italic; letter-spacing: -1.5px; fill: url(#shimmerGrad);
+
+        .logo-container {
+            text-align: center;
+            animation: logoScale 1.2s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
-        /* --- 視圖控制 --- */
+        .shimmer-text {
+            font-family: "Arial Black", sans-serif; 
+            font-size: 42px; 
+            font-weight: 900; 
+            font-style: italic; 
+            letter-spacing: -1.5px;
+            fill: #FFFFFF; /* 純白實色，解決圖 1 稀薄感 */
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.9)); /* 模擬圖 2 外發光質感 */
+        }
+
+        @keyframes logoScale {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* --- 視圖切換動畫 --- */
         .view { display: none; min-height: 100vh; animation: fadeIn 0.6s ease forwards; }
         .active-view { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* --- UI 元件 --- */
         .glass-card { 
             background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
             border: 1px solid rgba(255,255,255,0.7); border-radius: 32px; padding: 35px; margin: 20px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.02);
         }
 
+        .input-group { margin-bottom: 20px; }
+        .input-box {
+            width: 100%; padding: 18px; border-radius: 18px; border: 1px solid #eee;
+            background: rgba(255,255,255,0.5); font-size: 16px; transition: 0.3s;
+        }
+        .input-box:focus { background: #fff; border-color: var(--main-theme); }
+
         .btn-main { 
-            width: 100%; padding: 18px; border-radius: 35px; border: none; font-weight: bold; font-size: 17px;
+            width: 100%; padding: 18px; border-radius: 35px; border: none; font-weight: 900; font-size: 17px;
             background: linear-gradient(45deg, #5D9CEC, #A29BFE); color: #fff;
             box-shadow: 0 10px 25px rgba(93, 156, 236, 0.3); transition: 0.3s;
         }
         .btn-main:active { transform: scale(0.95); }
 
+        /* --- 底部導航 --- */
         .nav-bar {
             position: fixed; bottom: 25px; left: 5%; width: 90%; height: 75px;
             background: rgba(255,255,255,0.8); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
@@ -58,50 +81,50 @@
             display: flex; justify-content: space-around; align-items: center;
             box-shadow: 0 15px 40px rgba(0,0,0,0.08); z-index: 1000;
         }
-        .nav-item { text-align: center; color: #ccc; font-weight: bold; flex: 1; }
+        .nav-item { text-align: center; color: #ccc; font-weight: bold; flex: 1; font-size: 10px; }
         .nav-item.active { color: var(--main-theme); }
 
+        /* --- 內容樣式 --- */
         .feed-item { margin-bottom: 18px; padding: 25px; background: rgba(255,255,255,0.7); border-radius: 30px; border: 1px solid #fff; }
         .artist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; padding-bottom: 150px; }
-        .artist-card { aspect-ratio: 1/1.3; border-radius: 28px; background-size: cover; position: relative; border: 4px solid transparent; transition: 0.3s; }
+        .artist-card { aspect-ratio: 1/1.3; border-radius: 28px; background-size: cover; background-position: center; position: relative; border: 4px solid transparent; transition: 0.3s; }
         .artist-card.selected { border-color: var(--main-theme); transform: scale(0.96); }
     </style>
 </head>
 <body>
 
     <div id="splash-screen">
-        <svg class="logo-svg" viewBox="0 0 400 80">
-            <defs>
-                <linearGradient id="shimmerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#5D9CEC"><animate attributeName="offset" values="-1; 2" dur="2s" repeatCount="indefinite" /></stop>
-                    <stop offset="50%" stop-color="#FFFFFF"><animate attributeName="offset" values="-0.5; 2.5" dur="2s" repeatCount="indefinite" /></stop>
-                    <stop offset="100%" stop-color="#A29BFE"><animate attributeName="offset" values="0; 3" dur="2s" repeatCount="indefinite" /></stop>
-                </linearGradient>
-            </defs>
-            <text x="50%" y="55" text-anchor="middle" class="shimmer-text">NEXT’S YOU</text>
-        </svg>
+        <div class="logo-container">
+            <svg width="350" height="80" viewBox="0 0 400 80">
+                <text x="50%" y="55" text-anchor="middle" class="shimmer-text">NEXT’S YOU</text>
+            </svg>
+        </div>
     </div>
 
     <section id="view-login" class="view">
         <div style="text-align:center; margin: 100px 0 30px;">
             <h1 style="color:var(--main-theme); font-style:italic; font-weight:900; font-size:38px; margin:0;">Login</h1>
-            <p style="color:#aaa; font-size:14px;">輸入 fan 或 artist 進入不同星球</p>
+            <p style="color:#aaa; font-size:14px;">輸入 fan 或 artist 進入系統</p>
         </div>
         <div class="glass-card">
-            <input type="text" id="acc" style="width:100%; padding:18px; margin-bottom:15px; border-radius:18px; border:1px solid #eee; background:rgba(255,255,255,0.5);" placeholder="帳號">
-            <input type="password" id="pwd" style="width:100%; padding:18px; margin-bottom:20px; border-radius:18px; border:1px solid #eee; background:rgba(255,255,255,0.5);" placeholder="密碼">
+            <div class="input-group">
+                <input type="text" id="acc" class="input-box" placeholder="帳號">
+            </div>
+            <div class="input-group">
+                <input type="password" id="pwd" class="input-box" placeholder="密碼">
+            </div>
             <button class="btn-main" onclick="handleLogin()">登入星球</button>
         </div>
     </section>
 
     <section id="view-onboarding" class="view">
         <div style="padding: 60px 25px 15px;">
-            <h2 style="font-size:30px; font-weight:900;">追蹤藝人</h2>
+            <h2 style="font-size:30px; font-weight:900; margin:0;">追蹤藝人</h2>
             <p style="color:#888;">選擇您想加入的社群星球</p>
         </div>
         <div class="artist-grid" id="onboardingGrid"></div>
         <div style="position:fixed; bottom:35px; width:100%; padding:0 25px; z-index:2000;">
-            <button class="btn-main" onclick="saveOnboarding()">進入首頁</button>
+            <button class="btn-main" onclick="saveOnboarding()">進入我的星球</button>
         </div>
     </section>
 
@@ -111,18 +134,18 @@
             <div style="font-size:24px;">🔔</div>
         </div>
         <div class="glass-card" style="margin-top:0; padding: 20px; overflow:hidden;">
-            <div id="homeBar" style="display:flex; gap:18px; overflow-x:auto;"></div>
+            <div id="homeBar" style="display:flex; gap:18px; overflow-x:auto; padding-bottom: 5px;"></div>
         </div>
         <div style="padding: 0 20px 150px;">
             <h3 style="margin: 25px 0 15px; font-weight:900;">🪐 星球廣播</h3>
             <div id="feedWall"></div>
-            <p onclick="logout()" style="text-align:center; color:#ccc; font-size:12px; margin-top:40px;">登出帳號</p>
+            <p onclick="logout()" style="text-align:center; color:#ccc; font-size:12px; margin-top:40px; text-decoration: underline;">登出帳號</p>
         </div>
         <nav class="nav-bar">
-            <div class="nav-item active">🏠<br><span style="font-size:10px;">首頁</span></div>
-            <div class="nav-item">🛍️<br><span style="font-size:10px;">Shop</span></div>
-            <div class="nav-item">💬<br><span style="font-size:10px;">DM</span></div>
-            <div class="nav-item">👤<br><span style="font-size:10px;">我的</span></div>
+            <div class="nav-item active">🏠<br>首頁</div>
+            <div class="nav-item">🛍️<br>Shop</div>
+            <div class="nav-item">💬<br>DM</div>
+            <div class="nav-item">👤<br>我的</div>
         </nav>
     </section>
 
@@ -136,16 +159,16 @@
 
         let selectedIds = JSON.parse(localStorage.getItem("fan_joined") || "[]");
 
+        // 啟動動畫邏輯
         window.onload = () => {
             setTimeout(() => {
                 const ss = document.getElementById('splash-screen');
                 ss.style.opacity = '0';
                 setTimeout(() => { 
                     ss.style.display = 'none';
-                    // 恢復自動路由偵測
                     checkGlobalRoute();
                 }, 800);
-            }, 2000);
+            }, 2000); // 2秒展示時間
         };
 
         function checkGlobalRoute() {
@@ -155,12 +178,18 @@
             } else if (role === 'artist') {
                 window.location.href = 'artist.html';
             } else {
-                if (selectedIds.length === 0) { show('view-onboarding'); renderOnboarding(); }
-                else { renderHome(); renderFeeds(); show('view-home'); }
+                if (selectedIds.length === 0) {
+                    show('view-onboarding');
+                    renderOnboarding();
+                } else {
+                    renderHome();
+                    renderFeeds();
+                    show('view-home');
+                }
             }
         }
 
-        // --- 核心恢復：全能登入邏輯 ---
+        // 登入處理 (恢復之前的自動識別功能)
         function handleLogin() {
             const acc = document.getElementById('acc').value.trim().toLowerCase();
             const pwd = document.getElementById('pwd').value;
@@ -168,15 +197,15 @@
             if (pwd === '123') {
                 if (acc === 'artist') {
                     localStorage.setItem("user_role", "artist");
-                    window.location.href = 'artist.html';
+                    window.location.href = 'artist.html'; // 直接跳轉，不跑第二次動畫
                 } else if (acc === 'fan') {
                     localStorage.setItem("user_role", "fan");
                     checkGlobalRoute();
                 } else {
-                    alert("請輸入 fan 或 artist");
+                    alert("請輸入正確帳號 (fan 或 artist)");
                 }
             } else {
-                alert("密碼錯誤");
+                alert("密碼錯誤 (預設為 123)");
             }
         }
 
@@ -201,13 +230,25 @@
 
         function renderFeeds() {
             const feeds = JSON.parse(localStorage.getItem("NEXTS_YOU_DATA") || "[]");
-            document.getElementById('feedWall').innerHTML = feeds.length === 0 ? '<p style="text-align:center; color:#999; margin-top:40px;">暫無動態</p>' :
-                feeds.map(f => `<div class="feed-item"><div style="color:var(--main-theme); font-weight:900; margin-bottom:10px;">🌟 ${f.artist}</div><div style="font-size:16px;">${f.text}</div><div style="font-size:11px; color:#bbb; margin-top:15px;">${f.time}</div></div>`).join('');
+            const wall = document.getElementById('feedWall');
+            wall.innerHTML = feeds.length === 0 ? 
+                '<p style="text-align:center; color:#999; margin-top:40px;">🛸 暫無星球廣播</p>' :
+                feeds.map(f => `
+                    <div class="feed-item">
+                        <div style="color:var(--main-theme); font-weight:900; margin-bottom:10px;">🌟 ${f.artist}</div>
+                        <div style="font-size:16px; line-height:1.6;">${f.text}</div>
+                        <div style="font-size:11px; color:#bbb; margin-top:15px;">${f.time}</div>
+                    </div>`).join('');
         }
 
         function renderHome() {
+            const bar = document.getElementById('homeBar');
             const joined = ARTISTS.filter(a => selectedIds.includes(a.id));
-            document.getElementById('homeBar').innerHTML = joined.map(a => `<div style="text-align:center; flex-shrink:0;"><img src="${a.img}" style="width:70px; height:70px; border-radius:25px; border:2px solid #fff;"><div style="font-size:11px; margin-top:8px; font-weight:600;">${a.name}</div></div>`).join('');
+            bar.innerHTML = joined.map(a => `
+                <div style="text-align:center; flex-shrink:0;">
+                    <img src="${a.img}" style="width:70px; height:70px; border-radius:25px; border:2px solid #fff; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+                    <div style="font-size:11px; margin-top:8px; font-weight:600;">${a.name}</div>
+                </div>`).join('');
         }
 
         function show(id) {
@@ -215,7 +256,10 @@
             document.getElementById(id).classList.add('active-view');
         }
 
-        function logout() { localStorage.clear(); location.reload(); }
+        function logout() {
+            localStorage.clear();
+            location.reload();
+        }
     </script>
 </body>
 </html>
