@@ -3,131 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>NEXT’S YOU | Artist Studio</title>
+    <title>NEXT ONE | Artist Studio</title>
     <style>
         :root {
             --sky-blue: #D0EFFF;
             --lavender: #E6D5FF;
             --art-purple: #A29BFE;
-            --glass: rgba(255, 255, 255, 0.3);
+            --glass: rgba(255, 255, 255, 0.4);
             --glass-border: rgba(255, 255, 255, 0.5);
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { 
-            margin: 0; font-family: -apple-system, sans-serif; 
+            margin: 0; font-family: "PingFang TC", "Microsoft JhengHei", sans-serif;
             background: linear-gradient(160deg, var(--lavender) 0%, #FFFFFF 50%, var(--sky-blue) 100%);
-            background-attachment: fixed; min-height: 100vh; color: #333;
+            background-attachment: fixed; min-height: 100vh; color: #333; overflow-x: hidden;
         }
 
-        .studio-header {
-            padding: 50px 25px 30px; background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(10px); border-bottom: 1px solid var(--glass-border);
-            border-radius: 0 0 35px 35px;
+        /* --- 1. 華麗啟動動畫 --- */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(135deg, var(--sky-blue), var(--lavender));
+            display: flex; align-items: center; justify-content: center; z-index: 99999;
+            transition: opacity 0.6s ease;
         }
-        .studio-header h1 { margin: 0; font-size: 28px; font-weight: 900; color: var(--art-purple); }
+        .logo-main {
+            font-size: 42px; font-weight: 900; letter-spacing: -1px;
+            background: linear-gradient(120deg, #fff 30%, #f0f0f0 50%, #fff 70%);
+            background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: shine 1.5s linear infinite, logoPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes shine { to { background-position: 200% center; } }
+        @keyframes logoPop { 0% { transform: scale(0.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        /* --- 2. 主介面 --- */
+        .studio-header { padding: 60px 25px 30px; }
+        .studio-header h1 { margin: 0; font-size: 32px; font-weight: 900; color: #5a5a5a; letter-spacing: -1px; }
+        .studio-header p { margin: 8px 0 0; color: #888; font-size: 16px; }
 
         .glass-panel {
             background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border); border-radius: 30px; padding: 25px; margin: 20px;
+            border: 1px solid var(--glass-border); border-radius: 30px; padding: 25px; margin: 0 20px 20px;
         }
 
         .tool-btn {
             width: 100%; padding: 18px; border-radius: 20px; border: none; margin-bottom: 12px;
             font-size: 16px; font-weight: bold; cursor: pointer; color: #fff; transition: 0.3s;
+            background: linear-gradient(45deg, #A29BFE, #6C5CE7);
+            box-shadow: 0 10px 20px rgba(162, 155, 254, 0.2);
         }
-        .btn-feed { background: linear-gradient(45deg, #A29BFE, #6C5CE7); }
 
-        /* 發文紀錄樣式 */
+        /* --- 3. 仿圖 5 滿版發文介面 --- */
+        #post-editor {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; z-index: 20000; display: none; flex-direction: column;
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        .editor-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f5f5f5; }
+        .editor-header .close-icon { font-size: 28px; color: #333; width: 40px; }
+        .editor-header .post-title { font-weight: 900; font-style: italic; font-size: 20px; letter-spacing: 1px; }
+        .editor-header .post-action { color: var(--art-purple); font-weight: bold; font-size: 17px; width: 40px; text-align: right; }
+
+        .editor-body { flex: 1; padding: 20px; }
+        .editor-textarea { 
+            width: 100%; height: 300px; border: none; font-size: 19px; 
+            color: #333; resize: none; line-height: 1.5; 
+        }
+        .editor-footer { padding: 20px; display: flex; gap: 30px; border-top: 1px solid #f5f5f5; color: #999; font-size: 22px; }
+
+        /* --- 4. 自定義漂亮彈窗 --- */
+        .custom-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(8px);
+            display: none; align-items: center; justify-content: center; z-index: 30000;
+        }
+        .modal-content {
+            background: #fff; width: 80%; max-width: 300px; border-radius: 24px;
+            padding: 25px; text-align: center; box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            transform: scale(0.8); transition: 0.3s;
+        }
+        .modal-active .modal-content { transform: scale(1); }
+        .modal-btn { 
+            margin-top: 20px; width: 100%; padding: 12px; border-radius: 12px; 
+            border: none; background: #333; color: #fff; font-weight: bold; 
+        }
+
         .history-item {
-            background: rgba(255,255,255,0.5); padding: 15px; border-radius: 15px;
-            margin-bottom: 10px; border-left: 5px solid var(--art-purple);
+            background: rgba(255,255,255,0.4); padding: 15px; border-radius: 18px;
+            margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.6);
         }
-        .history-time { font-size: 10px; color: #aaa; margin-top: 5px; }
-
-        .logout-btn { background: none; border: 1px solid #ddd; padding: 10px 25px; border-radius: 15px; color: #bbb; }
     </style>
 </head>
 <body>
 
+    <div id="splash-screen">
+        <div class="logo-main">NEXT ONE</div>
+    </div>
+
     <header class="studio-header">
-        <h1 id="artistTitle">Artist Studio</h1>
-        <p>歡迎回來，<span id="display-name">創作者</span></p>
+        <h1>Artist Studio</h1>
+        <p>歡迎回來，<span id="display-name">ARTIST</span></p>
     </header>
 
     <div class="glass-panel">
         <h3 style="margin-top:0;">🚀 快速創作</h3>
-        <button class="tool-btn btn-feed" onclick="publishFeed()">✍️ 撰寫新動態 (Feed)</button>
-        <p style="font-size: 12px; color: #888;">發布後，所有追蹤您的粉絲將會收到通知。</p>
+        <button class="tool-btn" onclick="openEditor()">✍️ 撰寫新動態</button>
     </div>
 
-    <div class="glass-panel" id="history-panel">
+    <div class="glass-panel">
         <h3 style="margin-top:0;">📜 最近發布</h3>
-        <div id="feed-history">
-            <p style="color:#999; font-size:14px;">尚無發布紀錄</p>
+        <div id="feed-history"><p style="color:#aaa;">尚無發布紀錄</p></div>
+    </div>
+
+    <div id="post-editor">
+        <div class="editor-header">
+            <div class="close-icon" onclick="closeEditor()">✕</div>
+            <div class="post-title">NEXT ONE</div>
+            <div class="post-action" onclick="submitPost()">貼文</div>
+        </div>
+        <div class="editor-body">
+            <textarea id="postText" class="editor-textarea" placeholder="在想些什麼？"></textarea>
+        </div>
+        <div class="editor-footer">
+            <span>🖼️</span><span>📷</span><span>😊</span><span>📍</span>
         </div>
     </div>
 
-    <div style="text-align: center; margin-bottom: 50px;">
-        <button class="logout-btn" onclick="logout()">安全登出</button>
+    <div id="customAlert" class="custom-modal">
+        <div class="modal-content">
+            <p id="alertMsg" style="font-size:16px; font-weight:bold;"></p>
+            <button class="modal-btn" onclick="closeAlert()">知道了</button>
+        </div>
     </div>
 
 <script>
-    // 取得當前藝人身分
-    const currentArtist = localStorage.getItem("user") || "藝人";
-
+    // --- 初始化 ---
     window.onload = () => {
+        // 動畫縮短至 1.5 秒
+        setTimeout(() => {
+            document.getElementById('splash-screen').style.opacity = '0';
+            setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 600);
+        }, 1500);
+
         if (localStorage.getItem("user_role") !== 'artist') {
             window.location.href = 'index.html';
         }
-        document.getElementById('display-name').innerText = currentArtist;
+        document.getElementById('display-name').innerText = localStorage.getItem("user") || "ARTIST";
         renderHistory();
     };
 
-    function publishFeed() {
-    const content = prompt("想對粉絲說點什麼？");
-    if (content && content.trim() !== "") {
-        // 強致使用統一的 Key: NEXTS_YOU_FEEDS
-        let feeds = JSON.parse(localStorage.getItem("NEXTS_YOU_FEEDS") || "[]");
-        
-        const newPost = {
+    // --- 發文編輯器邏輯 ---
+    function openEditor() {
+        document.getElementById('post-editor').style.display = 'flex';
+        document.getElementById('postText').focus();
+    }
+
+    function closeEditor() {
+        document.getElementById('post-editor').style.display = 'none';
+    }
+
+    function submitPost() {
+        const text = document.getElementById('postText').value;
+        if (!text.trim()) return myAlert("請輸入一些內容吧！");
+
+        let feeds = JSON.parse(localStorage.getItem("NEXTS_YOU_DATA") || "[]");
+        feeds.unshift({
             id: Date.now(),
             artist: (localStorage.getItem("user") || "ARTIST").toUpperCase(),
-            text: content,
+            text: text,
             time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-        };
+        });
+        localStorage.setItem("NEXTS_YOU_DATA", JSON.stringify(feeds));
 
-        feeds.unshift(newPost); 
-        localStorage.setItem("NEXTS_YOU_FEEDS", JSON.stringify(feeds));
-        
-        alert("✅ 發布成功！");
-        renderHistory(); // 重新整理藝人自己的紀錄
+        myAlert("✨ 發布成功！");
+        closeEditor();
+        document.getElementById('postText').value = "";
+        renderHistory();
     }
-}
+
+    // --- 漂亮彈窗邏輯 ---
+    function myAlert(msg) {
+        document.getElementById('alertMsg').innerText = msg;
+        const m = document.getElementById('customAlert');
+        m.style.display = 'flex';
+        setTimeout(() => m.classList.add('modal-active'), 10);
+    }
+
+    function closeAlert() {
+        const m = document.getElementById('customAlert');
+        m.classList.remove('modal-active');
+        setTimeout(() => m.style.display = 'none', 300);
+    }
 
     function renderHistory() {
         const container = document.getElementById('feed-history');
-        const feeds = JSON.parse(localStorage.getItem("wv_feeds") || "[]");
-        
-        // 僅篩選屬於「自己」的發文
-        const myFeeds = feeds.filter(f => f.artist === currentArtist.toUpperCase());
+        const feeds = JSON.parse(localStorage.getItem("NEXTS_YOU_DATA") || "[]");
+        const user = (localStorage.getItem("user") || "ARTIST").toUpperCase();
+        const myFeeds = feeds.filter(f => f.artist === user);
 
-        if (myFeeds.length === 0) {
-            container.innerHTML = `<p style="color:#999; font-size:14px;">尚無發布紀錄</p>`;
-            return;
-        }
-
+        if (myFeeds.length === 0) return;
         container.innerHTML = myFeeds.map(f => `
             <div class="history-item">
-                <div style="font-size:14px;">${f.text}</div>
-                <div class="history-time">${f.time} · 已同步至粉絲端</div>
+                <div style="font-size:15px; line-height:1.4;">${f.text}</div>
+                <div style="font-size:10px; color:#aaa; margin-top:8px;">${f.time} · 已發布</div>
             </div>
         `).join('');
-    }
-
-    function logout() {
-        localStorage.clear();
-        window.location.href = 'index.html';
     }
 </script>
 </body>
