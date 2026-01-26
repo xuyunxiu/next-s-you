@@ -10,7 +10,7 @@
             --art-deep: #6C5CE7;
             --sky-blue: #D0EFFF;
             --lavender: #E6D5FF;
-            --glass: rgba(255, 255, 255, 0.5);
+            --glass: rgba(255, 255, 255, 0.45);
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -20,54 +20,59 @@
             background-attachment: fixed; min-height: 100vh; color: #333;
         }
 
-        /* --- 💎 旗艦級 SVG 流光 LOGO (同步粉絲端) --- */
-        #splash-screen {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: linear-gradient(135deg, var(--sky-blue), var(--lavender));
-            display: flex; align-items: center; justify-content: center; z-index: 99999;
-            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .logo-svg { width: 320px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.05)); }
-        .shimmer-text {
-            font-family: "Arial Black", sans-serif; font-size: 42px; font-weight: 900; 
-            font-style: italic; letter-spacing: -1.5px; fill: url(#shimmerGrad);
+        /* --- 視覺修正：對齊圖 2 的發光質感 --- */
+        .top-banner {
+            padding: 60px 25px 20px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
         }
 
-        /* --- 介面佈局 --- */
-        .container { padding: 80px 20px 150px; animation: fadeIn 0.8s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .studio-logo {
+            font-family: "Arial Black", sans-serif;
+            font-size: 28px; font-weight: 900; font-style: italic;
+            color: #FFFFFF;
+            text-shadow: 0 0 15px rgba(162, 155, 254, 0.8); /* 模擬圖 2 的發光感 */
+            letter-spacing: -1px;
+            margin-bottom: 5px;
+        }
+
+        /* --- 旗艦級容器 --- */
+        .container { padding: 0 20px 150px; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .glass-panel { 
             background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255,255,255,0.7); border-radius: 35px; padding: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.03); margin-bottom: 25px;
+            border: 1px solid rgba(255,255,255,0.7); border-radius: 35px; padding: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.03); margin-bottom: 25px;
         }
 
-        h1 { font-size: 32px; font-weight: 900; margin: 0 0 10px; color: var(--art-deep); }
-        .subtitle { color: #888; font-size: 14px; margin-bottom: 30px; }
-
-        /* --- 發文工具 --- */
+        /* --- 發文介面 --- */
+        .post-area { position: relative; }
         .post-input {
-            width: 100%; height: 120px; border: none; background: rgba(255,255,255,0.4);
-            border-radius: 20px; padding: 20px; font-size: 16px; resize: none; margin-bottom: 15px;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
+            width: 100%; height: 150px; border: none; background: rgba(255,255,255,0.5);
+            border-radius: 24px; padding: 20px; font-size: 17px; resize: none;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.02); line-height: 1.6;
         }
         .btn-post {
-            width: 100%; padding: 18px; border-radius: 35px; border: none; font-weight: bold;
-            font-size: 17px; background: linear-gradient(45deg, var(--art-purple), var(--art-deep));
-            color: #fff; box-shadow: 0 10px 25px rgba(108, 92, 231, 0.3);
-            transition: 0.3s;
+            margin-top: 15px; width: 100%; padding: 18px; border-radius: 35px; border: none;
+            font-weight: 900; font-size: 17px; color: #fff;
+            background: linear-gradient(45deg, var(--art-purple), var(--art-deep));
+            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.3); transition: 0.3s;
         }
-        .btn-post:active { transform: scale(0.97); opacity: 0.9; }
+        .btn-post:active { transform: scale(0.96); }
 
-        /* --- 歷史動態 --- */
+        /* --- 動態清單 --- */
         .feed-item {
-            background: #fff; padding: 20px; border-radius: 25px; margin-bottom: 15px;
-            border: 1px solid rgba(0,0,0,0.03); box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+            background: rgba(255,255,255,0.8); padding: 22px; border-radius: 28px;
+            margin-bottom: 15px; border: 1px solid #fff;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+            animation: slideIn 0.4s ease-out;
         }
-        .feed-time { font-size: 11px; color: #ccc; margin-top: 10px; display: block; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
 
-        /* --- 底部導航 --- */
+        .feed-text { font-size: 16px; color: #444; margin-bottom: 12px; }
+        .feed-meta { font-size: 11px; color: #bbb; font-weight: bold; }
+
+        /* --- 底部導航 (同步旗艦版) --- */
         .nav-bar {
             position: fixed; bottom: 25px; left: 5%; width: 90%; height: 75px;
             background: rgba(255,255,255,0.85); backdrop-filter: blur(25px);
@@ -75,42 +80,29 @@
             display: flex; justify-content: space-around; align-items: center;
             box-shadow: 0 15px 40px rgba(0,0,0,0.08); z-index: 1000;
         }
-        .nav-item { text-align: center; color: #bbb; font-weight: bold; flex: 1; }
+        .nav-item { text-align: center; color: #ccc; font-weight: bold; flex: 1; }
         .nav-item.active { color: var(--art-deep); }
     </style>
 </head>
 <body>
 
-    <div id="splash-screen">
-        <svg class="logo-svg" viewBox="0 0 400 80">
-            <defs>
-                <linearGradient id="shimmerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#A29BFE">
-                        <animate attributeName="offset" values="-1; 2" dur="2s" repeatCount="indefinite" />
-                    </stop>
-                    <stop offset="50%" stop-color="#FFFFFF">
-                        <animate attributeName="offset" values="-0.5; 2.5" dur="2s" repeatCount="indefinite" />
-                    </stop>
-                    <stop offset="100%" stop-color="#6C5CE7">
-                        <animate attributeName="offset" values="0; 3" dur="2s" repeatCount="indefinite" />
-                    </stop>
-                </linearGradient>
-            </defs>
-            <text x="50%" y="55" text-anchor="middle" class="shimmer-text">NEXT’S YOU</text>
-        </svg>
+    <div class="top-banner">
+        <div class="studio-logo">Studio</div>
+        <p style="margin:0; color:#888; font-size:14px; font-weight:600;">歡迎回來，藝人端工作室</p>
     </div>
 
     <div class="container">
-        <h1>Artist Studio</h1>
-        <p class="subtitle">歡迎回來，與您的粉絲分享近況吧！</p>
-
-        <div class="glass-panel">
-            <textarea id="postContent" class="post-input" placeholder="想對粉絲說點什麼？"></textarea>
-            <button class="btn-post" onclick="publishPost()">發布動態</button>
+        <div class="glass-panel post-area">
+            <textarea id="postContent" class="post-input" placeholder="分享此刻的心情..."></textarea>
+            <button class="btn-post" onclick="publishPost()">發布動態至星球</button>
         </div>
 
-        <h3 style="margin: 30px 0 15px; font-weight: 900;">📜 歷史發布</h3>
-        <div id="historyWall"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding: 10px;">
+            <h3 style="margin: 0; font-weight: 900; font-size: 20px;">📜 我的發布紀錄</h3>
+            <span style="font-size: 12px; color: var(--art-deep); font-weight: bold;">即時同步中</span>
+        </div>
+        
+        <div id="historyWall" style="margin-top:15px;"></div>
     </div>
 
     <nav class="nav-bar">
@@ -121,61 +113,60 @@
     </nav>
 
 <script>
-    // 預設登入的藝人身分
-    const CURRENT_ARTIST = "BTS"; 
+    const CURRENT_ARTIST = "BTS"; // 預設身分
 
-    window.onload = () => {
-        // 動畫時長同步至 2.2s
-        setTimeout(() => {
-            const ss = document.getElementById('splash-screen');
-            ss.style.opacity = '0';
-            setTimeout(() => { ss.style.display = 'none'; }, 800);
-        }, 2200);
-        renderHistory();
-    };
+    // 頁面加載直接渲染，不跑重複動畫
+    window.onload = () => { renderHistory(); };
 
     function publishPost() {
         const txt = document.getElementById('postContent').value.trim();
-        if (!txt) return alert("內容不能為空喔！");
+        if (!txt) {
+            alert("請輸入內容！");
+            return;
+        }
 
         const feeds = JSON.parse(localStorage.getItem("NEXTS_YOU_DATA") || "[]");
         const newPost = {
             id: Date.now(),
             artist: CURRENT_ARTIST,
             text: txt,
-            time: new Date().toLocaleString()
+            time: new Date().toLocaleString('zh-TW', { hour12: false })
         };
 
-        feeds.unshift(newPost); // 最新的排在前面
+        feeds.unshift(newPost);
         localStorage.setItem("NEXTS_YOU_DATA", JSON.stringify(feeds));
         
         document.getElementById('postContent').value = "";
-        alert("🎉 發布成功！粉絲端已同步更新。");
         renderHistory();
+        
+        // 輕微震動回饋 (如果手機支援)
+        if (window.navigator.vibrate) window.navigator.vibrate(50);
     }
 
     function renderHistory() {
         const feeds = JSON.parse(localStorage.getItem("NEXTS_YOU_DATA") || "[]");
-        const wall = document.getElementById('historyWall');
         const myFeeds = feeds.filter(f => f.artist === CURRENT_ARTIST);
+        const wall = document.getElementById('historyWall');
 
         if (myFeeds.length === 0) {
-            wall.innerHTML = '<p style="text-align:center; color:#ccc; padding:30px;">尚無發布紀錄</p>';
+            wall.innerHTML = `
+                <div class="glass-panel" style="text-align:center; color:#ccc;">
+                    <p>目前還沒有發布過動態喔！</p>
+                </div>`;
             return;
         }
 
         wall.innerHTML = myFeeds.map(f => `
             <div class="feed-item">
-                <div style="font-size:16px; line-height:1.5;">${f.text}</div>
-                <span class="feed-time">📅 ${f.time}</span>
+                <div class="feed-text">${f.text}</div>
+                <div class="feed-meta">發布於 ${f.time}</div>
             </div>
         `).join('');
     }
 
     function logout() {
-        if(confirm("確定要登出並切換至粉絲端嗎？")) {
-            location.href = 'index.html';
-        }
+        localStorage.clear();
+        window.location.href = 'index.html';
     }
 </script>
 </body>
