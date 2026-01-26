@@ -198,26 +198,27 @@
     }
 
     // --- 核心：渲染藝人動態牆 ---
-    function renderFeeds() {
-        const wall = document.getElementById('feedWall');
-        const feeds = JSON.parse(localStorage.getItem("wv_feeds") || "[]");
+   function renderFeeds() {
+    const wall = document.getElementById('feedWall');
+    // 讀取跟藝人端一模一樣的 Key
+    const feeds = JSON.parse(localStorage.getItem("NEXTS_YOU_FEEDS") || "[]");
 
-        if (feeds.length === 0) {
-            wall.innerHTML = `
-                <div class="glass-card" style="margin:0; background:rgba(255,255,255,0.4); border:none; text-align:center;">
-                    <p style="color:#777; font-size:13px;">目前尚無藝人發布動態。</p>
-                </div>`;
-            return;
-        }
-
-        wall.innerHTML = feeds.map(f => `
-            <div class="feed-item">
-                <div class="feed-artist">🌟 ${f.artist}</div>
-                <div class="feed-text">${f.text}</div>
-                <div class="feed-time">${f.time}</div>
-            </div>
-        `).join('');
+    if (feeds.length === 0) {
+        wall.innerHTML = `
+            <div class="glass-card" style="text-align:center; background:rgba(255,255,255,0.3);">
+                <p style="color:#888;">🌌 星球目前很安靜，等待藝人發文中...</p>
+            </div>`;
+        return;
     }
+
+    wall.innerHTML = feeds.map(f => `
+        <div class="feed-item">
+            <div class="feed-artist">🌟 ${f.artist}</div>
+            <div class="feed-text">${f.text}</div>
+            <div class="feed-time">${f.time}</div>
+        </div>
+    `).join('');
+}
 
     function logout() { localStorage.clear(); location.reload(); }
 </script>
