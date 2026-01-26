@@ -3,41 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>Weverse Web Project</title>
+    <title>Weverse Professional Project</title>
     <style>
-        /* --- 核心樣式 --- */
+        /* --- 核心樣式 (黑金質感) --- */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { 
-            background-color: #000; color: #fff; margin: 0; 
-            font-family: -apple-system, sans-serif; overflow-x: hidden;
-        }
-        
+        body { background-color: #000; color: #fff; margin: 0; font-family: -apple-system, sans-serif; overflow-x: hidden; }
         .view { display: none; min-height: 100vh; width: 100vw; }
         .active-view { display: block; }
 
-        /* 標題與文字 */
+        /* 標題區 */
         .step-header { padding: 60px 25px 20px; }
         .step-header h1 { font-size: 24px; font-weight: bold; margin: 0; }
         .step-header p { color: #888; font-size: 14px; margin-top: 8px; }
 
-        /* 1. 卡片牆 (Grid) */
+        /* 1. 卡片牆 */
         .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 15px 150px; }
         .artist-card { 
             aspect-ratio: 1 / 1.25; border-radius: 20px; background-size: cover; background-position: center;
             position: relative; border: 2.5px solid transparent; transition: 0.2s; cursor: pointer;
         }
-        .artist-card.selected { border-color: #fff; }
+        .artist-card.selected { border-color: #fff; transform: scale(0.98); }
         .check-badge { 
             position: absolute; top: 10px; right: 10px; background: #fff; color: #000; 
             width: 20px; height: 20px; border-radius: 50%; text-align: center; 
             line-height: 20px; font-weight: bold; font-size: 11px; display: none;
         }
         .selected .check-badge { display: block; }
-        .artist-card::after { 
-            content: ''; position: absolute; bottom: 0; width: 100%; height: 40%; 
-            background: linear-gradient(transparent, rgba(0,0,0,0.8)); border-radius: 0 0 20px 20px; 
-        }
-        .artist-name { position: absolute; bottom: 12px; left: 12px; font-weight: bold; z-index: 2; }
+        .artist-name { position: absolute; bottom: 12px; left: 12px; font-weight: bold; z-index: 2; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
 
         /* 2. 使用者設定 */
         .input-wrap { padding: 40px 20px; text-align: center; }
@@ -47,206 +39,187 @@
         }
 
         /* 3. 老屁股首頁 */
-        .home-nav { padding: 15px; text-align: center; font-weight: bold; border-bottom: 0.5px solid #222; font-size: 18px; }
+        .home-nav { padding: 15px; text-align: center; font-weight: bold; border-bottom: 0.5px solid #222; font-size: 18px; position: sticky; top:0; background:#000; z-index:10; }
         .avatar-bar { display: flex; padding: 15px; gap: 12px; overflow-x: auto; border-bottom: 0.5px solid #111; }
         .avatar-bar::-webkit-scrollbar { display: none; }
         .circle-wrap { text-align: center; flex-shrink: 0; width: 65px; cursor: pointer; }
-        .circle { 
-            width: 60px; height: 60px; border-radius: 50%; background: #222; 
-            border: 1.2px solid #333; overflow: hidden; display: flex; 
-            align-items: center; justify-content: center; margin-bottom: 5px;
-        }
+        .circle { width: 60px; height: 60px; border-radius: 50%; background: #222; border: 1px solid #333; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 5px; }
         .circle img { width: 100%; height: 100%; object-fit: cover; }
-        .circle.plus { font-size: 22px; color: #fff; border: 1px dashed #444; }
         .circle-name { font-size: 10px; color: #999; }
 
-        /* 4. 星球內部 (Planet View) */
-        .planet-header { 
-            height: 200px; background-size: cover; background-position: center; 
-            position: relative; display: flex; align-items: flex-end; padding: 20px;
-        }
-        .planet-header::before { 
-            content: ''; position: absolute; top:0; left:0; width:100%; height:100%; 
-            background: rgba(0,0,0,0.3); 
-        }
+        /* 4. 星球內部 */
+        .planet-header { height: 220px; background-size: cover; background-position: center; position: relative; display: flex; align-items: flex-end; padding: 20px; }
+        .planet-header::before { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(transparent, rgba(0,0,0,0.7)); }
         .back-btn { position: absolute; top: 40px; left: 20px; font-size: 30px; z-index: 10; cursor: pointer; }
-        .planet-title { position: relative; font-size: 28px; font-weight: bold; z-index: 5; }
-        .planet-tabs { display: flex; justify-content: space-around; padding: 15px; border-bottom: 0.5px solid #222; }
-        .tab { color: #888; font-weight: bold; }
-        .tab.active { color: #fff; border-bottom: 2px solid #fff; padding-bottom: 5px; }
+        .planet-title { position: relative; font-size: 26px; font-weight: bold; z-index: 5; }
+        .planet-tabs { display: flex; justify-content: space-around; padding: 15px; border-bottom: 0.5px solid #222; position: sticky; top:0; background:#000; z-index:10; }
+        .tab { color: #888; font-weight: bold; padding-bottom: 8px; }
+        .tab.active { color: #fff; border-bottom: 2px solid #fff; }
 
-        /* 底部固定按鈕 */
+        /* 動態 Feed 樣式 */
+        .feed-container { padding: 15px; padding-bottom: 100px; }
+        .post-card { background: #111; border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 0.5px solid #222; }
+        .post-header { display: flex; align-items: center; margin-bottom: 10px; }
+        .post-avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; background: #333; }
+        .post-author { font-weight: bold; font-size: 14px; }
+        .post-time { font-size: 11px; color: #555; margin-left: auto; }
+        .post-content { font-size: 14px; line-height: 1.5; color: #ccc; }
+
+        /* 底部固定按鈕 & 導航列 */
         .footer { position: fixed; bottom: 0; width: 100%; padding: 20px; background: linear-gradient(transparent, #000 40%); z-index: 100; }
-        .btn-main { 
-            width: 100%; padding: 18px; border-radius: 35px; border: none; 
-            background: #333; color: #666; font-weight: bold; font-size: 16px; 
-        }
+        .btn-main { width: 100%; padding: 18px; border-radius: 35px; border: none; background: #333; color: #666; font-weight: bold; font-size: 16px; transition: 0.3s; }
         .btn-main.ready { background: #fff; color: #000; cursor: pointer; }
+        .nav-bar { position: fixed; bottom: 0; width: 100%; height: 70px; background: #000; display: flex; justify-content: space-around; align-items: center; border-top: 0.5px solid #222; font-size: 22px; z-index: 20; }
         
-        /* 導航列 */
-        .nav-bar { position: fixed; bottom: 0; width: 100%; height: 70px; background: #000; display: flex; justify-content: space-around; align-items: center; border-top: 0.5px solid #222; }
+        /* 彈窗樣式 */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-content { background: #111; width: 85%; padding: 25px; border-radius: 20px; text-align: center; }
     </style>
 </head>
 <body>
 
 <div id="app">
     <section id="view-artist-select" class="view">
-        <div class="step-header">
-            <h1>選擇感興趣的藝人</h1>
-            <p>請多選幾個喜歡的社群吧！</p>
-        </div>
+        <div class="step-header"><h1>選擇感興趣的藝人</h1><p>請多選幾個喜歡的社群吧！</p></div>
         <div class="card-grid" id="cardGrid"></div>
-        <div class="footer">
-            <button id="nextStepBtn" class="btn-main" onclick="toProfileStep()">下一步</button>
-        </div>
+        <div class="footer"><button id="nextStepBtn" class="btn-main" onclick="toProfileStep()">下一步</button></div>
     </section>
 
     <section id="view-profile-setup" class="view">
-        <div class="step-header">
-            <h1>最後一步</h1>
-            <p>設定您的使用者名稱 (全球顯示名稱)</p>
-        </div>
-        <div class="input-wrap">
-            <input type="text" id="nameInput" class="user-input" placeholder="請輸入名稱" maxlength="15">
-        </div>
-        <div class="footer">
-            <button class="btn-main ready" onclick="completeJoin()">進入 Weverse</button>
-        </div>
+        <div class="step-header"><h1>設定您的使用者名稱</h1><p>這是您的全球顯示名稱</p></div>
+        <div class="input-wrap"><input type="text" id="nameInput" class="user-input" placeholder="請輸入名稱" maxlength="15"></div>
+        <div class="footer"><button class="btn-main ready" onclick="completeJoin()">進入 Weverse</button></div>
     </section>
 
     <section id="view-home" class="view">
         <div class="home-nav">weverse</div>
         <div class="avatar-bar" id="avatarBar"></div>
-        <main style="padding: 40px; text-align: center; color: #444;">
-            <p id="welcomeUser"></p>
-            <div style="margin-top: 50px;">目前尚無社群動態</div>
-            <button onclick="clearAll()" style="background:none; border:1px solid #222; color:#333; padding:10px; border-radius:10px; margin-top:20px;">重置資料 (回歸新人)</button>
+        <main style="padding: 20px; text-align: center;">
+            <p id="welcomeUser" style="color:#888"></p>
+            <div id="homeFeed" class="feed-container">
+                </div>
+            <button onclick="clearAll()" style="background:none; border:1px solid #222; color:#333; padding:8px; border-radius:8px; margin-top:20px;">重置 App 資料</button>
         </main>
-        <nav class="nav-bar">
-            <span>🏠</span><span>💬</span><span>🔔</span><span>👤</span>
-        </nav>
+        <nav class="nav-bar"><span>🏠</span><span>💬</span><span>🔔</span><span>👤</span></nav>
     </section>
 
     <section id="view-planet" class="view">
         <div class="back-btn" onclick="backToHome()">‹</div>
-        <div id="planetHeader" class="planet-header">
-            <div id="planetName" class="planet-title"></div>
-        </div>
-        <div class="planet-tabs">
-            <div class="tab active">Feed</div>
-            <div class="tab">Artist</div>
-            <div class="tab">Media</div>
-        </div>
-        <div style="padding: 50px; text-align: center; color: #555;">
-            這裡還沒有任何動態...
-        </div>
+        <div id="planetHeader" class="planet-header"><div id="planetName" class="planet-title"></div></div>
+        <div class="planet-tabs"><div class="tab active">Feed</div><div class="tab">Artist</div><div class="tab">Media</div></div>
+        <div id="planetFeed" class="feed-container"></div>
     </section>
+
+    <div id="nicknameModal" class="modal">
+        <div class="modal-content">
+            <h2>設定社群暱稱</h2>
+            <p style="color:#888; font-size:14px;">在 <span id="targetPlanetName"></span> 使用的暱稱</p>
+            <input type="text" id="planetNicknameInput" class="user-input" placeholder="輸入社群暱稱">
+            <button class="btn-main ready" style="margin-top:20px;" onclick="savePlanetNickname()">開始加入</button>
+        </div>
+    </div>
 </div>
 
 <script>
-    // --- 藝人資料庫 ---
+    // --- 藝人 & 模擬貼文資料 ---
     const ARTIST_LIST = [
-        { id: 1, name: "BLACKPINK", img: "https://placehold.co/100x100/ff69b4/fff?text=BP", card: "https://placehold.co/400x500/ff69b4/fff?text=BLACKPINK" },
-        { id: 2, name: "DREAMCATCHER", img: "https://placehold.co/100x100/4b0082/fff?text=DC", card: "https://placehold.co/400x500/4b0082/fff?text=DREAMCATCHER" },
-        { id: 3, name: "BABYMONSTER", img: "https://placehold.co/100x100/ff0000/fff?text=BM", card: "https://placehold.co/400x500/ff0000/fff?text=BABYMONSTER" },
-        { id: 4, name: "NCT DREAM", img: "https://placehold.co/100x100/adff2f/000?text=NCT", card: "https://placehold.co/400x500/adff2f/000?text=NCT+DREAM" }
+        { id: 1, name: "BLACKPINK", img: "https://placehold.co/100/ff69b4/fff?text=BP", card: "https://placehold.co/400x500/ff69b4/fff?text=BLACKPINK", posts: ["大家好，我們是 BLACKPINK！", "期待與大家見面 ✨", "新專輯準備中..."] },
+        { id: 2, name: "DREAMCATCHER", img: "https://placehold.co/100/4b0082/fff?text=DC", card: "https://placehold.co/400x500/4b0082/fff?text=DREAMCATCHER", posts: ["In the Frozen... ❄️", "今天也要加油喔 Somnia！"] },
+        { id: 3, name: "BABYMONSTER", img: "https://placehold.co/100/ff0000/fff?text=BM", card: "https://placehold.co/400x500/ff0000/fff?text=BABYMONSTER", posts: ["SHEESH! 🤘", "練習室日常公開"] },
+        { id: 4, name: "NCT DREAM", img: "https://placehold.co/100/adff2f/000?text=NCT", card: "https://placehold.co/400x500/adff2f/000?text=NCT+DREAM", posts: ["7DREAM 永遠在一起！", "YO DREAM!"] }
     ];
 
-    let tempSelected = []; // 暫存選中的團體
+    let state = {
+        tempSelected: [],
+        currentPlanetId: null,
+        nicknames: JSON.parse(localStorage.getItem("wv_nicknames") || "{}")
+    };
 
-    // --- 頁面控制器 ---
-    function show(viewId) {
+    function show(id) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
-        document.getElementById(viewId).classList.add('active-view');
+        document.getElementById(id).classList.add('active-view');
     }
 
-    // --- 流程 1: 渲染卡片牆 ---
+    // --- 流程 1 & 2 (註冊) ---
     function renderCards() {
         const grid = document.getElementById('cardGrid');
         grid.innerHTML = ARTIST_LIST.map(a => `
-            <div class="artist-card ${tempSelected.includes(a.id) ? 'selected' : ''}" 
-                 onclick="toggleSelect(${a.id})" 
-                 style="background-image: url('${a.card}')">
-                <div class="check-badge">✓</div>
-                <div class="artist-name">${a.name}</div>
-            </div>
-        `).join('');
+            <div class="artist-card ${state.tempSelected.includes(a.id) ? 'selected' : ''}" onclick="toggleSelect(${a.id})" style="background-image: url('${a.card}')">
+                <div class="check-badge">✓</div><div class="artist-name">${a.name}</div>
+            </div>`).join('');
     }
-
     function toggleSelect(id) {
-        const i = tempSelected.indexOf(id);
-        if (i === -1) tempSelected.push(id);
-        else tempSelected.splice(i, 1);
-        
+        const i = state.tempSelected.indexOf(id);
+        if (i === -1) state.tempSelected.push(id); else state.tempSelected.splice(i, 1);
         const btn = document.getElementById('nextStepBtn');
-        if (tempSelected.length > 0) {
-            btn.classList.add('ready');
-            btn.innerText = `加入 ${tempSelected.length} 個社群，下一步`;
-        } else {
-            btn.classList.remove('ready');
-            btn.innerText = "下一步";
-        }
+        btn.classList.toggle('ready', state.tempSelected.length > 0);
+        btn.innerText = state.tempSelected.length > 0 ? `加入 ${state.tempSelected.length} 個社群，下一步` : "下一步";
         renderCards();
     }
-
-    function toProfileStep() {
-        if (tempSelected.length > 0) show('view-profile-setup');
-    }
-
-    // --- 流程 2: 註冊完成 ---
+    function toProfileStep() { if (state.tempSelected.length > 0) show('view-profile-setup'); }
     function completeJoin() {
         const name = document.getElementById('nameInput').value.trim();
         if (!name) return alert("請輸入名稱！");
-        
         localStorage.setItem("wv_user", name);
-        const joined = ARTIST_LIST.filter(a => tempSelected.includes(a.id));
-        localStorage.setItem("wv_groups", JSON.stringify(joined));
-        
+        localStorage.setItem("wv_groups", JSON.stringify(ARTIST_LIST.filter(a => state.tempSelected.includes(a.id))));
         startApp();
     }
 
-    // --- 流程 3: 老屁股首頁 ---
+    // --- 流程 3 (首頁) ---
     function startApp() {
         const name = localStorage.getItem("wv_user");
+        if (!name) { show('view-artist-select'); renderCards(); return; }
+        document.getElementById('welcomeUser').innerText = `Global ID: ${name}`;
         const groups = JSON.parse(localStorage.getItem("wv_groups") || "[]");
-        
-        if (!name) {
-            show('view-artist-select');
-            renderCards();
-            return;
-        }
-
-        document.getElementById('welcomeUser').innerText = `你好，${name}！`;
         const bar = document.getElementById('avatarBar');
-        const plus = `<div class="circle-wrap"><div class="circle plus">+</div><div class="circle-name">新增</div></div>`;
-        const circles = groups.map(g => `
-            <div class="circle-wrap" onclick="openPlanet(${g.id})">
-                <div class="circle"><img src="${g.img}"></div>
-                <div class="circle-name">${g.name}</div>
-            </div>
-        `).join('');
-        
-        bar.innerHTML = plus + circles;
+        bar.innerHTML = `<div class="circle-wrap"><div class="circle" style="border:1px dashed #444">+</div><div class="circle-name">新增</div></div>` + 
+            groups.map(g => `<div class="circle-wrap" onclick="checkPlanetAccess(${g.id})"><div class="circle"><img src="${g.img}"></div><div class="circle-name">${g.name}</div></div>`).join('');
         show('view-home');
     }
 
-    // --- 流程 4: 進入星球頁面 ---
+    // --- 流程 4 (星球 & 暱稱) ---
+    function checkPlanetAccess(id) {
+        state.currentPlanetId = id;
+        const artist = ARTIST_LIST.find(a => a.id === id);
+        if (!state.nicknames[id]) {
+            document.getElementById('targetPlanetName').innerText = artist.name;
+            document.getElementById('nicknameModal').style.display = 'flex';
+        } else {
+            openPlanet(id);
+        }
+    }
+
+    function savePlanetNickname() {
+        const nick = document.getElementById('planetNicknameInput').value.trim();
+        if (!nick) return alert("請輸入社群專屬暱稱！");
+        state.nicknames[state.currentPlanetId] = nick;
+        localStorage.setItem("wv_nicknames", JSON.stringify(state.nicknames));
+        document.getElementById('nicknameModal').style.display = 'none';
+        openPlanet(state.currentPlanetId);
+    }
+
     function openPlanet(id) {
         const artist = ARTIST_LIST.find(a => a.id === id);
         document.getElementById('planetName').innerText = artist.name;
         document.getElementById('planetHeader').style.backgroundImage = `url('${artist.card}')`;
+        
+        // 渲染動態 Feed
+        const feed = document.getElementById('planetFeed');
+        feed.innerHTML = artist.posts.map(p => `
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="post-avatar"><img src="${artist.img}" style="width:100%; border-radius:50%;"></div>
+                    <div><div class="post-author">${artist.name}</div><div class="post-time">剛剛</div></div>
+                </div>
+                <div class="post-content">${p}</div>
+            </div>
+        `).join('');
+        
         show('view-planet');
     }
 
-    function backToHome() {
-        show('view-home');
-    }
-
-    function clearAll() {
-        localStorage.clear();
-        location.reload();
-    }
-
+    function backToHome() { show('view-home'); }
+    function clearAll() { if(confirm("確定重置？")) { localStorage.clear(); location.reload(); } }
     window.onload = startApp;
 </script>
 </body>
