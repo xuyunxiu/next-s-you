@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>NEXT ONE | Artist Studio</title>
+    <title>NEXT’S YOU | Artist Studio</title>
     <style>
         :root {
             --sky-blue: #D0EFFF;
@@ -11,16 +11,17 @@
             --art-purple: #A29BFE;
             --glass: rgba(255, 255, 255, 0.4);
             --glass-border: rgba(255, 255, 255, 0.5);
+            --text-main: #333;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { 
-            margin: 0; font-family: "PingFang TC", "Microsoft JhengHei", sans-serif;
+            margin: 0; font-family: "PingFang TC", "STHeiti", sans-serif;
             background: linear-gradient(160deg, var(--lavender) 0%, #FFFFFF 50%, var(--sky-blue) 100%);
-            background-attachment: fixed; min-height: 100vh; color: #333; overflow-x: hidden;
+            background-attachment: fixed; min-height: 100vh; color: var(--text-main); overflow-x: hidden;
         }
 
-        /* --- 1. 華麗啟動動畫 --- */
+        /* --- 1. NEXT’S YOU 流光啟動動畫 --- */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: linear-gradient(135deg, var(--sky-blue), var(--lavender));
@@ -28,7 +29,7 @@
             transition: opacity 0.6s ease;
         }
         .logo-main {
-            font-size: 42px; font-weight: 900; letter-spacing: -1px;
+            font-size: 42px; font-weight: 900; letter-spacing: -1px; font-style: italic;
             background: linear-gradient(120deg, #fff 30%, #f0f0f0 50%, #fff 70%);
             background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             animation: shine 1.5s linear infinite, logoPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -36,22 +37,24 @@
         @keyframes shine { to { background-position: 200% center; } }
         @keyframes logoPop { 0% { transform: scale(0.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-        /* --- 2. 主介面 --- */
+        /* --- 2. 主畫面佈局 --- */
         .studio-header { padding: 60px 25px 30px; }
         .studio-header h1 { margin: 0; font-size: 32px; font-weight: 900; color: #5a5a5a; letter-spacing: -1px; }
-        .studio-header p { margin: 8px 0 0; color: #888; font-size: 16px; }
+        .studio-header p { margin: 8px 0 0; color: #888; font-size: 16px; font-weight: 500; }
 
         .glass-panel {
             background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border); border-radius: 30px; padding: 25px; margin: 0 20px 20px;
+            border: 1px solid var(--glass-border); border-radius: 32px; padding: 25px; margin: 0 20px 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
         }
 
         .tool-btn {
-            width: 100%; padding: 18px; border-radius: 20px; border: none; margin-bottom: 12px;
-            font-size: 16px; font-weight: bold; cursor: pointer; color: #fff; transition: 0.3s;
+            width: 100%; padding: 20px; border-radius: 22px; border: none; margin-bottom: 12px;
+            font-size: 17px; font-weight: bold; cursor: pointer; color: #fff; transition: 0.3s;
             background: linear-gradient(45deg, #A29BFE, #6C5CE7);
-            box-shadow: 0 10px 20px rgba(162, 155, 254, 0.2);
+            box-shadow: 0 10px 20px rgba(162, 155, 254, 0.25);
         }
+        .tool-btn:active { transform: scale(0.98); opacity: 0.9; }
 
         /* --- 3. 仿圖 5 滿版發文介面 --- */
         #post-editor {
@@ -61,17 +64,17 @@
         }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-        .editor-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f5f5f5; }
-        .editor-header .close-icon { font-size: 28px; color: #333; width: 40px; }
-        .editor-header .post-title { font-weight: 900; font-style: italic; font-size: 20px; letter-spacing: 1px; }
-        .editor-header .post-action { color: var(--art-purple); font-weight: bold; font-size: 17px; width: 40px; text-align: right; }
+        .editor-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f8f8f8; }
+        .close-icon { font-size: 24px; color: #333; width: 45px; padding: 10px 0; }
+        .post-title { font-weight: 900; font-style: italic; font-size: 20px; letter-spacing: 0.5px; }
+        .post-action { color: var(--art-purple); font-weight: bold; font-size: 17px; width: 45px; text-align: right; }
 
         .editor-body { flex: 1; padding: 20px; }
         .editor-textarea { 
-            width: 100%; height: 300px; border: none; font-size: 19px; 
-            color: #333; resize: none; line-height: 1.5; 
+            width: 100%; height: 350px; border: none; font-size: 19px; 
+            color: #333; resize: none; line-height: 1.6; font-family: inherit;
         }
-        .editor-footer { padding: 20px; display: flex; gap: 30px; border-top: 1px solid #f5f5f5; color: #999; font-size: 22px; }
+        .editor-footer { padding: 20px 25px; display: flex; gap: 30px; border-top: 1px solid #f8f8f8; color: #bbb; font-size: 22px; }
 
         /* --- 4. 自定義漂亮彈窗 --- */
         .custom-modal {
@@ -80,26 +83,31 @@
             display: none; align-items: center; justify-content: center; z-index: 30000;
         }
         .modal-content {
-            background: #fff; width: 80%; max-width: 300px; border-radius: 24px;
-            padding: 25px; text-align: center; box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-            transform: scale(0.8); transition: 0.3s;
+            background: #fff; width: 80%; max-width: 300px; border-radius: 28px;
+            padding: 30px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            transform: scale(0.85); transition: 0.3s;
         }
         .modal-active .modal-content { transform: scale(1); }
         .modal-btn { 
-            margin-top: 20px; width: 100%; padding: 12px; border-radius: 12px; 
-            border: none; background: #333; color: #fff; font-weight: bold; 
+            margin-top: 25px; width: 100%; padding: 14px; border-radius: 16px; 
+            border: none; background: #222; color: #fff; font-weight: bold; font-size: 15px;
         }
 
+        /* --- 5. 發文紀錄樣式 --- */
         .history-item {
-            background: rgba(255,255,255,0.4); padding: 15px; border-radius: 18px;
-            margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.5); padding: 18px; border-radius: 20px;
+            margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.8);
         }
+        .history-text { font-size: 15px; line-height: 1.5; color: #444; }
+        .history-time { font-size: 11px; color: #aaa; margin-top: 10px; display: block; }
+
+        .logout-btn { background: none; border: 1px solid #ddd; padding: 10px 25px; border-radius: 15px; color: #bbb; font-size: 13px; margin-top: 20px; }
     </style>
 </head>
 <body>
 
     <div id="splash-screen">
-        <div class="logo-main">NEXT ONE</div>
+        <div class="logo-main">NEXT’S YOU</div>
     </div>
 
     <header class="studio-header">
@@ -108,19 +116,26 @@
     </header>
 
     <div class="glass-panel">
-        <h3 style="margin-top:0;">🚀 快速創作</h3>
+        <h3 style="margin-top:0; font-size: 18px;">🚀 快速創作</h3>
         <button class="tool-btn" onclick="openEditor()">✍️ 撰寫新動態</button>
+        <p style="font-size: 12px; color: #aaa; text-align: center;">貼文將同步推播至粉絲星球</p>
     </div>
 
-    <div class="glass-panel">
-        <h3 style="margin-top:0;">📜 最近發布</h3>
-        <div id="feed-history"><p style="color:#aaa;">尚無發布紀錄</p></div>
+    <div class="glass-panel" id="history-section">
+        <h3 style="margin-top:0; font-size: 18px;">📜 最近發布</h3>
+        <div id="feed-history">
+            <p style="color:#bbb; font-size:14px; text-align: center;">尚無發布紀錄</p>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 60px;">
+        <button class="logout-btn" onclick="logout()">安全登出系統</button>
     </div>
 
     <div id="post-editor">
         <div class="editor-header">
             <div class="close-icon" onclick="closeEditor()">✕</div>
-            <div class="post-title">NEXT ONE</div>
+            <div class="post-title">NEXT’S YOU</div>
             <div class="post-action" onclick="submitPost()">貼文</div>
         </div>
         <div class="editor-body">
@@ -133,28 +148,31 @@
 
     <div id="customAlert" class="custom-modal">
         <div class="modal-content">
-            <p id="alertMsg" style="font-size:16px; font-weight:bold;"></p>
+            <p id="alertMsg" style="font-size:17px; font-weight:bold; color:#333;"></p>
             <button class="modal-btn" onclick="closeAlert()">知道了</button>
         </div>
     </div>
 
 <script>
-    // --- 初始化 ---
+    // --- 1. 啟動與權限檢查 ---
     window.onload = () => {
-        // 動畫縮短至 1.5 秒
+        // 動畫 1.5 秒後消失
         setTimeout(() => {
-            document.getElementById('splash-screen').style.opacity = '0';
-            setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 600);
+            const ss = document.getElementById('splash-screen');
+            ss.style.opacity = '0';
+            setTimeout(() => ss.style.display = 'none', 600);
         }, 1500);
 
         if (localStorage.getItem("user_role") !== 'artist') {
             window.location.href = 'index.html';
         }
-        document.getElementById('display-name').innerText = localStorage.getItem("user") || "ARTIST";
+        
+        const userName = localStorage.getItem("user") || "ARTIST";
+        document.getElementById('display-name').innerText = userName.toUpperCase();
         renderHistory();
     };
 
-    // --- 發文編輯器邏輯 ---
+    // --- 2. 發文編輯器控制 ---
     function openEditor() {
         document.getElementById('post-editor').style.display = 'flex';
         document.getElementById('postText').focus();
@@ -166,24 +184,31 @@
 
     function submitPost() {
         const text = document.getElementById('postText').value;
-        if (!text.trim()) return myAlert("請輸入一些內容吧！");
+        if (!text.trim()) {
+            myAlert("請輸入一些內容再貼文吧！");
+            return;
+        }
 
+        const currentUser = (localStorage.getItem("user") || "ARTIST").toUpperCase();
         let feeds = JSON.parse(localStorage.getItem("NEXTS_YOU_DATA") || "[]");
-        feeds.unshift({
+        
+        const newPost = {
             id: Date.now(),
-            artist: (localStorage.getItem("user") || "ARTIST").toUpperCase(),
+            artist: currentUser,
             text: text,
             time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-        });
+        };
+
+        feeds.unshift(newPost);
         localStorage.setItem("NEXTS_YOU_DATA", JSON.stringify(feeds));
 
-        myAlert("✨ 發布成功！");
+        myAlert("✨ 發布成功！粉絲已可查閱。");
         closeEditor();
         document.getElementById('postText').value = "";
         renderHistory();
     }
 
-    // --- 漂亮彈窗邏輯 ---
+    // --- 3. 自定義彈窗邏輯 ---
     function myAlert(msg) {
         document.getElementById('alertMsg').innerText = msg;
         const m = document.getElementById('customAlert');
@@ -197,19 +222,27 @@
         setTimeout(() => m.style.display = 'none', 300);
     }
 
+    // --- 4. 渲染歷史紀錄 ---
     function renderHistory() {
         const container = document.getElementById('feed-history');
         const feeds = JSON.parse(localStorage.getItem("NEXTS_YOU_DATA") || "[]");
-        const user = (localStorage.getItem("user") || "ARTIST").toUpperCase();
-        const myFeeds = feeds.filter(f => f.artist === user);
+        const currentUser = (localStorage.getItem("user") || "ARTIST").toUpperCase();
+        
+        const myFeeds = feeds.filter(f => f.artist === currentUser);
 
         if (myFeeds.length === 0) return;
+
         container.innerHTML = myFeeds.map(f => `
             <div class="history-item">
-                <div style="font-size:15px; line-height:1.4;">${f.text}</div>
-                <div style="font-size:10px; color:#aaa; margin-top:8px;">${f.time} · 已發布</div>
+                <div class="history-text">${f.text}</div>
+                <div class="history-time">${f.time} · 已發布</div>
             </div>
         `).join('');
+    }
+
+    function logout() {
+        localStorage.clear();
+        window.location.href = 'index.html';
     }
 </script>
 </body>
