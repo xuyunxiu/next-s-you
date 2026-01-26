@@ -3,126 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>NEXT’S YOU | Fan Universe</title>
+    <title>NEXT ONE | Fan Universe</title>
     <style>
         :root {
             --sky-blue: #D0EFFF;
             --lavender: #E6D5FF;
             --main-theme: #5D9CEC;
-            --glass: rgba(255, 255, 255, 0.25);
+            --glass: rgba(255, 255, 255, 0.3);
             --glass-border: rgba(255, 255, 255, 0.4);
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { 
             margin: 0; font-family: -apple-system, sans-serif; 
             background: linear-gradient(160deg, var(--sky-blue) 0%, #FFFFFF 50%, var(--lavender) 100%);
             background-attachment: fixed; min-height: 100vh; overflow-x: hidden; color: #444;
         }
 
-        /* --- 1. NEXT’S YOU 開屏動畫 --- */
+        /* --- 1. 華麗啟動動畫 --- */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: linear-gradient(135deg, var(--sky-blue), var(--lavender));
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 9999; transition: opacity 0.8s ease;
+            display: flex; align-items: center; justify-content: center; z-index: 99999;
+            transition: opacity 0.6s ease;
         }
-        .logo-box { text-align: center; animation: logoIn 1.8s ease-out forwards; }
-        .logo-text { font-size: 38px; font-weight: 900; letter-spacing: 5px; color: #fff; text-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .logo-sub { font-size: 12px; color: rgba(255,255,255,0.7); letter-spacing: 3px; margin-top: 8px; }
-        @keyframes logoIn {
-            0% { opacity: 0; transform: scale(0.85) translateY(20px); filter: blur(10px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0px); }
+        .logo-main {
+            font-size: 42px; font-weight: 900; letter-spacing: -1px; font-style: italic;
+            background: linear-gradient(120deg, #fff 30%, #f0f0f0 50%, #fff 70%);
+            background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: shine 1.5s linear infinite, logoPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        @keyframes shine { to { background-position: 200% center; } }
+        @keyframes logoPop { 0% { transform: scale(0.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
+        /* --- 2. 視圖控制器 --- */
         .view { display: none; min-height: 100vh; animation: fadeIn 0.5s ease; }
         .active-view { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- 2. 登入介面 --- */
-        .glass-card { 
-            background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border); border-radius: 30px; padding: 25px; margin: 20px;
+        /* --- 3. 自定義漂亮彈窗 --- */
+        .custom-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(8px);
+            display: none; align-items: center; justify-content: center; z-index: 30000;
         }
-        .input-box { width: 100%; padding: 16px; margin-bottom: 12px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.5); background: rgba(255,255,255,0.2); outline: none; font-size: 16px; }
+        .modal-content {
+            background: #fff; width: 80%; max-width: 300px; border-radius: 24px;
+            padding: 25px; text-align: center; box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            transform: scale(0.8); transition: 0.3s;
+        }
+        .modal-active .modal-content { transform: scale(1); }
+        .modal-btn { 
+            margin-top: 20px; width: 100%; padding: 12px; border-radius: 12px; 
+            border: none; background: #333; color: #fff; font-weight: bold; 
+        }
+
+        /* --- 4. 登入介面 --- */
+        .glass-card { 
+            background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); 
+            border-radius: 30px; padding: 30px; margin: 20px;
+        }
+        .input-box { width: 100%; padding: 16px; margin-bottom: 12px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.5); background: rgba(255,255,255,0.2); font-size: 16px; }
         .btn-main { width: 100%; padding: 16px; border-radius: 32px; border: none; font-weight: bold; font-size: 16px; background: linear-gradient(45deg, #5D9CEC, #A29BFE); color: #fff; box-shadow: 0 8px 20px rgba(93, 156, 236, 0.3); }
 
-        /* --- 3. 粉絲端 UI 組件 --- */
+        /* --- 5. 新人牆 --- */
         .artist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; padding-bottom: 100px; }
-        .artist-card { aspect-ratio: 1 / 1.3; border-radius: 24px; background-size: cover; background-position: center; position: relative; border: 3px solid transparent; transition: 0.3s; overflow: hidden; }
-        .artist-card.selected { border-color: #fff; transform: translateY(-5px); }
-        .card-name { position: absolute; bottom: 15px; left: 15px; color: #fff; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .artist-card { aspect-ratio: 1 / 1.3; border-radius: 24px; background-size: cover; background-position: center; position: relative; border: 4px solid transparent; transition: 0.3s; overflow: hidden; }
+        .artist-card.selected { border-color: var(--main-theme); transform: scale(0.98); }
+        .card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.4), transparent); }
+        .card-name { position: absolute; bottom: 15px; left: 15px; color: #fff; font-weight: bold; }
 
-        .circle-bar { display: flex; gap: 15px; overflow-x: auto; padding: 10px 5px; }
+        /* --- 6. 首頁組件 --- */
+        .home-header { padding: 25px; display: flex; justify-content: space-between; align-items: center; }
+        .circle-bar { display: flex; gap: 15px; overflow-x: auto; padding: 5px; }
         .circle-bar::-webkit-scrollbar { display: none; }
-        .avatar-circle { width: 66px; height: 66px; border-radius: 22px; border: 2px solid #fff; object-fit: cover; background: #fff; box-shadow: 0 5px 10px rgba(0,0,0,0.05); }
+        .avatar-circle { width: 66px; height: 66px; border-radius: 22px; border: 2px solid #fff; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 
-        /* --- 動態牆樣式 --- */
-        .feed-item {
-            margin-bottom: 15px; padding: 20px; background: rgba(255,255,255,0.4); border-radius: 24px;
-            border-left: 4px solid var(--main-theme);
-        }
-        .feed-artist { font-weight: 900; color: var(--main-theme); font-size: 14px; margin-bottom: 5px; }
-        .feed-text { font-size: 15px; line-height: 1.5; color: #333; }
-        .feed-time { font-size: 10px; color: #aaa; margin-top: 10px; }
+        .feed-item { margin-bottom: 15px; padding: 20px; background: rgba(255,255,255,0.5); border-radius: 24px; border: 1px solid rgba(255,255,255,0.7); }
+        .feed-artist { font-weight: 900; color: var(--main-theme); font-size: 14px; margin-bottom: 8px; }
 
-        .nav-bar { position: fixed; bottom: 20px; left: 5%; width: 90%; height: 70px; background: rgba(255,255,255,0.4); backdrop-filter: blur(25px); border-radius: 35px; border: 1px solid var(--glass-border); display: flex; justify-content: space-around; align-items: center; z-index: 100; }
-        .nav-item { font-size: 10px; color: #888; text-align: center; font-weight: bold; }
-        .nav-item.active { color: var(--main-theme); }
+        .nav-bar { position: fixed; bottom: 20px; left: 5%; width: 90%; height: 70px; background: rgba(255,255,255,0.6); backdrop-filter: blur(20px); border-radius: 35px; border: 1px solid var(--glass-border); display: flex; justify-content: space-around; align-items: center; }
     </style>
 </head>
 <body>
 
-    <div id="splash-screen">
-        <div class="logo-box">
-            <div style="font-size: 50px;">🌟</div>
-            <div class="logo-text">NEXT’S YOU</div>
-            <div class="logo-sub">BE THE NEXT WITH YOU</div>
-        </div>
-    </div>
+    <div id="splash-screen"><div class="logo-main">NEXT ONE</div></div>
 
     <section id="view-login" class="view">
         <div style="text-align:center; margin-top:100px;">
-            <h1 style="color: var(--main-theme); font-size:32px;">Login</h1>
-            <p style="color: #999;">開啟星球旅程</p>
+            <h1 style="color: var(--main-theme); font-weight:900;">Login</h1>
+            <p style="color:#999;">輸入帳號密碼開啟星球旅程</p>
         </div>
         <div class="glass-card">
             <input type="text" id="acc" class="input-box" placeholder="帳號">
             <input type="password" id="pwd" class="input-box" placeholder="密碼">
-            <button class="btn-main" onclick="handleLogin()">登入系統</button>
+            <button class="btn-main" onclick="handleLogin()">登入</button>
         </div>
     </section>
 
     <section id="view-onboarding" class="view">
-        <div style="padding: 40px 25px 10px;"><h2>追蹤藝人</h2><p style="color:#888;">選擇加入星球</p></div>
+        <div style="padding: 40px 25px 10px;"><h2>追蹤藝人</h2><p style="color:#888;">選擇您想加入的社群星球</p></div>
         <div class="artist-grid" id="onboardingGrid"></div>
-        <div style="position:fixed; bottom:30px; width:100%; padding:0 25px;"><button class="btn-main" onclick="saveOnboarding()">選好了，進入首頁</button></div>
+        <div style="position:fixed; bottom:30px; width:100%; padding:0 25px;">
+            <button class="btn-main" onclick="saveOnboarding()">進入首頁</button>
+        </div>
     </section>
 
     <section id="view-home" class="view">
-        <div style="padding: 25px; display:flex; justify-content:space-between; align-items:center;">
+        <div class="home-header">
             <div style="font-weight:900; color:var(--main-theme); font-size:26px; font-style:italic;">weverse</div>
             <div style="font-size:22px;">🔔</div>
         </div>
-        
-        <div class="glass-card" style="margin-top:0; padding: 15px;">
-            <div class="circle-bar" id="homeBar"></div>
-        </div>
-
-        <div style="padding: 0 20px 100px;">
-            <h3 style="margin: 20px 0 15px;">🪐 星球廣播 (Feeds)</h3>
-            <div id="feedWall">
-                </div>
+        <div class="glass-card" style="margin-top:0; padding: 15px;"><div class="circle-bar" id="homeBar"></div></div>
+        <div style="padding: 0 20px 120px;">
+            <h3 style="margin: 20px 0 15px;">🪐 星球廣播</h3>
+            <div id="feedWall"></div>
             <button onclick="logout()" style="margin-top:40px; border:none; background:none; color:#bbb; width:100%;">登出帳號</button>
         </div>
-
         <nav class="nav-bar">
-            <div class="nav-item active">🏠<br>首頁</div>
-            <div class="nav-item">🛍️<br>Shop</div>
-            <div class="nav-item">💬<br>DM</div>
-            <div class="nav-item">👤<br>我的</div>
+            <div style="text-align:center; color:var(--main-theme); font-weight:bold;">🏠<br><span style="font-size:10px;">首頁</span></div>
+            <div style="text-align:center; color:#aaa;">🛍️<br><span style="font-size:10px;">Shop</span></div>
+            <div style="text-align:center; color:#aaa;">💬<br><span style="font-size:10px;">DM</span></div>
+            <div style="text-align:center; color:#aaa;">👤<br><span style="font-size:10px;">我的</span></div>
         </nav>
     </section>
+
+    <div id="customAlert" class="custom-modal">
+        <div class="modal-content">
+            <p id="alertMsg" style="font-size:16px; font-weight:bold;"></p>
+            <button class="modal-btn" onclick="closeAlert()">知道了</button>
+        </div>
+    </div>
 
 <script>
     const ARTISTS = [
@@ -132,48 +143,41 @@
         { id: 4, name: "TXT", img: "https://placehold.co/200/00ffcc/000?text=TXT", card: "https://placehold.co/400x600/00ffcc/000?text=TXT" }
     ];
 
-    const ACCOUNTS = { "fan": { pwd: "123", role: "fan" }, "artist": { pwd: "123", role: "artist" } };
     let selectedIds = JSON.parse(localStorage.getItem("fan_joined") || "[]");
 
     window.onload = () => {
         setTimeout(() => {
             document.getElementById('splash-screen').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('splash-screen').style.display = 'none';
-                checkRoute();
-            }, 800);
-        }, 2500);
+            setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 600);
+            checkRoute();
+        }, 1500);
     };
 
     function checkRoute() {
         const role = localStorage.getItem("user_role");
         if (!role) { show('view-login'); } 
-        else if (role === 'artist') { window.location.href = 'artist.html'; } 
+        else if (role === 'artist') { myAlert("正在進入藝人後台..."); setTimeout(()=> window.location.href = 'artist.html', 1000); } 
         else {
             if (selectedIds.length === 0) { show('view-onboarding'); renderOnboarding(); } 
             else { renderHome(); renderFeeds(); show('view-home'); }
         }
     }
 
-    function show(id) {
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
-        document.getElementById(id).classList.add('active-view');
-    }
-
     function handleLogin() {
         const acc = document.getElementById('acc').value;
         const pwd = document.getElementById('pwd').value;
-        if (ACCOUNTS[acc] && ACCOUNTS[acc].pwd === pwd) {
-            localStorage.setItem("user_role", ACCOUNTS[acc].role);
+        if ((acc === 'fan' || acc === 'artist') && pwd === '123') {
+            localStorage.setItem("user_role", acc);
             localStorage.setItem("user", acc);
             checkRoute();
-        } else { alert("帳號密碼錯誤！"); }
+        } else { myAlert("帳號密碼錯誤！"); }
     }
 
     function renderOnboarding() {
         const grid = document.getElementById('onboardingGrid');
         grid.innerHTML = ARTISTS.map(a => `
             <div class="artist-card ${selectedIds.includes(a.id)?'selected':''}" onclick="toggleSelect(${a.id})" style="background-image: url('${a.card}')">
+                <div class="card-overlay"></div>
                 <div class="card-name">${a.name}</div>
             </div>
         `).join('');
@@ -186,9 +190,25 @@
     }
 
     function saveOnboarding() {
-        if(selectedIds.length === 0) return alert("請至少選擇一個團體！");
+        if(selectedIds.length === 0) return myAlert("請至少選擇一個團體！");
         localStorage.setItem("fan_joined", JSON.stringify(selectedIds));
         checkRoute();
+    }
+
+    function renderFeeds() {
+        const wall = document.getElementById('feedWall');
+        const feeds = JSON.parse(localStorage.getItem("NEXTS_YOU_DATA") || "[]");
+        if (feeds.length === 0) {
+            wall.innerHTML = `<div class="feed-item" style="text-align:center; color:#999;">目前尚無星球廣播</div>`;
+            return;
+        }
+        wall.innerHTML = feeds.map(f => `
+            <div class="feed-item">
+                <div class="feed-artist">🌟 ${f.artist}</div>
+                <div style="font-size:15px; line-height:1.5;">${f.text}</div>
+                <div style="font-size:10px; color:#bbb; margin-top:10px;">${f.time}</div>
+            </div>
+        `).join('');
     }
 
     function renderHome() {
@@ -197,28 +217,23 @@
         bar.innerHTML = joined.map(a => `<div style="text-align:center; flex-shrink:0; width:70px;"><img src="${a.img}" class="avatar-circle"><div style="font-size:11px; margin-top:5px; font-weight:600;">${a.name}</div></div>`).join('');
     }
 
-    // --- 核心：渲染藝人動態牆 ---
-   function renderFeeds() {
-    const wall = document.getElementById('feedWall');
-    // 讀取跟藝人端一模一樣的 Key
-    const feeds = JSON.parse(localStorage.getItem("NEXTS_YOU_FEEDS") || "[]");
-
-    if (feeds.length === 0) {
-        wall.innerHTML = `
-            <div class="glass-card" style="text-align:center; background:rgba(255,255,255,0.3);">
-                <p style="color:#888;">🌌 星球目前很安靜，等待藝人發文中...</p>
-            </div>`;
-        return;
+    function myAlert(msg) {
+        document.getElementById('alertMsg').innerText = msg;
+        const m = document.getElementById('customAlert');
+        m.style.display = 'flex';
+        setTimeout(() => m.classList.add('modal-active'), 10);
     }
 
-    wall.innerHTML = feeds.map(f => `
-        <div class="feed-item">
-            <div class="feed-artist">🌟 ${f.artist}</div>
-            <div class="feed-text">${f.text}</div>
-            <div class="feed-time">${f.time}</div>
-        </div>
-    `).join('');
-}
+    function closeAlert() {
+        const m = document.getElementById('customAlert');
+        m.classList.remove('modal-active');
+        setTimeout(() => m.style.display = 'none', 300);
+    }
+
+    function show(id) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
+        document.getElementById(id).classList.add('active-view');
+    }
 
     function logout() { localStorage.clear(); location.reload(); }
 </script>
