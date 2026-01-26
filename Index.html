@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Weverse Clone</title>
+    <style>
+        /* --- CSS 樣式區 --- */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { 
+            background-color: #000; color: #fff; margin: 0; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            overflow-x: hidden;
+        }
+        
+        .view { display: none; min-height: 100vh; width: 100vw; position: relative; }
+        .active-view { display: block; }
+
+        /* 標題區 */
+        .step-header { padding: 60px 25px 20px; }
+        .step-header h1 { font-size: 26px; font-weight: bold; margin: 0; line-height: 1.3; }
+        .step-header p { color: #888; font-size: 14px; margin-top: 10px; }
+
+        /* 1. 新人多選卡片牆 */
+        .card-grid { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; 
+            padding: 0 15px 150px; /* 留空間給底部按鈕 */
+        }
+        .artist-card { 
+            aspect-ratio: 1 / 1.25; border-radius: 25px; background-size: cover; 
+            background-position: center; position: relative; border: 2.5px solid transparent; 
+            transition: transform 0.2s, border-color 0.2s; cursor: pointer;
+        }
+        .artist-card.selected { border-color: #fff; transform: scale(0.98); }
+        .check-badge { 
+            position: absolute; top: 12px; right: 12px; background: #fff; color: #000; 
+            width: 22px; height: 22px; border-radius: 50%; text-align: center; 
+            line-height: 22px; font-weight: bold; font-size: 12px; display: none;
+        }
+        .selected .check-badge { display: block; }
+        .artist-name { 
+            position: absolute; bottom: 15px; left: 15px; font-weight: bold; 
+            font-size: 14px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        /* 2. 設定個人資訊頁面 */
+        .form-body { padding: 40px 25px; text-align: center; }
+        .user-input { 
+            width: 100%; padding: 18px; border-radius: 15px; border: 1px solid #333; 
+            background: #111; color: #fff; font-size: 18px; text-align: center;
+            outline: none; transition: border-color 0.3s;
+        }
+        .user-input:focus { border-color: #00f0ff; }
+        .input-hint { color: #555; font-size: 12px; margin-top: 15px; }
+
+        /* 3. 老屁股首頁 UI */
+        .home-header { 
+            padding: 15px; font-size: 20px; font-weight: bold; text-align: center; 
+            border-bottom: 0.5px solid #222; position: sticky; top: 0; background: #000; z-index: 10;
+        }
+        .avatar-bar { 
+            display: flex; overflow-x: auto; padding: 15px; gap: 12px; 
+            border-bottom: 0.5px solid #111; scrollbar-width: none;
+        }
+        .avatar-bar::-webkit-scrollbar { display: none; }
+        .circle-wrap { text-align: center; flex-shrink: 0; width: 65px; cursor: pointer; }
+        .circle { 
+            width: 60px; height: 60px; border-radius: 50%; background: #222; 
+            border: 1px solid #333; overflow: hidden; display: flex; 
+            align-items: center; justify-content: center; margin-bottom: 5px;
+        }
+        .circle img { width: 100%; height: 100%; object-fit: cover; }
+        .circle.plus { font-size: 24px; color: #fff; border: 1px dashed #555; background: #0a0a0a; }
+        .circle-name { font-size: 10px; color: #999; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* 底部固定按鈕區 */
+        .sticky-footer { 
+            position: fixed; bottom: 0; width: 100%; padding: 20px; 
+            background: linear-gradient(transparent, #000 40%); z-index: 100;
+        }
+        .btn-main { 
+            width: 100%; padding: 18px; border-radius: 40px; border: none; 
+            background: #333; color: #777; font-weight: bold; font-size: 16px; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-main.active { background: #fff; color: #000; cursor: pointer; }
+
+        /* 底部標籤列 (老屁股首頁用) */
+        .tab-bar { 
+            position: fixed; bottom: 0; width: 100%; height: 70px; background: #000; 
+            display: flex; justify-content: space-around; align-items: center; 
+            border-top: 0.5px solid #222; font-size: 22px; 
+        }
+
+        /* 重置按鈕 */
+        .btn-reset { 
+            background: none; border: 1px solid #333; color: #444; 
+            padding: 8px 15px; border-radius: 10px; margin-top: 50px; font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <section id="view-artist-select" class="view">
+        <header class="step-header">
+            <h1>歡迎！<br>選擇您感興趣的藝人</h1>
+            <p>您可以多選幾個社群加入 ✨</p>
+        </header>
+        <div class="card-grid" id="cardGrid">
+            </div>
+        <div class="sticky-footer">
+            <button id="toStep2Btn" class="btn-main" onclick="goToProfileSetup()">下一步</button>
+        </div>
+    </section>
+
+    <section id="view-profile-setup" class="view">
+        <header class="step-header">
+            <h1>設定您的使用者名稱</h1>
+            <p>這是您在 App 中的個人 ID</p>
+        </header>
+        <div class="form-body">
+            <input type="text" id="userNameInput" class="user-input" placeholder="請輸入名稱" maxlength="15">
+            <p class="input-hint">之後隨時可以修改個人資料</p>
+        </div>
+        <div class="sticky-footer">
+            <button class="btn-main active" onclick="completeRegistration()">進入 Weverse</button>
+        </div>
+    </section>
+
+    <section id="view-home" class="view">
+        <nav class="home-header">weverse</nav>
+        <div class="avatar-bar" id="avatarBar">
+            </div>
+        <main style="padding: 40px 20px; text-align: center;">
+            <h2 id="welcomeMsg" style="margin-bottom: 10px;"></h2>
+            <div style="color: #444; margin-top: 50px;">目前尚無新貼文</div>
+            <button class="btn-reset" onclick="resetApp()">重置並回歸新人身分</button>
+        </main>
+        <nav class="tab-bar">
+            <span>🏠</span><span>💬</span><span>🔔</span><span>👤</span>
+        </nav>
+    </section>
+</div>
+
+<script>
+    /* --- JS 邏輯區 --- */
+
+    // 1. 虛擬資料庫 (Artist Database)
+    const ALL_ARTISTS = [
+        { id: 1, name: "BLACKPINK", img: "https://placehold.co/100x100/ff69b4/fff?text=BP", card: "https://placehold.co/400x500/ff69b4/fff?text=BLACKPINK" },
+        { id: 2, name: "DREAMCATCHER", img: "https://placehold.co/100x100/4b0082/fff?text=DC", card: "https://placehold.co/400x500/4b0082/fff?text=DREAMCATCHER" },
+        { id: 3, name: "BABYMONSTER", img: "https://placehold.co/100x100/ff0000/fff?text=BM", card: "https://placehold.co/400x500/ff0000/fff?text=BABYMONSTER" },
+        { id: 4, name: "NCT DREAM", img: "https://placehold.co/100x100/adff2f/000?text=NCT", card: "https://placehold.co/400x500/adff2f/000?text=NCT+DREAM" },
+        { id: 5, name: "NewJeans", img: "https://placehold.co/100x100/87ceeb/fff?text=NJ", card: "https://placehold.co/400x500/87ceeb/fff?text=NewJeans" }
+    ];
+
+    // 2. 應用程式狀態 (State)
+    let state = {
+        tempSelectedIds: [],
+        userName: localStorage.getItem("wv_user_name") || "",
+        myGroups: JSON.parse(localStorage.getItem("wv_my_groups") || "[]")
+    };
+
+    // 3. 視圖控制器
+    function switchView(viewId) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
+        document.getElementById(viewId).classList.add('active-view');
+    }
+
+    // 4. 新人選取邏輯
+    function renderArtistCards() {
+        const grid = document.getElementById('cardGrid');
+        grid.innerHTML = ALL_ARTISTS.map(a => `
+            <div class="artist-card ${state.tempSelectedIds.includes(a.id) ? 'selected' : ''}" 
+                 onclick="handleCardClick(${a.id})" 
+                 style="background-image: url('${a.card}')">
+                <div class="check-badge">✓</div>
+                <div class="artist-name">${a.name}</div>
+            </div>
+        `).join('');
+    }
+
+    function handleCardClick(id) {
+        const index = state.tempSelectedIds.indexOf(id);
+        if (index === -1) {
+            state.tempSelectedIds.push(id);
+        } else {
+            state.tempSelectedIds.splice(index, 1);
+        }
+        updateNextButton();
+        renderArtistCards();
+    }
+
+    function updateNextButton() {
+        const btn = document.getElementById('toStep2Btn');
+        if (state.tempSelectedIds.length > 0) {
+            btn.classList.add('active');
+            btn.innerText = `加入 ${state.tempSelectedIds.length} 個社群，下一步`;
+        } else {
+            btn.classList.remove('active');
+            btn.innerText = "下一步";
+        }
+    }
+
+    function goToProfileSetup() {
+        if (state.tempSelectedIds.length > 0) {
+            switchView('view-profile-setup');
+        }
+    }
+
+    // 5. 註冊完成邏輯
+    function completeRegistration() {
+        const inputName = document.getElementById('userNameInput').value.trim();
+        if (!inputName) return alert("請輸入您的名稱喔！");
+
+        // 更新狀態並存入持久記憶
+        state.userName = inputName;
+        state.myGroups = ALL_ARTISTS.filter(a => state.tempSelectedIds.includes(a.id));
+
+        localStorage.setItem("wv_user_name", state.userName);
+        localStorage.setItem("wv_my_groups", JSON.stringify(state.myGroups));
+
+        initApp(); // 跳轉首頁
+    }
+
+    // 6. 老屁股首頁邏輯
+    function renderHomePage() {
+        document.getElementById('welcomeMsg').innerText = `歡迎回來，${state.userName}`;
+        const bar = document.getElementById('avatarBar');
+        
+        // 加上「+」按鈕
+        const plusBtn = `
+            <div class="circle-wrap" onclick="alert('進入新增列表...')">
+                <div class="circle plus">+</div>
+                <div class="circle-name">新增</div>
+            </div>`;
+
+        const groupItems = state.myGroups.map(g => `
+            <div class="circle-wrap">
+                <div class="circle"><img src="${g.img}"></div>
+                <div class="circle-name">${g.name}</div>
+            </div>
+        `).join('');
+
+        bar.innerHTML = plusBtn + groupItems;
+    }
+
+    function resetApp() {
+        if(confirm("確定要刪除所有資料重新開始嗎？")) {
+            localStorage.clear();
+            location.reload();
+        }
+    }
+
+    // 7. 初始化啟動器
+    function initApp() {
+        if (state.userName) {
+            // 已有資料 -> 直接去首頁
+            switchView('view-home');
+            renderHomePage();
+        } else {
+            // 新人 -> 去選卡片牆
+            switchView('view-artist-select');
+            renderArtistCards();
+        }
+    }
+
+    window.onload = initApp;
+</script>
+
+</body>
+</html>
