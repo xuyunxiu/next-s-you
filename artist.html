@@ -85,26 +85,25 @@
     };
 
     function publishFeed() {
-        const content = prompt("想對粉絲說點什麼？");
-        if (content && content.trim() !== "") {
-            // 讀取舊動態
-            let feeds = JSON.parse(localStorage.getItem("wv_feeds") || "[]");
-            
-            // 建立新動態
-            const newPost = {
-                id: Date.now(),
-                artist: currentArtist.toUpperCase(),
-                text: content,
-                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-            };
+    const content = prompt("想對粉絲說點什麼？");
+    if (content && content.trim() !== "") {
+        // 強致使用統一的 Key: NEXTS_YOU_FEEDS
+        let feeds = JSON.parse(localStorage.getItem("NEXTS_YOU_FEEDS") || "[]");
+        
+        const newPost = {
+            id: Date.now(),
+            artist: (localStorage.getItem("user") || "ARTIST").toUpperCase(),
+            text: content,
+            time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+        };
 
-            feeds.unshift(newPost); // 把最新的一則放最前面
-            localStorage.setItem("wv_feeds", JSON.stringify(feeds));
-            
-            alert("✨ 發布成功！粉絲端已同步。");
-            renderHistory();
-        }
+        feeds.unshift(newPost); 
+        localStorage.setItem("NEXTS_YOU_FEEDS", JSON.stringify(feeds));
+        
+        alert("✅ 發布成功！");
+        renderHistory(); // 重新整理藝人自己的紀錄
     }
+}
 
     function renderHistory() {
         const container = document.getElementById('feed-history');
