@@ -3,212 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>NEXT’S YOU | Artist Studio</title>
+    <title>NEXT’S YOU | Artist Hub</title>
     <style>
         :root {
             --art-purple: #A29BFE;
             --art-deep: #6C5CE7;
-            --glass-white: rgba(255, 255, 255, 0.9);
-            --bg-color: #f0f2f5;
+            --glass: rgba(255, 255, 255, 0.95);
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        
-        body { 
-            margin: 0; font-family: -apple-system, "PingFang TC", sans-serif;
-            background: #FFFFFF; height: 100vh; display: flex; flex-direction: column;
-            overflow: hidden;
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; font-family: -apple-system, sans-serif; background: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
-        /* --- 頂部導航：圖 2 質感 Logo --- */
+        /* --- 頂部 LOGO (圖 2 質感) --- */
         .header {
-            padding: 55px 20px 15px;
-            background: #fff; border-bottom: 1px solid #f0f0f0;
-            display: flex; align-items: center; justify-content: space-between;
-            position: relative; z-index: 100;
+            padding: 55px 20px 15px; background: #fff; border-bottom: 1px solid #f2f2f2;
+            display: flex; align-items: center; justify-content: space-between; z-index: 100;
         }
         .header-logo {
-            font-family: "Arial Black", sans-serif; font-size: 22px; font-weight: 900; 
-            font-style: italic; color: #FFFFFF; letter-spacing: -1px;
-            text-shadow: 0 0 12px rgba(162, 155, 254, 0.8), 0 0 5px rgba(162, 155, 254, 1);
+            font-family: "Arial Black", sans-serif; font-size: 22px; font-weight: 900; font-style: italic; 
+            color: #FFFFFF; text-shadow: 0 0 12px rgba(162, 155, 254, 0.8);
         }
-        .header-icon { font-size: 20px; color: #333; cursor: pointer; }
 
-        /* --- 粉絲問題掛載區 (影片頂部) --- */
-        .fan-context {
-            background: #f8f9fa; padding: 15px 20px;
-            border-bottom: 1px solid #eee; font-size: 13px; color: #666;
-        }
-        .fan-tag { color: var(--art-deep); font-weight: bold; margin-bottom: 4px; display: block; }
+        /* --- 視圖切換 --- */
+        .view-container { flex: 1; overflow: hidden; position: relative; }
+        .view { display: none; height: 100%; overflow-y: auto; padding: 20px; }
+        .view.active { display: block; }
 
-        /* --- 聊天動態區 --- */
-        #chatWall {
-            flex: 1; overflow-y: auto; padding: 20px;
-            background: #fff; display: flex; flex-direction: column;
-        }
-        .bubble-artist {
-            align-self: flex-end; background: var(--art-purple); color: #fff;
-            padding: 12px 18px; border-radius: 20px 20px 2px 20px;
-            font-size: 16px; line-height: 1.5; max-width: 80%;
-            margin-bottom: 15px; box-shadow: 0 4px 12px rgba(162, 155, 254, 0.2);
-            animation: bubblePop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes bubblePop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        /* --- 訊息列表 --- */
+        .msg-list-item { display: flex; align-items: center; gap: 15px; padding: 15px 0; border-bottom: 1px solid #f9f9f9; }
+        .avatar { width: 50px; height: 50px; border-radius: 18px; background: #eee; }
 
-        /* --- 核心功能：即時打字預覽框 (同步影片效果) --- */
+        /* --- 核心：對話介面 --- */
+        #view-chat { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #fff; z-index: 500; display: none; flex-direction: column; 
+        }
+
+        /* 🎬 影片亮點：自動滾動訊息條 */
+        .rolling-notice {
+            background: #f8f9fa; height: 40px; overflow: hidden;
+            display: flex; align-items: center; border-bottom: 1px solid #eee;
+        }
+        .rolling-track {
+            display: flex; white-space: nowrap; 
+            animation: scrollText 20s linear infinite;
+        }
+        .notice-item { padding: 0 30px; font-size: 13px; color: #666; font-weight: 500; }
+        @keyframes scrollText {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .chat-wall { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; }
+        .bubble-artist { 
+            align-self: flex-end; background: var(--art-purple); color: #fff; 
+            padding: 12px 18px; border-radius: 20px 20px 2px 20px; margin-bottom: 10px; 
+            max-width: 80%; box-shadow: 0 4px 10px rgba(162,155,254,0.2);
+        }
+
+        /* 🎬 影片亮點：打字即時預覽 */
         #livePreview {
-            position: fixed; bottom: 110px; left: 15px; right: 15px;
-            background: var(--glass-white); backdrop-filter: blur(15px);
-            padding: 15px; border-radius: 20px; border: 1px solid var(--art-purple);
-            box-shadow: 0 -5px 25px rgba(0,0,0,0.05);
-            display: none; z-index: 90;
-        }
-        .preview-header { font-size: 10px; color: var(--art-purple); font-weight: 900; margin-bottom: 6px; letter-spacing: 1px; }
-        .preview-text { font-size: 15px; color: #333; white-space: pre-wrap; }
-
-        /* --- 底部輸入區 --- */
-        .input-container {
-            padding: 15px 15px 40px; background: #fff;
-            border-top: 1px solid #f0f0f0; display: flex; align-items: center; gap: 12px;
-        }
-        .btn-extra { font-size: 26px; color: #ccc; width: 30px; }
-        .input-box {
-            flex: 1; background: #f1f3f5; border: none; padding: 12px 20px;
-            border-radius: 25px; font-size: 16px; font-family: inherit;
-        }
-        .btn-send {
-            width: 42px; height: 42px; background: var(--art-purple);
-            border-radius: 50%; border: none; color: white; 
-            font-size: 20px; display: flex; align-items: center; justify-content: center;
+            position: absolute; bottom: 85px; left: 15px; right: 15px;
+            background: var(--glass); backdrop-filter: blur(10px);
+            padding: 12px; border-radius: 15px; border: 1px solid var(--art-purple);
+            display: none; box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
         }
 
-        /* --- 核心功能：確認彈窗 (同步影片黑白風格) --- */
-        #confirmModal {
+        .input-area { 
+            padding: 10px 15px 35px; border-top: 1px solid #eee; 
+            display: flex; align-items: center; gap: 10px; background: #fff;
+        }
+        .input-box { flex: 1; background: #f1f3f5; border: none; padding: 12px 20px; border-radius: 25px; }
+        .btn-send { width: 40px; height: 40px; border-radius: 50%; background: var(--art-purple); border: none; color: #fff; }
+
+        /* --- 底部導航 --- */
+        .nav-bar { height: 85px; border-top: 1px solid #eee; display: flex; align-items: center; padding-bottom: 20px; }
+        .nav-item { flex: 1; text-align: center; color: #ccc; font-size: 10px; font-weight: bold; }
+        .nav-item.active { color: var(--art-purple); }
+
+        /* 🎬 影片亮點：發送確認彈窗 */
+        #modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); display: none;
-            align-items: center; justify-content: center; z-index: 1000;
+            background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000;
         }
-        .modal-body {
-            background: #fff; width: 80%; border-radius: 28px; padding: 30px;
-            text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-        }
-        .modal-text { font-size: 16px; color: #333; margin-bottom: 25px; line-height: 1.5; font-weight: 500; }
-        .modal-btns { display: flex; gap: 12px; }
-        .m-btn {
-            flex: 1; padding: 14px; border-radius: 16px; border: none; font-weight: bold; font-size: 15px;
-        }
-        .btn-no { background: #f5f5f5; color: #666; }
-        .btn-yes { background: #1a1a1a; color: #fff; }
+        .modal-card { background: #fff; width: 80%; border-radius: 25px; padding: 25px; text-align: center; }
+        .m-btn { width: 100%; padding: 12px; border-radius: 15px; border: none; font-weight: bold; margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <header class="header">
-        <div class="header-icon">❮</div>
+        <div id="backBtn" style="opacity:0;" onclick="closeChat()">❮</div>
         <div class="header-logo">NEXT’S YOU</div>
-        <div class="header-icon" onclick="logout()">⚙️</div>
+        <div onclick="location.reload()">⚙️</div>
     </header>
 
-    <div class="fan-context">
-        <span class="fan-tag">FROM FAN</span>
-        <div>歐巴！打字速度真的很快耶，是在用手機拍影片嗎？❤️</div>
-    </div>
-
-    <div id="chatWall">
-        </div>
-
-    <div id="livePreview">
-        <div class="preview-header">PREVIEW</div>
-        <div id="previewText" class="preview-text"></div>
-    </div>
-
-    <div class="input-container">
-        <div class="btn-extra">＋</div>
-        <input type="text" id="mainInput" class="input-box" placeholder="輸入訊息..." oninput="syncPreview()">
-        <button class="btn-send" onclick="showModal()">↑</button>
-    </div>
-
-    <div id="confirmModal">
-        <div class="modal-body">
-            <div class="modal-text">要發送 bubble 嗎？<br><span style="font-size:12px; color:#999; font-weight:normal;">訊息將同步至所有粉絲星球</span></div>
-            <div class="modal-btns">
-                <button class="m-btn btn-no" onclick="closeModal()">取消</button>
-                <button class="m-btn btn-yes" onclick="finalSend()">確定</button>
+    <div class="view-container">
+        <section id="tab-studio" class="view active">
+            <h2 style="font-weight:900;">Studio</h2>
+            <div style="background:#f9f9f9; padding:20px; border-radius:20px;">
+                <textarea id="studioInput" style="width:100%; height:80px; border:none; background:transparent;" placeholder="發布動態..."></textarea>
+                <button onclick="alert('已發布')" style="width:100%; padding:10px; background:var(--art-purple); border:none; color:#fff; border-radius:10px;">發布</button>
             </div>
+        </section>
+
+        <section id="tab-msg" class="view">
+            <h2 style="font-weight:900;">Messages</h2>
+            <div class="msg-list-item" onclick="openChat()">
+                <div class="avatar"></div>
+                <div>
+                    <div style="font-weight:bold;">粉絲社群</div>
+                    <div style="font-size:12px; color:#999;">點擊進入泡泡對話模式...</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-chat">
+            <div class="rolling-notice">
+                <div class="rolling-track">
+                    <div class="notice-item">歐巴今天吃飯了嗎？🍚</div>
+                    <div class="notice-item">打字速度真的好快喔！✨</div>
+                    <div class="notice-item">期待週末的演唱會！🎤</div>
+                    <div class="notice-item">要多多休息喔～💙</div>
+                    <div class="notice-item">歐巴今天吃飯了嗎？🍚</div>
+                    <div class="notice-item">打字速度真的好快喔！✨</div>
+                    <div class="notice-item">期待週末的演唱會！🎤</div>
+                    <div class="notice-item">要多多休息喔～💙</div>
+                </div>
+            </div>
+
+            <div class="chat-wall" id="chatWall"></div>
+
+            <div id="livePreview">
+                <div style="font-size:9px; color:var(--art-purple); font-weight:900;">PREVIEW</div>
+                <div id="previewContent"></div>
+            </div>
+
+            <div class="input-area">
+                <div style="font-size:24px; color:#ccc;">＋</div>
+                <input type="text" id="chatInput" class="input-box" placeholder="輸入訊息..." oninput="showPreview()">
+                <button class="btn-send" onclick="showConfirm()">↑</button>
+            </div>
+        </section>
+    </div>
+
+    <nav class="nav-bar">
+        <div class="nav-item active" onclick="switchTab('studio', this)">🎨<br>工作室</div>
+        <div class="nav-item" onclick="switchTab('msg', this)">💬<br>訊息</div>
+        <div class="nav-item">📊<br>數據</div>
+    </nav>
+
+    <div id="modal">
+        <div class="modal-card">
+            <p style="font-weight:bold;">要發送 bubble 嗎？</p>
+            <button class="m-btn" style="background:#1a1a1a; color:#fff;" onclick="sendBubble()">確定</button>
+            <button class="m-btn" style="background:#eee;" onclick="document.getElementById('modal').style.display='none'">取消</button>
         </div>
     </div>
 
 <script>
-    const input = document.getElementById('mainInput');
-    const preview = document.getElementById('livePreview');
-    const previewText = document.getElementById('previewText');
-    const modal = document.getElementById('confirmModal');
-    const chatWall = document.getElementById('chatWall');
+    function switchTab(id, el) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById('tab-'+id).classList.add('active');
+        el.classList.add('active');
+        closeChat();
+    }
 
-    // 初始化：載入歷史紀錄
-    window.onload = () => { renderChat(); };
+    function openChat() {
+        document.getElementById('view-chat').style.display = 'flex';
+        document.getElementById('backBtn').style.opacity = '1';
+        renderBubbles();
+    }
 
-    // 1. 即時同步預覽 (同步影片打字效果)
-    function syncPreview() {
-        const val = input.value;
-        if (val.length > 0) {
-            preview.style.display = 'block';
-            previewText.innerText = val;
+    function closeChat() {
+        document.getElementById('view-chat').style.display = 'none';
+        document.getElementById('backBtn').style.opacity = '0';
+    }
+
+    function showPreview() {
+        const val = document.getElementById('chatInput').value;
+        const pre = document.getElementById('livePreview');
+        if(val) {
+            pre.style.display = 'block';
+            document.getElementById('previewContent').innerText = val;
         } else {
-            preview.style.display = 'none';
+            pre.style.display = 'none';
         }
     }
 
-    // 2. 顯示發送確認框
-    function showModal() {
-        if (!input.value.trim()) return;
-        modal.style.display = 'flex';
+    function showConfirm() {
+        if(!document.getElementById('chatInput').value.trim()) return;
+        document.getElementById('modal').style.display = 'flex';
     }
 
-    function closeModal() {
-        modal.style.display = 'none';
-    }
-
-    // 3. 確定發送 (寫入資料庫並同步粉絲端)
-    function finalSend() {
-        const text = input.value.trim();
+    function sendBubble() {
+        const txt = document.getElementById('chatInput').value;
         const feeds = JSON.parse(localStorage.getItem("NEXTS_YOU_DATA") || "[]");
-        
-        const newPost = {
-            id: Date.now(),
-            artist: "BTS", // 預設身分
-            text: text,
-            time: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
-        };
-
-        feeds.unshift(newPost);
+        feeds.unshift({ artist: "BTS", text: txt, time: new Date().toLocaleTimeString() });
         localStorage.setItem("NEXTS_YOU_DATA", JSON.stringify(feeds));
-
-        // 清空介面
-        input.value = "";
-        preview.style.display = 'none';
-        closeModal();
-        renderChat();
-
-        // 滾動到底部
-        chatWall.scrollTop = chatWall.scrollHeight;
+        
+        document.getElementById('chatInput').value = '';
+        document.getElementById('livePreview').style.display = 'none';
+        document.getElementById('modal').style.display = 'none';
+        renderBubbles();
     }
 
-    function renderChat() {
+    function renderBubbles() {
         const feeds = JSON.parse(localStorage.getItem("NEXTS_YOU_DATA") || "[]");
-        const myFeeds = feeds.filter(f => f.artist === "BTS").reverse(); // 聊天由舊到新
-        
-        chatWall.innerHTML = myFeeds.map(f => `
+        document.getElementById('chatWall').innerHTML = feeds.filter(f => f.artist === "BTS").reverse().map(f => `
             <div class="bubble-artist">${f.text}</div>
         `).join('');
-        chatWall.scrollTop = chatWall.scrollHeight;
-    }
-
-    function logout() {
-        if(confirm("確定登出工作室？")) {
-            localStorage.clear();
-            window.location.href = 'index.html';
-        }
+        const wall = document.getElementById('chatWall');
+        wall.scrollTop = wall.scrollHeight;
     }
 </script>
 </body>
