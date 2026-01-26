@@ -30,11 +30,10 @@
         
         .shimmer-text {
             font-family: "Arial Black", sans-serif; font-size: 42px; font-weight: 900; 
-            font-style: italic; letter-spacing: -1.5px;
-            fill: url(#shimmerGrad);
+            font-style: italic; letter-spacing: -1.5px; fill: url(#shimmerGrad);
         }
 
-        /* --- 介面控制 --- */
+        /* --- 視圖控制 --- */
         .view { display: none; min-height: 100vh; animation: fadeIn 0.6s ease forwards; }
         .active-view { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -48,10 +47,10 @@
         .btn-main { 
             width: 100%; padding: 18px; border-radius: 35px; border: none; font-weight: bold; font-size: 17px;
             background: linear-gradient(45deg, #5D9CEC, #A29BFE); color: #fff;
-            box-shadow: 0 10px 25px rgba(93, 156, 236, 0.3);
+            box-shadow: 0 10px 25px rgba(93, 156, 236, 0.3); transition: 0.3s;
         }
+        .btn-main:active { transform: scale(0.95); }
 
-        /* --- 導航欄 --- */
         .nav-bar {
             position: fixed; bottom: 25px; left: 5%; width: 90%; height: 75px;
             background: rgba(255,255,255,0.8); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
@@ -62,7 +61,6 @@
         .nav-item { text-align: center; color: #ccc; font-weight: bold; flex: 1; }
         .nav-item.active { color: var(--main-theme); }
 
-        /* 動態牆樣式 */
         .feed-item { margin-bottom: 18px; padding: 25px; background: rgba(255,255,255,0.7); border-radius: 30px; border: 1px solid #fff; }
         .artist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; padding-bottom: 150px; }
         .artist-card { aspect-ratio: 1/1.3; border-radius: 28px; background-size: cover; position: relative; border: 4px solid transparent; transition: 0.3s; }
@@ -75,15 +73,9 @@
         <svg class="logo-svg" viewBox="0 0 400 80">
             <defs>
                 <linearGradient id="shimmerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#5D9CEC">
-                        <animate attributeName="offset" values="-1; 2" dur="2s" repeatCount="indefinite" />
-                    </stop>
-                    <stop offset="50%" stop-color="#FFFFFF">
-                        <animate attributeName="offset" values="-0.5; 2.5" dur="2s" repeatCount="indefinite" />
-                    </stop>
-                    <stop offset="100%" stop-color="#A29BFE">
-                        <animate attributeName="offset" values="0; 3" dur="2s" repeatCount="indefinite" />
-                    </stop>
+                    <stop offset="0%" stop-color="#5D9CEC"><animate attributeName="offset" values="-1; 2" dur="2s" repeatCount="indefinite" /></stop>
+                    <stop offset="50%" stop-color="#FFFFFF"><animate attributeName="offset" values="-0.5; 2.5" dur="2s" repeatCount="indefinite" /></stop>
+                    <stop offset="100%" stop-color="#A29BFE"><animate attributeName="offset" values="0; 3" dur="2s" repeatCount="indefinite" /></stop>
                 </linearGradient>
             </defs>
             <text x="50%" y="55" text-anchor="middle" class="shimmer-text">NEXT’S YOU</text>
@@ -93,10 +85,10 @@
     <section id="view-login" class="view">
         <div style="text-align:center; margin: 100px 0 30px;">
             <h1 style="color:var(--main-theme); font-style:italic; font-weight:900; font-size:38px; margin:0;">Login</h1>
-            <p style="color:#aaa; font-size:14px;">輸入帳號密碼開啟星球旅程</p>
+            <p style="color:#aaa; font-size:14px;">輸入 fan 或 artist 進入不同星球</p>
         </div>
         <div class="glass-card">
-            <input type="text" id="acc" style="width:100%; padding:18px; margin-bottom:15px; border-radius:18px; border:1px solid #eee; background:rgba(255,255,255,0.5);" placeholder="帳號 (fan)">
+            <input type="text" id="acc" style="width:100%; padding:18px; margin-bottom:15px; border-radius:18px; border:1px solid #eee; background:rgba(255,255,255,0.5);" placeholder="帳號">
             <input type="password" id="pwd" style="width:100%; padding:18px; margin-bottom:20px; border-radius:18px; border:1px solid #eee; background:rgba(255,255,255,0.5);" placeholder="密碼">
             <button class="btn-main" onclick="handleLogin()">登入星球</button>
         </div>
@@ -150,22 +142,42 @@
                 ss.style.opacity = '0';
                 setTimeout(() => { 
                     ss.style.display = 'none';
-                    if (!localStorage.getItem("fan_logged")) show('view-login');
-                    else checkRoute();
+                    // 恢復自動路由偵測
+                    checkGlobalRoute();
                 }, 800);
-            }, 2200); // 延長啟動時間感受流光
+            }, 2000);
         };
 
-        function checkRoute() {
-            if (selectedIds.length === 0) { show('view-onboarding'); renderOnboarding(); }
-            else { renderHome(); renderFeeds(); show('view-home'); }
+        function checkGlobalRoute() {
+            const role = localStorage.getItem("user_role");
+            if (!role) {
+                show('view-login');
+            } else if (role === 'artist') {
+                window.location.href = 'artist.html';
+            } else {
+                if (selectedIds.length === 0) { show('view-onboarding'); renderOnboarding(); }
+                else { renderHome(); renderFeeds(); show('view-home'); }
+            }
         }
 
+        // --- 核心恢復：全能登入邏輯 ---
         function handleLogin() {
-            if (document.getElementById('acc').value === 'fan') {
-                localStorage.setItem("fan_logged", "true");
-                checkRoute();
-            } else alert("帳號請輸入 fan");
+            const acc = document.getElementById('acc').value.trim().toLowerCase();
+            const pwd = document.getElementById('pwd').value;
+
+            if (pwd === '123') {
+                if (acc === 'artist') {
+                    localStorage.setItem("user_role", "artist");
+                    window.location.href = 'artist.html';
+                } else if (acc === 'fan') {
+                    localStorage.setItem("user_role", "fan");
+                    checkGlobalRoute();
+                } else {
+                    alert("請輸入 fan 或 artist");
+                }
+            } else {
+                alert("密碼錯誤");
+            }
         }
 
         function renderOnboarding() {
@@ -184,7 +196,7 @@
         function saveOnboarding() {
             if(selectedIds.length === 0) return alert("請至少選擇一個團體！");
             localStorage.setItem("fan_joined", JSON.stringify(selectedIds));
-            checkRoute();
+            checkGlobalRoute();
         }
 
         function renderFeeds() {
@@ -203,7 +215,7 @@
             document.getElementById(id).classList.add('active-view');
         }
 
-        function logout() { localStorage.removeItem("fan_logged"); location.reload(); }
+        function logout() { localStorage.clear(); location.reload(); }
     </script>
 </body>
 </html>
