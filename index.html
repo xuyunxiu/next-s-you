@@ -3,223 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>Weverse Professional Project</title>
+    <title>Weverse Liquid Glass Edition</title>
     <style>
-        /* --- 核心樣式 (黑金質感) --- */
+        /* --- 夢幻液態玻璃樣式 --- */
+        :root {
+            --sky-blue: #87CEEB;
+            --light-purple: #E6E6FA;
+            --glass-white: rgba(255, 255, 255, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --text-main: #2c3e50;
+        }
+
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #000; color: #fff; margin: 0; font-family: -apple-system, sans-serif; overflow-x: hidden; }
-        .view { display: none; min-height: 100vh; width: 100vw; }
-        .active-view { display: block; }
-
-        /* 標題區 */
-        .step-header { padding: 60px 25px 20px; }
-        .step-header h1 { font-size: 24px; font-weight: bold; margin: 0; }
-        .step-header p { color: #888; font-size: 14px; margin-top: 8px; }
-
-        /* 1. 卡片牆 */
-        .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 15px 150px; }
-        .artist-card { 
-            aspect-ratio: 1 / 1.25; border-radius: 20px; background-size: cover; background-position: center;
-            position: relative; border: 2.5px solid transparent; transition: 0.2s; cursor: pointer;
-        }
-        .artist-card.selected { border-color: #fff; transform: scale(0.98); }
-        .check-badge { 
-            position: absolute; top: 10px; right: 10px; background: #fff; color: #000; 
-            width: 20px; height: 20px; border-radius: 50%; text-align: center; 
-            line-height: 20px; font-weight: bold; font-size: 11px; display: none;
-        }
-        .selected .check-badge { display: block; }
-        .artist-name { position: absolute; bottom: 12px; left: 12px; font-weight: bold; z-index: 2; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-
-        /* 2. 使用者設定 */
-        .input-wrap { padding: 40px 20px; text-align: center; }
-        .user-input { 
-            width: 100%; padding: 18px; border-radius: 12px; border: 1px solid #333; 
-            background: #111; color: #fff; font-size: 18px; text-align: center; outline: none;
-        }
-
-        /* 3. 老屁股首頁 */
-        .home-nav { padding: 15px; text-align: center; font-weight: bold; border-bottom: 0.5px solid #222; font-size: 18px; position: sticky; top:0; background:#000; z-index:10; }
-        .avatar-bar { display: flex; padding: 15px; gap: 12px; overflow-x: auto; border-bottom: 0.5px solid #111; }
-        .avatar-bar::-webkit-scrollbar { display: none; }
-        .circle-wrap { text-align: center; flex-shrink: 0; width: 65px; cursor: pointer; }
-        .circle { width: 60px; height: 60px; border-radius: 50%; background: #222; border: 1px solid #333; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 5px; }
-        .circle img { width: 100%; height: 100%; object-fit: cover; }
-        .circle-name { font-size: 10px; color: #999; }
-
-        /* 4. 星球內部 */
-        .planet-header { height: 220px; background-size: cover; background-position: center; position: relative; display: flex; align-items: flex-end; padding: 20px; }
-        .planet-header::before { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(transparent, rgba(0,0,0,0.7)); }
-        .back-btn { position: absolute; top: 40px; left: 20px; font-size: 30px; z-index: 10; cursor: pointer; }
-        .planet-title { position: relative; font-size: 26px; font-weight: bold; z-index: 5; }
-        .planet-tabs { display: flex; justify-content: space-around; padding: 15px; border-bottom: 0.5px solid #222; position: sticky; top:0; background:#000; z-index:10; }
-        .tab { color: #888; font-weight: bold; padding-bottom: 8px; }
-        .tab.active { color: #fff; border-bottom: 2px solid #fff; }
-
-        /* 動態 Feed 樣式 */
-        .feed-container { padding: 15px; padding-bottom: 100px; }
-        .post-card { background: #111; border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 0.5px solid #222; }
-        .post-header { display: flex; align-items: center; margin-bottom: 10px; }
-        .post-avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; background: #333; }
-        .post-author { font-weight: bold; font-size: 14px; }
-        .post-time { font-size: 11px; color: #555; margin-left: auto; }
-        .post-content { font-size: 14px; line-height: 1.5; color: #ccc; }
-
-        /* 底部固定按鈕 & 導航列 */
-        .footer { position: fixed; bottom: 0; width: 100%; padding: 20px; background: linear-gradient(transparent, #000 40%); z-index: 100; }
-        .btn-main { width: 100%; padding: 18px; border-radius: 35px; border: none; background: #333; color: #666; font-weight: bold; font-size: 16px; transition: 0.3s; }
-        .btn-main.ready { background: #fff; color: #000; cursor: pointer; }
-        .nav-bar { position: fixed; bottom: 0; width: 100%; height: 70px; background: #000; display: flex; justify-content: space-around; align-items: center; border-top: 0.5px solid #222; font-size: 22px; z-index: 20; }
         
-        /* 彈窗樣式 */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; }
-        .modal-content { background: #111; width: 85%; padding: 25px; border-radius: 20px; text-align: center; }
+        body { 
+            margin: 0; 
+            font-family: -apple-system, sans-serif; 
+            background: linear-gradient(135deg, var(--sky-blue), var(--light-purple), #ffffff);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--text-main);
+        }
+
+        .view { display: none; min-height: 100vh; width: 100vw; }
+        .active-view { display: block; animation: fadeIn 0.5s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 液態玻璃卡片通用樣式 */
+        .glass-panel {
+            background: var(--glass-white);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+        }
+
+        /* 1. 列表頁與首頁頭部 */
+        .step-header { padding: 40px 20px 10px; display: flex; align-items: center; }
+        .back-arrow { font-size: 28px; margin-right: 15px; cursor: pointer; color: var(--text-main); }
+        .search-bar { 
+            background: rgba(255, 255, 255, 0.4); 
+            border-radius: 12px; padding: 12px; flex: 1; 
+            color: #555; font-size: 14px; border: 1px solid var(--glass-border);
+        }
+        
+        /* 2. 藝人列表項目 (截圖二升級版) */
+        .artist-list { padding: 10px 20px 100px; }
+        .artist-item { 
+            display: flex; align-items: center; margin-bottom: 15px; 
+            padding: 15px; transition: 0.3s;
+        }
+        .artist-info-img { width: 65px; height: 65px; border-radius: 18px; object-fit: cover; margin-right: 15px; border: 2px solid #fff; }
+        .artist-detail h3 { margin: 0; font-size: 16px; color: #333; }
+        .artist-detail p { margin: 4px 0 0; font-size: 10px; color: #666; font-weight: 500; }
+        
+        .btn-join { 
+            margin-left: auto; 
+            background: linear-gradient(45deg, #00d2ff, #92fe9d); 
+            color: #fff; border: none; padding: 8px 20px; border-radius: 20px; 
+            font-weight: bold; font-size: 13px; box-shadow: 0 4px 15px rgba(0,210,255,0.3);
+        }
+        .btn-join.joined { background: rgba(0,0,0,0.1); color: #888; box-shadow: none; }
+
+        /* 3. 首頁社區圓圈 (截圖一升級版) */
+        .home-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .logo-font { font-size: 24px; font-weight: 900; background: linear-gradient(to right, #2c3e50, #4b0082); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .community-container { margin: 15px; padding: 20px 10px; }
+        .avatar-scroll { display: flex; gap: 18px; overflow-x: auto; padding: 5px; }
+        .avatar-scroll::-webkit-scrollbar { display: none; }
+        
+        .circle-wrap { text-align: center; flex-shrink: 0; width: 68px; position: relative; }
+        .circle { 
+            width: 64px; height: 64px; border-radius: 22px; 
+            background: #fff; overflow: hidden; display: flex; 
+            align-items: center; justify-content: center; margin-bottom: 8px; 
+            border: 2px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .circle img { width: 100%; height: 100%; object-fit: cover; }
+        .circle-name { font-size: 11px; color: #444; font-weight: 600; }
+        .notif-dot { position: absolute; top: -3px; right: -3px; background: #ff5e62; width: 10px; height: 10px; border-radius: 50%; border: 2px solid #fff; }
+
+        /* 底部導航列 */
+        .nav-bar { 
+            position: fixed; bottom: 15px; left: 5%; width: 90%; height: 70px; 
+            background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            display: flex; justify-content: space-around; align-items: center; 
+            border-radius: 25px; border: 1px solid var(--glass-border); z-index: 100;
+        }
+        .nav-item { text-align: center; font-size: 10px; color: #666; font-weight: bold; }
+        .nav-icon { font-size: 24px; margin-bottom: 2px; display: block; }
+        .nav-item.active { color: #5d9cec; }
+
+        /* 星球頁面 */
+        .planet-view { background: #fff; border-radius: 30px 30px 0 0; margin-top: -30px; position: relative; min-height: 80vh; padding: 20px; }
     </style>
 </head>
 <body>
 
 <div id="app">
-    <section id="view-artist-select" class="view">
-        <div class="step-header"><h1>選擇感興趣的藝人</h1><p>請多選幾個喜歡的社群吧！</p></div>
-        <div class="card-grid" id="cardGrid"></div>
-        <div class="footer"><button id="nextStepBtn" class="btn-main" onclick="toProfileStep()">下一步</button></div>
-    </section>
-
-    <section id="view-profile-setup" class="view">
-        <div class="step-header"><h1>設定您的使用者名稱</h1><p>這是您的全球顯示名稱</p></div>
-        <div class="input-wrap"><input type="text" id="nameInput" class="user-input" placeholder="請輸入名稱" maxlength="15"></div>
-        <div class="footer"><button class="btn-main ready" onclick="completeJoin()">進入 Weverse</button></div>
+    <section id="view-artist-list" class="view">
+        <div class="step-header">
+            <span class="back-arrow" onclick="startApp()">‹</span>
+            <div class="search-bar">🔍 搜尋您的本命藝人...</div>
+        </div>
+        <div class="artist-list" id="artistSelectionList"></div>
     </section>
 
     <section id="view-home" class="view">
-        <div class="home-nav">weverse</div>
-        <div class="avatar-bar" id="avatarBar"></div>
-        <main style="padding: 20px; text-align: center;">
-            <p id="welcomeUser" style="color:#888"></p>
-            <div id="homeFeed" class="feed-container">
+        <div class="home-header">
+            <div class="logo-font">weverse</div>
+            <div style="font-size: 22px;">🔔</div>
+        </div>
+        
+        <div class="community-container glass-panel">
+            <div class="avatar-scroll" id="homeCircleBar"></div>
+        </div>
+
+        <div style="padding: 10px 20px;">
+            <div class="glass-panel" style="overflow: hidden; margin-bottom: 20px; border:none; background: rgba(255,255,255,0.5);">
+                <div style="height: 180px; background: url('https://placehold.co/600x300/87CEEB/fff?text=New+Community') center/cover;"></div>
+                <div style="padding: 20px;">
+                    <h3 style="margin:0; font-size:18px;">✨ 新鮮事：社群功能升級</h3>
+                    <p style="color:#666; font-size:14px; margin-top:8px;">現在可以享受更流暢的液態玻璃介面體驗囉！</p>
                 </div>
-            <button onclick="clearAll()" style="background:none; border:1px solid #222; color:#333; padding:8px; border-radius:8px; margin-top:20px;">重置 App 資料</button>
-        </main>
-        <nav class="nav-bar"><span>🏠</span><span>💬</span><span>🔔</span><span>👤</span></nav>
+            </div>
+        </div>
+
+        <nav class="nav-bar">
+            <div class="nav-item active"><span class="nav-icon">🏠</span>首頁</div>
+            <div class="nav-item"><span class="nav-icon">🛍️</span>Shop</div>
+            <div class="nav-item"><span class="nav-icon">💬</span>DM</div>
+            <div class="nav-item" onclick="clearAll()"><span class="nav-icon">👤</span>Mine</div>
+        </nav>
     </section>
 
     <section id="view-planet" class="view">
-        <div class="back-btn" onclick="backToHome()">‹</div>
-        <div id="planetHeader" class="planet-header"><div id="planetName" class="planet-title"></div></div>
-        <div class="planet-tabs"><div class="tab active">Feed</div><div class="tab">Artist</div><div class="tab">Media</div></div>
-        <div id="planetFeed" class="feed-container"></div>
-    </section>
-
-    <div id="nicknameModal" class="modal">
-        <div class="modal-content">
-            <h2>設定社群暱稱</h2>
-            <p style="color:#888; font-size:14px;">在 <span id="targetPlanetName"></span> 使用的暱稱</p>
-            <input type="text" id="planetNicknameInput" class="user-input" placeholder="輸入社群暱稱">
-            <button class="btn-main ready" style="margin-top:20px;" onclick="savePlanetNickname()">開始加入</button>
+        <div id="planetBanner" style="height: 300px; background-size: cover; background-position: center;">
+             <div style="padding: 50px 20px; font-size: 30px; color: #fff;" onclick="startApp()">‹</div>
         </div>
-    </div>
+        <div class="planet-view">
+            <h1 id="planetTitle" style="margin: 0; color: #333;"></h1>
+            <div style="display:flex; gap: 20px; margin-top: 20px; font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                <div style="color: #5d9cec; border-bottom: 3px solid #5d9cec; padding-bottom: 10px;">Feed</div>
+                <div style="color: #bbb;">Artist</div>
+                <div style="color: #bbb;">Media</div>
+            </div>
+            <div style="padding: 40px 0; text-align: center; color: #999;">
+                <p>✨ 歡迎來到專屬星球 ✨</p>
+            </div>
+        </div>
+    </section>
 </div>
 
 <script>
-    // --- 藝人 & 模擬貼文資料 ---
-    const ARTIST_LIST = [
-        { id: 1, name: "BLACKPINK", img: "https://placehold.co/100/ff69b4/fff?text=BP", card: "https://placehold.co/400x500/ff69b4/fff?text=BLACKPINK", posts: ["大家好，我們是 BLACKPINK！", "期待與大家見面 ✨", "新專輯準備中..."] },
-        { id: 2, name: "DREAMCATCHER", img: "https://placehold.co/100/4b0082/fff?text=DC", card: "https://placehold.co/400x500/4b0082/fff?text=DREAMCATCHER", posts: ["In the Frozen... ❄️", "今天也要加油喔 Somnia！"] },
-        { id: 3, name: "BABYMONSTER", img: "https://placehold.co/100/ff0000/fff?text=BM", card: "https://placehold.co/400x500/ff0000/fff?text=BABYMONSTER", posts: ["SHEESH! 🤘", "練習室日常公開"] },
-        { id: 4, name: "NCT DREAM", img: "https://placehold.co/100/adff2f/000?text=NCT", card: "https://placehold.co/400x500/adff2f/000?text=NCT+DREAM", posts: ["7DREAM 永遠在一起！", "YO DREAM!"] }
+    const ARTISTS = [
+        { id: 1, name: "BTS", members: "RM • JIN • SUGA • J-HOPE • JIMIN • V • JUNGKOOK", img: "https://placehold.co/200/ff0080/fff?text=BTS", card: "https://placehold.co/600x400/ff0080/fff?text=BTS+WORLD" },
+        { id: 2, name: "SEVENTEEN", members: "S.COUPS • JEONGHAN • JOSHUA • JUN • HOSHI • WONWOO...", img: "https://placehold.co/200/87ceeb/fff?text=SVT", card: "https://placehold.co/600x400/87ceeb/fff?text=SEVENTEEN" },
+        { id: 3, name: "ENHYPEN", members: "JUNGWON • HEESEUNG • JAY • JAKE • SUNGHOON • SUNOO...", img: "https://placehold.co/200/00008b/fff?text=EN-", card: "https://placehold.co/600x400/00008b/fff?text=ENHYPEN" },
+        { id: 4, name: "TXT", members: "SOUBIN • YEONJUN • BEOMGYU • TAEHYUN • HUENINGKAI", img: "https://placehold.co/200/00ffcc/000?text=TXT", card: "https://placehold.co/600x400/00ffcc/000?text=TXT" },
+        { id: 5, name: "BABYMONSTER", members: "RUKA • PHARITA • ASA • AHYEON • RAMI • RORA • CHIQUITA", img: "https://placehold.co/200/000/fff?text=BM", card: "https://placehold.co/600x400/000/fff?text=BAEMON" }
     ];
 
-    let state = {
-        tempSelected: [],
-        currentPlanetId: null,
-        nicknames: JSON.parse(localStorage.getItem("wv_nicknames") || "{}")
-    };
+    let joinedIds = JSON.parse(localStorage.getItem("wv_joined") || "[]");
 
     function show(id) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
         document.getElementById(id).classList.add('active-view');
     }
 
-    // --- 流程 1 & 2 (註冊) ---
-    function renderCards() {
-        const grid = document.getElementById('cardGrid');
-        grid.innerHTML = ARTIST_LIST.map(a => `
-            <div class="artist-card ${state.tempSelected.includes(a.id) ? 'selected' : ''}" onclick="toggleSelect(${a.id})" style="background-image: url('${a.card}')">
-                <div class="check-badge">✓</div><div class="artist-name">${a.name}</div>
-            </div>`).join('');
-    }
-    function toggleSelect(id) {
-        const i = state.tempSelected.indexOf(id);
-        if (i === -1) state.tempSelected.push(id); else state.tempSelected.splice(i, 1);
-        const btn = document.getElementById('nextStepBtn');
-        btn.classList.toggle('ready', state.tempSelected.length > 0);
-        btn.innerText = state.tempSelected.length > 0 ? `加入 ${state.tempSelected.length} 個社群，下一步` : "下一步";
-        renderCards();
-    }
-    function toProfileStep() { if (state.tempSelected.length > 0) show('view-profile-setup'); }
-    function completeJoin() {
-        const name = document.getElementById('nameInput').value.trim();
-        if (!name) return alert("請輸入名稱！");
-        localStorage.setItem("wv_user", name);
-        localStorage.setItem("wv_groups", JSON.stringify(ARTIST_LIST.filter(a => state.tempSelected.includes(a.id))));
-        startApp();
-    }
-
-    // --- 流程 3 (首頁) ---
-    function startApp() {
-        const name = localStorage.getItem("wv_user");
-        if (!name) { show('view-artist-select'); renderCards(); return; }
-        document.getElementById('welcomeUser').innerText = `Global ID: ${name}`;
-        const groups = JSON.parse(localStorage.getItem("wv_groups") || "[]");
-        const bar = document.getElementById('avatarBar');
-        bar.innerHTML = `<div class="circle-wrap"><div class="circle" style="border:1px dashed #444">+</div><div class="circle-name">新增</div></div>` + 
-            groups.map(g => `<div class="circle-wrap" onclick="checkPlanetAccess(${g.id})"><div class="circle"><img src="${g.img}"></div><div class="circle-name">${g.name}</div></div>`).join('');
-        show('view-home');
-    }
-
-    // --- 流程 4 (星球 & 暱稱) ---
-    function checkPlanetAccess(id) {
-        state.currentPlanetId = id;
-        const artist = ARTIST_LIST.find(a => a.id === id);
-        if (!state.nicknames[id]) {
-            document.getElementById('targetPlanetName').innerText = artist.name;
-            document.getElementById('nicknameModal').style.display = 'flex';
-        } else {
-            openPlanet(id);
-        }
-    }
-
-    function savePlanetNickname() {
-        const nick = document.getElementById('planetNicknameInput').value.trim();
-        if (!nick) return alert("請輸入社群專屬暱稱！");
-        state.nicknames[state.currentPlanetId] = nick;
-        localStorage.setItem("wv_nicknames", JSON.stringify(state.nicknames));
-        document.getElementById('nicknameModal').style.display = 'none';
-        openPlanet(state.currentPlanetId);
-    }
-
-    function openPlanet(id) {
-        const artist = ARTIST_LIST.find(a => a.id === id);
-        document.getElementById('planetName').innerText = artist.name;
-        document.getElementById('planetHeader').style.backgroundImage = `url('${artist.card}')`;
-        
-        // 渲染動態 Feed
-        const feed = document.getElementById('planetFeed');
-        feed.innerHTML = artist.posts.map(p => `
-            <div class="post-card">
-                <div class="post-header">
-                    <div class="post-avatar"><img src="${artist.img}" style="width:100%; border-radius:50%;"></div>
-                    <div><div class="post-author">${artist.name}</div><div class="post-time">剛剛</div></div>
+    function renderArtistSelection() {
+        const list = document.getElementById('artistSelectionList');
+        list.innerHTML = ARTISTS.map(a => `
+            <div class="artist-item glass-panel">
+                <img src="${a.img}" class="artist-info-img">
+                <div class="artist-detail">
+                    <h3>${a.name}</h3>
+                    <p>${a.members}</p>
                 </div>
-                <div class="post-content">${p}</div>
+                <button class="btn-join ${joinedIds.includes(a.id)?'joined':''}" onclick="toggleJoin(${a.id})">
+                    ${joinedIds.includes(a.id)?'已加入':'加入'}
+                </button>
+            </div>
+        `).join('');
+    }
+
+    function toggleJoin(id) {
+        const idx = joinedIds.indexOf(id);
+        if(idx === -1) joinedIds.push(id);
+        else joinedIds.splice(idx, 1);
+        localStorage.setItem("wv_joined", JSON.stringify(joinedIds));
+        renderArtistSelection();
+    }
+
+    function startApp() {
+        const bar = document.getElementById('homeCircleBar');
+        const joinedArtists = ARTISTS.filter(a => joinedIds.includes(a.id));
+        
+        let html = `
+            <div class="circle-wrap" onclick="show('view-artist-list'); renderArtistSelection();">
+                <div class="circle" style="font-size:30px; color:#5d9cec; border:2px dashed #5d9cec;">+</div>
+                <div class="circle-name" style="color:#5d9cec">加入</div>
+            </div>
+        `;
+        
+        html += joinedArtists.map(a => `
+            <div class="circle-wrap" onclick="openPlanet(${a.id})">
+                <div class="notif-dot"></div>
+                <div class="circle"><img src="${a.img}"></div>
+                <div class="circle-name">${a.name}</div>
             </div>
         `).join('');
         
+        bar.innerHTML = html;
+        show('view-home');
+    }
+
+    function openPlanet(id) {
+        const a = ARTISTS.find(x => x.id === id);
+        document.getElementById('planetTitle').innerText = a.name;
+        document.getElementById('planetBanner').style.backgroundImage = `linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url('${a.card}')`;
         show('view-planet');
     }
 
-    function backToHome() { show('view-home'); }
-    function clearAll() { if(confirm("確定重置？")) { localStorage.clear(); location.reload(); } }
+    function clearAll() { if(confirm("確定重置嗎？")) { localStorage.clear(); location.reload(); } }
+
     window.onload = startApp;
 </script>
 </body>
