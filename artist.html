@@ -3,46 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>NEXT'S YOU | Artist Studio</title>
+    <title>NEXT'S YOU | Artist Full Pro</title>
     <style>
         :root {
             --bubble-purple: #A29BFE;
-            --bubble-purple-light: #C2BEFF;
-            --text-gray: #666;
-            --border-color: #F2F2F2;
+            --bg-gray: #F5F5F7;
+            --border: #F2F2F2;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: -apple-system, "PingFang TC", sans-serif; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: -apple-system, sans-serif; }
         body { margin: 0; background: #fff; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* --- 頂部 Header：發光 Logo (對齊截圖 1, 2) --- */
+        /* --- Header: 包含功能齒輪 (對應錄像 0:15) --- */
         .header {
             padding: 50px 20px 15px; background: #fff; display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid var(--border-color); flex-shrink: 0;
+            border-bottom: 1px solid var(--border);
         }
         .header-logo {
             font-size: 20px; font-weight: 900; font-style: italic; color: #fff;
-            text-shadow: 0 0 8px var(--bubble-purple), 0 0 15px rgba(162, 155, 254, 0.6);
+            text-shadow: 0 0 10px var(--bubble-purple);
         }
-        .back-btn { font-size: 20px; color: #333; cursor: pointer; visibility: hidden; }
+        .settings-icon { font-size: 22px; cursor: pointer; color: #333; }
 
-        /* --- 視圖管理 --- */
-        .view-container { flex: 1; position: relative; overflow: hidden; }
-        .view { display: none; height: 100%; width: 100%; position: absolute; flex-direction: column; }
+        /* --- 側邊/中心 設定選單 (登出入口) --- */
+        #settings-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); z-index: 3000; display: none; align-items: center; justify-content: center;
+        }
+        .settings-menu { background: #fff; width: 80%; border-radius: 20px; padding: 10px; }
+        .menu-item { padding: 18px; border-bottom: 1px solid #EEE; text-align: center; font-weight: 500; }
+        .menu-item.logout { color: #FF4D4F; border-bottom: none; }
+
+        /* --- 導航與視圖 --- */
+        .view-container { flex: 1; position: relative; }
+        .view { display: none; height: 100%; flex-direction: column; overflow-y: auto; }
         .view.active { display: flex; }
 
-        /* --- 工作室分頁 (對齊截圖 5) --- */
-        .studio-card { margin: 20px; padding: 20px; background: #F9F9F9; border-radius: 20px; border: 1px solid #EEE; }
-        .studio-input { width: 100%; height: 120px; border: none; background: transparent; font-size: 16px; outline: none; }
-
-        /* --- 🎬 訊息滾動區 (階梯式滾動：停留 3 秒) --- */
-        .rolling-bar {
-            height: 50px; background: #FAF9FF; overflow: hidden; position: relative;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .rolling-track { position: absolute; width: 100%; animation: steppedScroll 16s infinite; }
-        .rolling-item { height: 50px; display: flex; align-items: center; padding: 0 20px; font-size: 13px; color: #555; }
-        @keyframes steppedScroll {
+        /* --- 0:00-0:14 階梯式滾動訊息 --- */
+        .rolling-zone { height: 50px; background: #FAF9FF; border-bottom: 1px solid var(--border); overflow: hidden; }
+        .rolling-track { animation: steppedScrollUp 15s infinite; }
+        .rolling-msg { height: 50px; display: flex; align-items: center; padding: 0 20px; font-size: 13px; color: #555; }
+        @keyframes steppedScrollUp {
             0%, 20% { transform: translateY(0); }
             25%, 45% { transform: translateY(-50px); }
             50%, 70% { transform: translateY(-100px); }
@@ -50,171 +51,161 @@
             100% { transform: translateY(-200px); }
         }
 
-        /* --- 聊天區域 --- */
-        .chat-wall { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; }
-        .bubble-mine {
-            align-self: flex-end; background: var(--bubble-purple); color: #fff;
-            padding: 10px 16px; border-radius: 18px 18px 2px 18px;
-            margin-bottom: 10px; max-width: 75%; font-size: 15px;
-        }
-
-        /* --- 輸入欄 --- */
-        .input-bar {
-            padding: 10px 15px 35px; border-top: 1px solid var(--border-color);
-            display: flex; align-items: center; gap: 12px; background: #fff;
-        }
-        .input-trigger { flex: 1; background: #F1F3F5; padding: 12px 20px; border-radius: 25px; color: #999; font-size: 15px; }
-        .send-icon { width: 42px; height: 42px; background: var(--bubble-purple); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; }
-
-        /* --- 🎬 0:15 全螢幕編輯層 (無按鈕版) --- */
+        /* --- 0:15 打字編輯層 --- */
         #editor-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #fff; z-index: 1000; display: none; flex-direction: column;
         }
-        .editor-header { padding: 60px 25px 20px; display: flex; gap: 15px; align-items: center; }
-        .artist-avatar { width: 50px; height: 50px; border-radius: 50%; background: #EEE; }
-        .artist-tag { background: var(--bubble-purple); color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; }
-        .editor-textarea { width: 100%; flex: 1; border: none; padding: 25px; font-size: 20px; outline: none; resize: none; }
-        
-        .floating-send-btn { position: fixed; bottom: 40px; right: 25px; width: 60px; height: 60px; background: var(--bubble-purple); border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 15px rgba(162,155,254,0.3); }
-        .cancel-text { position: fixed; bottom: 58px; left: 30px; color: #999; font-size: 16px; }
+        .artist-header { padding: 60px 25px 20px; display: flex; align-items: center; gap: 12px; }
+        .avatar-circle { width: 48px; height: 48px; border-radius: 50%; background: #EEE; }
+        .tag { background: var(--bubble-purple); color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+        .editor-input { flex: 1; border: none; padding: 25px; font-size: 20px; outline: none; resize: none; }
+        .float-send { position: fixed; bottom: 40px; right: 25px; width: 60px; height: 60px; background: var(--bubble-purple); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 24px; box-shadow: 0 5px 15px rgba(162,155,254,0.4); }
 
-        /* --- 🎬 核心：附圖 2 彈跳確認窗 (手繪草圖復刻) --- */
+        /* --- 依照手繪草圖 2 製作的確認窗 --- */
         #confirm-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); z-index: 2000; display: none; align-items: center; justify-content: center;
         }
-        .modal-sketch-card { background: #fff; width: 85%; border-radius: 25px; overflow: hidden; }
-        .modal-sketch-title { padding: 25px 20px 15px; font-weight: bold; font-size: 18px; text-align: center; }
-        .modal-sketch-preview { padding: 0 25px 30px; color: #444; font-size: 16px; line-height: 1.5; min-height: 80px; text-align: center; }
-        .modal-sketch-footer { display: flex; border-top: 1px solid #EEE; }
-        .modal-btn { flex: 1; padding: 20px; border: none; background: #fff; font-size: 16px; font-weight: 600; cursor: pointer; }
-        .modal-btn.confirm { color: var(--bubble-purple); border-left: 1px solid #EEE; }
+        .sketch-card { background: #fff; width: 85%; border-radius: 20px; overflow: hidden; }
+        .sketch-title { padding: 25px; font-weight: bold; text-align: center; border-bottom: 1px solid #EEE; }
+        .sketch-preview { padding: 30px; font-size: 16px; min-height: 100px; text-align: left; background: #FAFAFA; }
+        .sketch-footer { display: flex; border-top: 1px solid #EEE; }
+        .sketch-btn { flex: 1; padding: 18px; border: none; background: #fff; font-size: 15px; font-weight: bold; cursor: pointer; }
+        .sketch-btn.ok { color: var(--bubble-purple); border-left: 1px solid #EEE; }
 
-        /* --- 底部導航 (對齊截圖 6) --- */
-        .nav-bar { height: 85px; border-top: 1px solid var(--border-color); display: flex; padding-bottom: 25px; background: #fff; }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #CCC; font-size: 10px; font-weight: bold; }
-        .nav-item.active { color: var(--bubble-purple); }
-        .nav-icon { font-size: 22px; margin-bottom: 4px; }
+        /* --- 底部導航 --- */
+        .nav-bar { height: 85px; border-top: 1px solid var(--border); display: flex; padding-bottom: 25px; background: #fff; }
+        .nav-tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #CCC; font-size: 10px; font-weight: bold; }
+        .nav-tab.active { color: var(--bubble-purple); }
     </style>
 </head>
 <body>
 
     <header class="header">
-        <div class="back-btn" id="backBtn" onclick="backToList()">❮</div>
+        <div id="back-nav" style="visibility:hidden; font-size:20px;" onclick="switchTab('msg')">❮</div>
         <div class="header-logo">NEXT’S YOU</div>
-        <div style="font-size: 20px; color: #333;">⚙️</div>
+        <div class="settings-icon" onclick="toggleSettings(true)">⚙️</div>
     </header>
 
     <div class="view-container">
-        <section id="view-studio" class="view active">
-            <h2 style="padding: 20px 20px 0; font-weight: 900;">工作室</h2>
-            <div class="studio-card">
-                <textarea class="studio-input" placeholder="寫點什麼給粉絲..."></textarea>
-                <button style="width:100%; padding:15px; background:var(--bubble-purple); color:#fff; border:none; border-radius:15px; font-weight:bold;">發布</button>
+        <section id="view-studio" class="view active" style="padding:20px;">
+            <h2 style="font-weight:900;">工作室</h2>
+            <div style="background:#F9F9F9; padding:20px; border-radius:20px; border:1px solid #EEE;">
+                <p style="color:#999; margin:0;">在此發布官方動態...</p>
             </div>
         </section>
 
-        <section id="view-msg-list" class="view">
-            <h2 style="padding: 20px 20px 0; font-weight: 900;">訊息</h2>
-            <div onclick="goToChat()" style="display:flex; align-items:center; gap:15px; padding:20px; border-bottom:1px solid #F9F9F9;">
+        <section id="view-msg" class="view">
+            <h2 style="padding:20px; font-weight:900; margin:0;">訊息</h2>
+            <div onclick="enterBubbleChat()" style="display:flex; align-items:center; gap:15px; padding:20px; border-bottom:1px solid #F9F9F9;">
                 <div style="width:55px; height:55px; background:#EEE; border-radius:18px;"></div>
-                <div><div style="font-weight:bold;">官方星球聊天室</div><div style="font-size:12px; color:#999;">來自 542,103 名粉絲的即時訊息</div></div>
+                <div><div style="font-weight:bold;">粉絲聊天室</div><div style="font-size:12px; color:#999;">查看最新留言...</div></div>
             </div>
         </section>
 
-        <section id="view-data" class="view">
-            <h2 style="padding: 20px 20px 0; font-weight: 900;">數據分析</h2>
-            <div style="padding:20px; color:#999;">數據載入中...</div>
+        <section id="view-data" class="view" style="padding:20px;">
+            <h2 style="font-weight:900;">數據</h2>
+            <p style="color:#999;">數據報表載入中...</p>
         </section>
 
-        <section id="view-bubble-chat" class="view">
-            <div class="rolling-bar"><div class="rolling-track" id="rollingTrack"></div></div>
-            <div class="chat-wall" id="chatWall"></div>
-            <div class="input-bar">
+        <section id="view-chat-detail" class="view">
+            <div class="rolling-zone"><div class="rolling-track" id="track"></div></div>
+            <div id="chatWall" style="flex:1; padding:20px; display:flex; flex-direction:column;"></div>
+            <div style="padding:10px 15px 35px; border-top:1px solid #EEE; display:flex; gap:10px; align-items:center;">
                 <div style="font-size:24px; color:#CCC;">＋</div>
-                <div class="input-trigger" onclick="showEditor()">輸入訊息...</div>
-                <div class="send-icon">↑</div>
+                <div style="flex:1; background:#F1F3F5; padding:12px 20px; border-radius:25px; color:#999;" onclick="showEditor()">輸入訊息...</div>
+                <div style="width:40px; height:40px; background:var(--bubble-purple); border-radius:50%; color:#fff; display:flex; align-items:center; justify-content:center;">↑</div>
             </div>
         </section>
     </div>
 
     <div id="editor-layer">
-        <div class="editor-header">
-            <div class="artist-avatar"></div>
-            <div><span class="artist-tag">ARTIST</span><br><span style="font-weight:bold;">NEXT'S YOU</span></div>
+        <div class="artist-header">
+            <div class="avatar-circle"></div>
+            <div><span class="tag">ARTIST</span><br><span style="font-weight:bold;">NEXT'S YOU</span></div>
         </div>
-        <textarea id="main-editor-input" class="editor-textarea" placeholder="在此輸入訊息..."></textarea>
-        <div class="cancel-text" onclick="hideEditor()">取消</div>
-        <div class="floating-send-btn" onclick="openSketchConfirm()">↑</div>
+        <textarea id="editor-textarea" class="editor-input" placeholder="在此輸入訊息..."></textarea>
+        <div style="position:fixed; bottom:58px; left:30px; color:#999;" onclick="hideEditor()">取消</div>
+        <div class="float-send" onclick="openConfirm()">↑</div>
     </div>
 
     <div id="confirm-modal">
-        <div class="modal-sketch-card">
-            <div class="modal-sketch-title">確認發送 Bubble</div>
-            <div id="modal-preview-text" class="modal-sketch-preview"></div>
-            <div class="modal-sketch-footer">
-                <button class="modal-btn" onclick="closeSketchConfirm()">取消</button>
-                <button class="modal-btn confirm" onclick="finalizeSend()">確認</button>
+        <div class="sketch-card">
+            <div class="sketch-title">確認發送 Bubble</div>
+            <div id="preview-text" class="sketch-preview"></div>
+            <div class="sketch-footer">
+                <button class="sketch-btn" onclick="closeConfirm()">取消</button>
+                <button class="sketch-btn ok" onclick="submitSend()">確認</button>
             </div>
         </div>
     </div>
 
+    <div id="settings-overlay" onclick="toggleSettings(false)">
+        <div class="settings-menu" onclick="event.stopPropagation()">
+            <div class="menu-item">個人資料設定</div>
+            <div class="menu-item">推播通知</div>
+            <div class="menu-item">語系切換</div>
+            <div class="menu-item logout" onclick="handleLogout()">登出 Artist 帳號</div>
+        </div>
+    </div>
+
     <nav class="nav-bar">
-        <div class="nav-item active" onclick="switchNav('studio', this)"><span class="nav-icon">🎨</span><span>工作室</span></div>
-        <div class="nav-item" onclick="switchNav('msg-list', this)"><span class="nav-icon">💬</span><span>訊息</span></div>
-        <div class="nav-item" onclick="switchNav('data', this)"><span class="nav-icon">📊</span><span>數據</span></div>
+        <div class="nav-tab active" onclick="switchTab('studio', this)">🎨<br>工作室</div>
+        <div class="nav-tab" onclick="switchTab('msg', this)">💬<br>訊息</div>
+        <div class="nav-tab" onclick="switchTab('data', this)">📊<br>數據</div>
     </nav>
 
 <script>
-    const track = document.getElementById('rollingTrack');
-    const fanMsgs = ["歐巴！打字速度真的很快耶 ❤️", "期待週末的演唱會！🎤", "今天要多多休息喔～💙", "這是在錄影嗎？📽️"];
-    track.innerHTML = fanMsgs.map(m => `<div class="rolling-item">${m}</div>`).join('') + `<div class="rolling-item">${fanMsgs[0]}</div>`;
+    // 1. 滾動訊息初始化 (停留 3 秒)
+    const msgs = ["歐巴！打字速度真的很快耶 ❤️", "期待週末的演唱會！🎤", "今天要多多休息喔～💙", "這是在錄影嗎？📽️"];
+    document.getElementById('track').innerHTML = msgs.map(m => `<div class="rolling-msg">${m}</div>`).join('') + `<div class="rolling-msg">${msgs[0]}</div>`;
 
-    function switchNav(viewId, el) {
+    // 2. 導航邏輯
+    function switchTab(id, el) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.getElementById('view-' + viewId).classList.add('active');
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('view-' + id).classList.add('active');
         el.classList.add('active');
-        document.getElementById('backBtn').style.visibility = 'hidden';
+        document.getElementById('back-nav').style.visibility = 'hidden';
     }
 
-    function goToChat() {
+    function enterBubbleChat() {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.getElementById('view-bubble-chat').classList.add('active');
-        document.getElementById('backBtn').style.visibility = 'visible';
-        render();
+        document.getElementById('view-chat-detail').classList.add('active');
+        document.getElementById('back-nav').style.visibility = 'visible';
     }
 
-    function backToList() { switchNav('msg-list', document.querySelectorAll('.nav-item')[1]); }
+    // 3. 齒輪設定與登出
+    function toggleSettings(show) {
+        document.getElementById('settings-overlay').style.display = show ? 'flex' : 'none';
+    }
 
-    function showEditor() { document.getElementById('editor-layer').style.display = 'flex'; document.getElementById('main-editor-input').focus(); }
+    function handleLogout() {
+        if(confirm("確定要登出嗎？")) {
+            alert("已成功登出。正在返回登入介面...");
+            location.reload(); // 模擬回到初始狀態
+        }
+    }
+
+    // 4. 0:15 編輯與 0:19 彈窗邏輯
+    function showEditor() { document.getElementById('editor-layer').style.display = 'flex'; document.getElementById('editor-textarea').focus(); }
     function hideEditor() { document.getElementById('editor-layer').style.display = 'none'; }
 
-    function openSketchConfirm() {
-        const txt = document.getElementById('main-editor-input').value.trim();
-        if(!txt) return;
-        document.getElementById('modal-preview-text').innerText = txt;
+    function openConfirm() {
+        const val = document.getElementById('editor-textarea').value.trim();
+        if(!val) return;
+        document.getElementById('preview-text').innerText = val;
         document.getElementById('confirm-modal').style.display = 'flex';
     }
 
-    function closeSketchConfirm() { document.getElementById('confirm-modal').style.display = 'none'; }
+    function closeConfirm() { document.getElementById('confirm-modal').style.display = 'none'; }
 
-    function finalizeSend() {
-        const val = document.getElementById('main-editor-input').value;
-        const data = JSON.parse(localStorage.getItem("NEXT_STORE") || "[]");
-        data.unshift({ text: val });
-        localStorage.setItem("NEXT_STORE", JSON.stringify(data));
-        document.getElementById('main-editor-input').value = '';
-        closeSketchConfirm();
+    function submitSend() {
+        // 發送邏輯...
+        closeConfirm();
         hideEditor();
-        render();
-    }
-
-    function render() {
-        const data = JSON.parse(localStorage.getItem("NEXT_STORE") || "[]");
-        document.getElementById('chatWall').innerHTML = data.reverse().map(d => `<div class="bubble-mine">${d.text}</div>`).join('');
-        document.getElementById('chatWall').scrollTop = document.getElementById('chatWall').scrollHeight;
+        alert("Bubble 已成功發送！");
     }
 </script>
 </body>
