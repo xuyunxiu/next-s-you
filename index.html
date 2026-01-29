@@ -2,264 +2,380 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>NEXT’S YOU | Universe</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bubble Replica</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <style>
+        /* --- 變量系統 --- */
         :root {
-            --sky-blue: #D0EFFF;
-            --lavender: #E6D5FF;
-            --main-theme: #5D9CEC;
-            --glass: rgba(255, 255, 255, 0.45);
+            /* 視覺風格 */
+            --glass-header: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --primary-gradient: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+            
+            /* Lysn 品牌色 */
+            --lysn-pink: #ff79b0;
+            --lysn-yellow: #ffe900;
+            --lysn-unread: #ff3b30;
+            
+            /* 字體色 */
+            --text-main: #2d3436;
+            --text-sub: #8e8e93;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { 
-            margin: 0; font-family: -apple-system, "PingFang TC", sans-serif;
-            background: linear-gradient(160deg, var(--sky-blue) 0%, #FFFFFF 50%, var(--lavender) 100%);
-            background-attachment: fixed; min-height: 100vh; overflow-x: hidden;
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            background-color: #f0f2f5;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
         }
 
-        /* --- 💎 視覺修正：對齊圖 2 的強烈白光發光 Logo --- */
-        #splash-screen {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: linear-gradient(135deg, var(--sky-blue), var(--lavender));
-            display: flex; align-items: center; justify-content: center; z-index: 99999;
-            transition: opacity 0.8s ease-in-out;
+        /* --- 背景層 --- */
+        .liquid-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); }
+        .blob { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.6; animation: float 10s infinite ease-in-out alternate; }
+        .blob-1 { top: -10%; left: -10%; width: 60vw; height: 60vw; background: #a18cd1; }
+        .blob-2 { bottom: -10%; right: -10%; width: 60vw; height: 60vw; background: #ff9a9e; animation-delay: -5s; }
+        @keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(20px, 40px); } }
+
+        /* --- App 容器 --- */
+        #app-viewport {
+            width: 100%; max-width: 480px; height: 100%; 
+            position: relative; overflow: hidden;
+            background: rgba(255, 255, 255, 0.1); 
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 40px rgba(0,0,0,0.1);
         }
 
-        .logo-container {
-            text-align: center;
-            animation: logoScale 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+        /* --- 視圖管理系統 --- */
+        .page {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            background: transparent;
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s;
         }
 
-        .shimmer-text {
-            font-family: "Arial Black", sans-serif; 
-            font-size: 42px; 
-            font-weight: 900; 
-            font-style: italic; 
-            letter-spacing: -1.5px;
-            fill: #FFFFFF; /* 純白實色，解決圖 1 稀薄感 */
-            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.9)); /* 模擬圖 2 外發光質感 */
+        /* 1. 登入頁 (Login) - 夢幻玻璃卡片風格 */
+        #page-login { 
+            z-index: 100; justify-content: center; align-items: center; padding: 30px; 
+            background: transparent;
+        }
+        
+        .login-card {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 24px;
+            padding: 40px 30px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            display: flex; flex-direction: column; align-items: center; gap: 20px;
         }
 
-        @keyframes logoScale {
-            0% { opacity: 0; transform: scale(0.9); }
-            100% { opacity: 1; transform: scale(1); }
+        .logo-text { 
+            font-size: 42px; font-weight: 800; 
+            background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+            margin-bottom: 10px; letter-spacing: -1px;
         }
 
-        /* --- 視圖切換動畫 --- */
-        .view { display: none; min-height: 100vh; animation: fadeIn 0.6s ease forwards; }
-        .active-view { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* --- UI 元件 --- */
-        .glass-card { 
-            background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255,255,255,0.7); border-radius: 32px; padding: 35px; margin: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.02);
+        .input-group { width: 100%; position: relative; }
+        .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888; font-size: 18px; }
+        .glass-input {
+            width: 100%; padding: 15px 15px 15px 45px;
+            border-radius: 12px; border: 1px solid rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.3);
+            font-size: 16px; outline: none; color: var(--text-main);
+            transition: 0.3s;
         }
+        .glass-input:focus { background: rgba(255,255,255,0.8); border-color: #a18cd1; box-shadow: 0 0 0 3px rgba(161, 140, 209, 0.1); }
 
-        .input-group { margin-bottom: 20px; }
-        .input-box {
-            width: 100%; padding: 18px; border-radius: 18px; border: 1px solid #eee;
-            background: rgba(255,255,255,0.5); font-size: 16px; transition: 0.3s;
+        .btn-login {
+            width: 100%; padding: 15px; border-radius: 12px;
+            background: var(--primary-gradient); color: white;
+            font-weight: 600; font-size: 16px; border: none; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(161, 140, 209, 0.3); margin-top: 10px;
         }
-        .input-box:focus { background: #fff; border-color: var(--main-theme); }
+        .btn-login:active { transform: scale(0.98); }
 
-        .btn-main { 
-            width: 100%; padding: 18px; border-radius: 35px; border: none; font-weight: 900; font-size: 17px;
-            background: linear-gradient(45deg, #5D9CEC, #A29BFE); color: #fff;
-            box-shadow: 0 10px 25px rgba(93, 156, 236, 0.3); transition: 0.3s;
+        /* 2. 主列表 (Lysn Logic) */
+        #page-main { z-index: 50; transform: translateX(20px); opacity: 0; pointer-events: none; }
+        #page-main.active { transform: translateX(0); opacity: 1; pointer-events: all; }
+        
+        .tab-header {
+            height: 54px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between;
+            background: var(--glass-header); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border);
         }
-        .btn-main:active { transform: scale(0.95); }
+        .tab-title { font-size: 24px; font-weight: 800; color: var(--text-main); }
+        .header-icons i { font-size: 24px; margin-left: 16px; color: var(--text-main); }
+        
+        .scroll-content { flex: 1; overflow-y: auto; padding-bottom: 80px; }
+        .banner-item { margin: 10px 16px; padding: 12px; background: rgba(255,255,255,0.5); border-radius: 12px; display: flex; align-items: center; gap: 12px; }
+        .banner-icon { width: 40px; height: 40px; background: #eee; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #666; }
 
-        /* --- 底部導航 --- */
-        .nav-bar {
-            position: fixed; bottom: 25px; left: 5%; width: 90%; height: 75px;
-            background: rgba(255,255,255,0.8); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border-radius: 38px; border: 1px solid rgba(255,255,255,0.6);
-            display: flex; justify-content: space-around; align-items: center;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.08); z-index: 1000;
+        .chat-row { padding: 12px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; }
+        .chat-row:active { background: rgba(0,0,0,0.05); }
+        .avatar-wrap { position: relative; width: 56px; height: 56px; }
+        .avatar-img { width: 100%; height: 100%; border-radius: 22px; background-size: cover; background-position: center; border: 1px solid rgba(0,0,0,0.05); }
+        .ring { position: absolute; top: -3px; left: -3px; right: -3px; bottom: -3px; border: 2px solid var(--lysn-pink); border-radius: 26px; }
+        .row-content { flex: 1; min-width: 0; }
+        .row-top { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .row-name { font-size: 17px; font-weight: 700; color: var(--text-main); }
+        .row-time { font-size: 12px; color: var(--text-sub); }
+        .row-preview { font-size: 13px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .badge { background: var(--lysn-unread); color: white; font-size: 11px; font-weight: 700; height: 18px; min-width: 18px; border-radius: 9px; display: flex; align-items: center; justify-content: center; padding: 0 5px; float: right; margin-top: 4px; }
+
+        .tab-bar {
+            height: 80px; position: absolute; bottom: 0; width: 100%;
+            background: var(--glass-header); backdrop-filter: blur(20px); border-top: 1px solid var(--glass-border);
+            display: flex; justify-content: space-around; padding-top: 12px;
         }
-        .nav-item { text-align: center; color: #ccc; font-weight: bold; flex: 1; font-size: 10px; }
-        .nav-item.active { color: var(--main-theme); }
+        .tab-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #b0b0b0; font-size: 26px; cursor: pointer; }
+        .tab-item.active { color: var(--text-main); }
+        .tab-label { font-size: 10px; font-weight: 500; }
 
-        /* --- 內容樣式 --- */
-        .feed-item { margin-bottom: 18px; padding: 25px; background: rgba(255,255,255,0.7); border-radius: 30px; border: 1px solid #fff; }
-        .artist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; padding-bottom: 150px; }
-        .artist-card { aspect-ratio: 1/1.3; border-radius: 28px; background-size: cover; background-position: center; position: relative; border: 4px solid transparent; transition: 0.3s; }
-        .artist-card.selected { border-color: var(--main-theme); transform: scale(0.96); }
+        /* 3. 聊天室 (Chat Room) */
+        #page-chat { z-index: 60; transform: translateX(100%); background: #f5f7fa; }
+        #page-chat.visible { transform: translateX(0); }
+
+        .chat-header {
+            height: 50px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between;
+            background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .back-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; }
+        .chat-title-box { display: flex; flex-direction: column; align-items: center; }
+        .chat-title { font-size: 17px; font-weight: 600; }
+        .live-badge { font-size: 10px; color: var(--lysn-pink); background: rgba(255, 121, 176, 0.15); padding: 2px 6px; border-radius: 4px; margin-top: 1px; font-weight: 600; }
+        .header-right { display: flex; gap: 8px; width: 70px; justify-content: flex-end; padding-right: 5px; }
+        .icon-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+
+        .chat-stream { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+        .d-day { align-self: center; background: rgba(0,0,0,0.05); padding: 4px 12px; border-radius: 12px; font-size: 11px; color: #666; margin-bottom: 15px; }
+        .msg-group { display: flex; gap: 8px; max-width: 80%; }
+        .msg-group.artist { align-self: flex-start; }
+        .msg-group.me { align-self: flex-end; flex-direction: row-reverse; }
+        .chat-avatar { width: 36px; height: 36px; border-radius: 14px; background-size: cover; background-color: #ddd; flex-shrink: 0; }
+        .msg-content { display: flex; flex-direction: column; gap: 4px; }
+        .artist-name { font-size: 12px; color: #666; margin-bottom: 2px; }
+        .bubble { padding: 10px 14px; border-radius: 18px; font-size: 15px; line-height: 1.4; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .artist .bubble { background: #fff; border-top-left-radius: 4px; color: #000; }
+        .me .bubble { background: var(--lysn-yellow); border-top-right-radius: 4px; color: #000; }
+        .msg-meta { display: flex; flex-direction: column; justify-content: flex-end; gap: 2px; }
+        .msg-time { font-size: 10px; color: #999; white-space: nowrap; }
+        .read-status { font-size: 10px; color: var(--lysn-yellow); font-weight: 700; text-align: right; }
+
+        .input-bar {
+            background: #fff; padding: 10px 16px; padding-bottom: 25px;
+            border-top: 1px solid #eee; display: flex; align-items: flex-end; gap: 10px;
+        }
+        .input-wrapper { flex: 1; background: #f5f5f5; border-radius: 20px; padding: 8px 12px; display: flex; align-items: flex-end; }
+        textarea { flex: 1; background: transparent; border: none; outline: none; resize: none; font-size: 15px; max-height: 80px; padding: 4px 0; }
+        .count { font-size: 10px; color: #bbb; margin-bottom: 4px; margin-left: 4px; }
+        .send-btn { width: 30px; height: 30px; border-radius: 50%; background: #e0e0e0; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: 0.2s; }
+        .send-btn.active { background: #333; }
     </style>
 </head>
 <body>
 
-    <div id="splash-screen">
-        <div class="logo-container">
-            <svg width="350" height="80" viewBox="0 0 400 80">
-                <text x="50%" y="55" text-anchor="middle" class="shimmer-text">NEXT’S YOU</text>
-            </svg>
-        </div>
+    <div class="liquid-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
     </div>
 
-    <section id="view-login" class="view">
-        <div style="text-align:center; margin: 100px 0 30px;">
-            <h1 style="color:var(--main-theme); font-style:italic; font-weight:900; font-size:38px; margin:0;">Login</h1>
-            <p style="color:#aaa; font-size:14px;">輸入 fan 或 artist 進入系統</p>
-        </div>
-        <div class="glass-card">
-            <div class="input-group">
-                <input type="text" id="acc" class="input-box" placeholder="帳號">
-            </div>
-            <div class="input-group">
-                <input type="password" id="pwd" class="input-box" placeholder="密碼">
-            </div>
-            <button class="btn-main" onclick="handleLogin()">登入星球</button>
-        </div>
-    </section>
+    <div id="app-viewport">
+        
+        <div id="page-login" class="page">
+            <div class="login-card">
+                <div class="logo-text">bubble</div>
+                
+                <div class="input-group">
+                    <i class="ri-mail-line"></i>
+                    <input type="email" class="glass-input" placeholder="電子郵件">
+                </div>
+                
+                <div class="input-group">
+                    <i class="ri-lock-2-line"></i>
+                    <input type="password" class="glass-input" placeholder="密碼">
+                </div>
 
-    <section id="view-onboarding" class="view">
-        <div style="padding: 60px 25px 15px;">
-            <h2 style="font-size:30px; font-weight:900; margin:0;">追蹤藝人</h2>
-            <p style="color:#888;">選擇您想加入的社群星球</p>
+                <button class="btn-login" onclick="router.login()">登入</button>
+                <div style="font-size: 12px; color: #666;">忘記密碼?</div>
+            </div>
         </div>
-        <div class="artist-grid" id="onboardingGrid"></div>
-        <div style="position:fixed; bottom:35px; width:100%; padding:0 25px; z-index:2000;">
-            <button class="btn-main" onclick="saveOnboarding()">進入我的星球</button>
-        </div>
-    </section>
 
-    <section id="view-home" class="view">
-        <div style="padding: 25px; display: flex; justify-content: space-between; align-items: center;">
-            <div style="font-weight:900; color:var(--main-theme); font-size:28px; font-style:italic;">weverse</div>
-            <div style="font-size:24px;">🔔</div>
+        <div id="page-main" class="page">
+            <header class="tab-header">
+                <div class="tab-title">Chats</div>
+                <div class="header-icons">
+                    <i class="ri-search-line"></i>
+                    <i class="ri-user-add-line"></i>
+                </div>
+            </header>
+
+            <div class="scroll-content">
+                <div class="banner-item">
+                    <div class="banner-icon"><i class="ri-store-2-line"></i></div>
+                    <div style="font-size: 14px; font-weight: 500;">STORE</div>
+                </div>
+
+                <div class="chat-row" onclick="router.chat('Karina')">
+                    <div class="avatar-wrap">
+                        <div class="ring"></div>
+                        <div class="avatar-img" style="background-image: url('https://ui-avatars.com/api/?name=Karina&background=random&color=fff');"></div>
+                    </div>
+                    <div class="row-content">
+                        <div class="row-top">
+                            <span class="row-name">aespa Karina</span>
+                            <span class="row-time">16:20</span>
+                        </div>
+                        <div class="row-preview">我想你了 MY~ 🥺 今天天氣真的很好對吧？</div>
+                    </div>
+                    <div class="badge">1</div>
+                </div>
+
+                <div class="chat-row">
+                    <div class="avatar-wrap">
+                        <div class="avatar-img" style="background-image: url('https://ui-avatars.com/api/?name=Winter&background=random&color=fff');"></div>
+                    </div>
+                    <div class="row-content">
+                        <div class="row-top">
+                            <span class="row-name">aespa Winter</span>
+                            <span class="row-time">昨天</span>
+                        </div>
+                        <div class="row-preview">晚安 ⭐</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-bar">
+                <div class="tab-item">
+                    <i class="ri-user-heart-line"></i>
+                    <span class="tab-label">Friends</span>
+                </div>
+                <div class="tab-item active">
+                    <i class="ri-chat-1-fill"></i>
+                    <span class="tab-label">Chats</span>
+                </div>
+                <div class="tab-item">
+                    <i class="ri-more-fill"></i>
+                    <span class="tab-label">More</span>
+                </div>
+            </div>
         </div>
-        <div class="glass-card" style="margin-top:0; padding: 20px; overflow:hidden;">
-            <div id="homeBar" style="display:flex; gap:18px; overflow-x:auto; padding-bottom: 5px;"></div>
+
+        <div id="page-chat" class="page">
+            <header class="chat-header">
+                <div class="back-btn" onclick="router.back()"><i class="ri-arrow-left-s-line"></i></div>
+                <div class="chat-title-box">
+                    <span class="chat-title">aespa Karina</span>
+                    <span class="live-badge">● LIVE</span>
+                </div>
+                <div class="header-right">
+                    <div class="icon-btn"><i class="ri-notification-3-line"></i></div>
+                    <div class="icon-btn"><i class="ri-settings-4-line"></i></div>
+                </div>
+            </header>
+
+            <div class="chat-stream" id="chat-stream">
+                <div class="d-day">♥︎ 與 Karina 開始 bubble 的第 100 天</div>
+
+                <div class="msg-group artist">
+                    <div class="chat-avatar" style="background-image: url('https://ui-avatars.com/api/?name=Karina&background=random&color=fff');"></div>
+                    <div class="msg-content">
+                        <div class="artist-name">Karina</div>
+                        <div class="bubble">今天天氣真的很好 ✨</div>
+                    </div>
+                    <div class="msg-meta"><span class="msg-time">16:20</span></div>
+                </div>
+
+                <div class="msg-group artist">
+                    <div class="chat-avatar" style="visibility: hidden;"></div>
+                    <div class="msg-content">
+                        <div class="bubble">我想你了 MY~ 🥺</div>
+                    </div>
+                    <div class="msg-meta"><span class="msg-time">16:20</span></div>
+                </div>
+            </div>
+
+            <div class="input-bar">
+                <i class="ri-image-line" style="font-size: 26px; color: #999; margin-bottom: 6px;"></i>
+                <div class="input-wrapper">
+                    <textarea id="msg-input" placeholder="回覆藝術家..." rows="1"></textarea>
+                    <span class="count" id="char-count">0/30</span>
+                    <div class="send-btn" id="send-btn"><i class="ri-arrow-up-line"></i></div>
+                </div>
+            </div>
         </div>
-        <div style="padding: 0 20px 150px;">
-            <h3 style="margin: 25px 0 15px; font-weight:900;">🪐 星球廣播</h3>
-            <div id="feedWall"></div>
-            <p onclick="logout()" style="text-align:center; color:#ccc; font-size:12px; margin-top:40px; text-decoration: underline;">登出帳號</p>
-        </div>
-        <nav class="nav-bar">
-            <div class="nav-item active">🏠<br>首頁</div>
-            <div class="nav-item">🛍️<br>Shop</div>
-            <div class="nav-item">💬<br>DM</div>
-            <div class="nav-item">👤<br>我的</div>
-        </nav>
-    </section>
+
+    </div>
 
     <script>
-        const ARTISTS = [
-            { id: 1, name: "BTS", card: "https://placehold.co/400x600/ff0080/fff?text=BTS", img: "https://placehold.co/200/ff0080/fff?text=B" },
-            { id: 2, name: "SEVENTEEN", card: "https://placehold.co/400x600/87ceeb/fff?text=SVT", img: "https://placehold.co/200/87ceeb/fff?text=S" },
-            { id: 3, name: "ENHYPEN", card: "https://placehold.co/400x600/00008b/fff?text=EN-", img: "https://placehold.co/200/00008b/fff?text=E" },
-            { id: 4, name: "TXT", card: "https://placehold.co/400x600/00ffcc/000?text=TXT", img: "https://placehold.co/200/00ffcc/000?text=T" }
-        ];
+        // --- 路由器邏輯 (增加登入動畫) ---
+        const router = {
+            login: function() {
+                // 1. 隱藏登入頁 (向上浮出 + 淡出)
+                const loginPage = document.getElementById('page-login');
+                loginPage.style.transform = 'translateY(-50px) scale(0.95)';
+                loginPage.style.opacity = '0';
+                loginPage.style.pointerEvents = 'none';
 
-        let selectedIds = JSON.parse(localStorage.getItem("fan_joined") || "[]");
-
-        // 啟動動畫邏輯
-        window.onload = () => {
-            setTimeout(() => {
-                const ss = document.getElementById('splash-screen');
-                ss.style.opacity = '0';
-                setTimeout(() => { 
-                    ss.style.display = 'none';
-                    checkGlobalRoute();
-                }, 800);
-            }, 2000); // 2秒展示時間
+                // 2. 顯示主頁 (淡入)
+                document.getElementById('page-main').classList.add('active');
+            },
+            chat: function(name) {
+                // 主頁 -> 聊天室
+                document.getElementById('page-chat').classList.add('visible');
+            },
+            back: function() {
+                // 聊天室 -> 主頁
+                document.getElementById('page-chat').classList.remove('visible');
+            }
         };
 
-        function checkGlobalRoute() {
-            const role = localStorage.getItem("user_role");
-            if (!role) {
-                show('view-login');
-            } else if (role === 'artist') {
-                window.location.href = 'artist.html';
-            } else {
-                if (selectedIds.length === 0) {
-                    show('view-onboarding');
-                    renderOnboarding();
-                } else {
-                    renderHome();
-                    renderFeeds();
-                    show('view-home');
-                }
-            }
-        }
+        // --- 聊天交互邏輯 (保持不變) ---
+        const input = document.getElementById('msg-input');
+        const sendBtn = document.getElementById('send-btn');
+        const countDisplay = document.getElementById('char-count');
+        const stream = document.getElementById('chat-stream');
+        const MAX_CHARS = 30;
 
-        // 登入處理 (恢復之前的自動識別功能)
-        function handleLogin() {
-            const acc = document.getElementById('acc').value.trim().toLowerCase();
-            const pwd = document.getElementById('pwd').value;
+        input.addEventListener('input', function() {
+            let len = this.value.length;
+            if(len > MAX_CHARS) { this.value = this.value.substring(0, MAX_CHARS); len = MAX_CHARS; }
+            countDisplay.innerText = `${len}/${MAX_CHARS}`;
+            this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px';
+            if(len > 0) sendBtn.classList.add('active'); else sendBtn.classList.remove('active');
+        });
 
-            if (pwd === '123') {
-                if (acc === 'artist') {
-                    localStorage.setItem("user_role", "artist");
-                    window.location.href = 'artist.html'; // 直接跳轉，不跑第二次動畫
-                } else if (acc === 'fan') {
-                    localStorage.setItem("user_role", "fan");
-                    checkGlobalRoute();
-                } else {
-                    alert("請輸入正確帳號 (fan 或 artist)");
-                }
-            } else {
-                alert("密碼錯誤 (預設為 123)");
-            }
-        }
+        sendBtn.addEventListener('click', () => {
+            const text = input.value.trim();
+            if(!text) return;
+            const time = new Date().toLocaleTimeString('zh-TW', { hour:'2-digit', minute:'2-digit', hour12: false });
+            
+            const html = `
+                <div class="msg-group me">
+                    <div class="msg-meta">
+                        <span class="read-status">1</span>
+                        <span class="msg-time">${time}</span>
+                    </div>
+                    <div class="msg-content">
+                        <div class="bubble">${text.replace(/</g, "&lt;")}</div>
+                    </div>
+                </div>
+            `;
+            stream.insertAdjacentHTML('beforeend', html);
+            input.value = ''; input.style.height = 'auto'; countDisplay.innerText = `0/${MAX_CHARS}`;
+            sendBtn.classList.remove('active'); stream.scrollTop = stream.scrollHeight;
 
-        function renderOnboarding() {
-            document.getElementById('onboardingGrid').innerHTML = ARTISTS.map(a => `
-                <div class="artist-card ${selectedIds.includes(a.id)?'selected':''}" onclick="toggleSelect(${a.id})" style="background-image: url('${a.card}')">
-                    <div style="position:absolute; bottom:15px; left:15px; color:#fff; font-weight:bold; font-size:18px;">${a.name}</div>
-                </div>`).join('');
-        }
-
-        function toggleSelect(id) {
-            const i = selectedIds.indexOf(id);
-            if(i === -1) selectedIds.push(id); else selectedIds.splice(i, 1);
-            renderOnboarding();
-        }
-
-        function saveOnboarding() {
-            if(selectedIds.length === 0) return alert("請至少選擇一個團體！");
-            localStorage.setItem("fan_joined", JSON.stringify(selectedIds));
-            checkGlobalRoute();
-        }
-
-        function renderFeeds() {
-            const feeds = JSON.parse(localStorage.getItem("NEXTS_YOU_DATA") || "[]");
-            const wall = document.getElementById('feedWall');
-            wall.innerHTML = feeds.length === 0 ? 
-                '<p style="text-align:center; color:#999; margin-top:40px;">🛸 暫無星球廣播</p>' :
-                feeds.map(f => `
-                    <div class="feed-item">
-                        <div style="color:var(--main-theme); font-weight:900; margin-bottom:10px;">🌟 ${f.artist}</div>
-                        <div style="font-size:16px; line-height:1.6;">${f.text}</div>
-                        <div style="font-size:11px; color:#bbb; margin-top:15px;">${f.time}</div>
-                    </div>`).join('');
-        }
-
-        function renderHome() {
-            const bar = document.getElementById('homeBar');
-            const joined = ARTISTS.filter(a => selectedIds.includes(a.id));
-            bar.innerHTML = joined.map(a => `
-                <div style="text-align:center; flex-shrink:0;">
-                    <img src="${a.img}" style="width:70px; height:70px; border-radius:25px; border:2px solid #fff; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-                    <div style="font-size:11px; margin-top:8px; font-weight:600;">${a.name}</div>
-                </div>`).join('');
-        }
-
-        function show(id) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
-            document.getElementById(id).classList.add('active-view');
-        }
-
-        function logout() {
-            localStorage.clear();
-            location.reload();
-        }
+            setTimeout(() => {
+                const unreads = document.querySelectorAll('.read-status');
+                const last = unreads[unreads.length - 1];
+                if(last) last.style.display = 'none';
+            }, 1500);
+        });
     </script>
 </body>
 </html>
