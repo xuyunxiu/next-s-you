@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-    <title>Lysn Bubble Artist Studio</title>
+    <title>NEXT'S YOU | Artist Pro</title>
     <style>
         :root {
             --sky-blue: #D0EFFF;
             --lavender: #E6D5FF;
-            --main-blue: #5D9CEC;
-            --bubble-purple: #A29BFE;
-            --glass: rgba(255, 255, 255, 0.4);
+            --main-theme: #5D9CEC;
+            --purple-bubble: #A29BFE;
             --glass-thick: rgba(255, 255, 255, 0.85);
             --safe-top: env(safe-area-inset-top, 20px);
             --safe-bottom: env(safe-area-inset-bottom);
@@ -25,270 +24,242 @@
             display: flex; flex-direction: column;
         }
 
-        /* --- 💎 頂部導航組件：實現絕對齊平 --- */
-        .nav-header {
-            padding: calc(var(--safe-top) + 15px) 20px 10px;
+        /* --- 💎 Header 核心修正：與大標題齊平 --- */
+        .app-header {
+            padding: calc(var(--safe-top) + 15px) 20px 0;
             display: flex; align-items: flex-end; justify-content: space-between;
-            z-index: 1000; flex-shrink: 0;
+            z-index: 1000; flex-shrink: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
-        /* 聊天室模式 (對標圖四圈起處：高不透明度、置中標題) */
-        .nav-header.chat-active {
-            background: var(--glass-thick);
+
+        /* 進入聊天室後的 Header 變換 (對標圖四) */
+        .app-header.chat-active {
+            padding-bottom: 15px; background: var(--glass-thick);
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border-bottom: 0.5px solid rgba(0,0,0,0.1);
-            align-items: center; padding-bottom: 15px;
+            border-bottom: 0.5px solid rgba(0,0,0,0.1); align-items: center;
         }
 
-        .header-action-btn { 
-            font-size: 26px; cursor: pointer; color: #444; width: 45px; 
-            display: flex; align-items: center; transition: 0.2s;
-        }
-
-        .page-big-title {
-            flex: 1; font-size: 32px; font-weight: 900; color: var(--main-blue);
-            font-style: italic; letter-spacing: -1.5px; margin: 0;
-            display: flex; align-items: baseline;
-        }
-        
-        #center-room-name {
+        #header-center-title {
             position: absolute; left: 50%; transform: translateX(-50%);
             font-size: 17px; font-weight: 800; color: #333; opacity: 0;
         }
-        .chat-active #center-room-name { opacity: 1; }
+        .chat-active #header-center-title { opacity: 1; }
+
+        .icon-btn { font-size: 26px; cursor: pointer; color: #444; width: 40px; display: flex; align-items: center; }
+        #header-right { justify-content: flex-end; visibility: hidden; }
 
         /* --- 視圖管理 --- */
-        .view-container { flex: 1; position: relative; overflow: hidden; }
+        .main-container { flex: 1; position: relative; overflow: hidden; }
         .view { display: none; height: 100%; width: 100%; position: absolute; flex-direction: column; overflow-y: auto; }
-        .view.active { display: flex; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .view.active { display: flex; animation: viewIn 0.3s ease-out; }
+        @keyframes viewIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* 工作室內容 (圖三/五/八) */
-        .welcome-msg { padding: 0 25px 20px; font-size: 14px; color: #888; font-weight: 500; }
+        /* --- 🎬 視圖：內容標題 (對標圖三 WEVERSE 齊平感) --- */
+        .title-group { padding: 0 25px 15px; }
+        .big-title { 
+            font-size: 34px; font-weight: 900; color: var(--main-theme); 
+            font-style: italic; letter-spacing: -1.5px; margin: 0;
+        }
+        .welcome-back { font-size: 14px; color: #888; margin-top: 4px; font-weight: 500; }
+
+        /* --- 🎬 工作室：貼文與分頁 --- */
         .post-card {
-            background: var(--glass-thick); border-radius: 30px; margin: 0 20px 20px;
-            padding: 25px; border: 1px solid #fff; box-shadow: 0 8px 30px rgba(0,0,0,0.02);
+            background: var(--glass-thick); backdrop-filter: blur(20px); border-radius: 30px;
+            margin: 0 20px 20px; padding: 25px; border: 1px solid #fff;
         }
-        .post-input { width: 100%; border: none; background: transparent; font-size: 16px; min-height: 120px; resize: none; color: #333; line-height: 1.6; }
-        .btn-post-go { width: 100%; padding: 16px; background: linear-gradient(45deg, var(--main-blue), var(--bubble-purple)); color: #fff; border: none; border-radius: 20px; font-weight: 900; font-size: 16px; box-shadow: 0 8px 20px rgba(93, 156, 236, 0.3); }
+        .post-input { width: 100%; border: none; background: transparent; font-size: 16px; min-height: 120px; resize: none; line-height: 1.6; }
+        .btn-post { width: 100%; padding: 16px; background: var(--purple-bubble); color: #fff; border: none; border-radius: 20px; font-weight: 900; font-size: 16px; }
 
-        /* DM 列表 (圖七) */
-        .dm-list-card {
-            margin: 0 20px 12px; padding: 22px; background: var(--glass-thick); border-radius: 28px;
-            display: flex; align-items: center; gap: 18px; border: 1px solid #fff;
+        .tab-row { display: flex; gap: 25px; padding: 10px 25px; margin-bottom: 10px; }
+        .tab-btn { font-size: 16px; font-weight: 900; color: #BBB; border: none; background: none; padding-bottom: 8px; position: relative; }
+        .tab-btn.active { color: #333; }
+        .tab-btn.active::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: var(--main-theme); }
+
+        /* --- 🎬 聊天室：Lysn Bubble 專業模式 --- */
+        #view-chat-detail { background: #f2f5f9; z-index: 2000; }
+        .rolling-notice {
+            height: 48px; background: rgba(255,255,255,0.6); 
+            border-bottom: 0.5px solid rgba(0,0,0,0.05); overflow: hidden;
         }
-        .dm-ava-img { width: 60px; height: 60px; background: #eee; border-radius: 22px; border: 1px solid #fff; }
+        .notice-track { animation: steppedScroll 15s infinite; }
+        .notice-item { height: 48px; display: flex; align-items: center; padding: 0 20px; font-size: 12.5px; color: #777; font-weight: 600; }
+        @keyframes steppedScroll { 0%, 25% { transform: translateY(0); } 30%, 55% { transform: translateY(-48px); } 60%, 85% { transform: translateY(-96px); } 100% { transform: translateY(-144px); } }
 
-        /* 個人中心 (登出按鈕放置處) */
-        .profile-list { padding: 20px; }
-        .list-group { background: #fff; border-radius: 25px; overflow: hidden; border: 1px solid #eee; }
-        .list-item { padding: 20px; display: flex; justify-content: space-between; border-bottom: 1px solid #f9f9f9; font-weight: 800; color: #444; }
-
-        /* --- 🎬 聊天室 (對標圖四/六：仿 Lysn 佈局) --- */
-        #view-chat-detail { background: #F2F5F9; z-index: 2000; }
-        .bubble-notice-bar { height: 50px; background: rgba(255,255,255,0.4); border-bottom: 1px solid rgba(0,0,0,0.05); overflow: hidden; }
-        .notice-track { animation: bubbleScroll 12s infinite; }
-        .notice-row { height: 50px; display: flex; align-items: center; padding: 0 20px; font-size: 13px; color: #666; font-weight: 600; }
-        @keyframes bubbleScroll { 0%, 25% { transform: translateY(0); } 30%, 50% { transform: translateY(-50px); } 55%, 75% { transform: translateY(-100px); } 80%, 100% { transform: translateY(-150px); } }
-
-        .chat-stream { flex: 1; padding: 20px; display: flex; flex-direction: column; overflow-y: auto; }
-        .bubble-art {
-            align-self: flex-end; background: var(--bubble-purple); color: #fff;
-            padding: 12px 18px; font-size: 15px; line-height: 1.5;
-            border-radius: 20px 20px 4px 20px; /* Lysn 特色缺角 */
-            margin-bottom: 12px; max-width: 80%; box-shadow: 0 3px 12px rgba(162,155,254,0.2);
+        .chat-area { flex: 1; padding: 20px; display: flex; flex-direction: column; overflow-y: auto; gap: 12px; }
+        .bubble-msg {
+            align-self: flex-end; background: var(--purple-bubble); color: #fff;
+            padding: 14px 18px; font-size: 15px; border-radius: 20px 20px 4px 20px;
+            max-width: 80%; box-shadow: 0 2px 10px rgba(162,155,254,0.2);
         }
 
-        .chat-bottom-dock {
-            background: #fff; padding: 12px 15px calc(15px + var(--safe-bottom));
+        .chat-bottom {
+            background: #fff; padding: 10px 15px calc(15px + var(--safe-bottom));
             display: flex; align-items: center; gap: 12px; border-top: 0.5px solid #eee;
         }
-        .chat-input-field { flex: 1; background: #F5F6F8; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; }
-        .chat-send-btn { width: 44px; height: 44px; background: var(--main-blue); border: none; border-radius: 50%; color: #fff; font-size: 22px; display: flex; align-items: center; justify-content: center; }
+        .chat-input-field { flex: 1; background: #F2F3F5; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; }
 
-        /* --- 🎬 核心：Lysn 規格預覽彈窗 (圖 10) --- */
-        #bubble-preview-modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 9999;
-            display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px);
+        /* --- 🎬 精緻預覽彈窗 (圖 10 規格) --- */
+        #preview-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 5000;
+            display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px);
         }
-        .preview-card { background: #fff; width: 88%; border-radius: 35px; overflow: hidden; }
-        .preview-header { padding: 25px 20px 10px; text-align: center; font-weight: 900; font-size: 18px; }
-        .preview-body { padding: 0 30px 30px; }
-        .art-profile-row { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
-        .art-p-ava { width: 45px; height: 45px; border-radius: 50%; background: #eee; }
-        .art-tag-btn { background: var(--purple-bubble); color: #fff; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 900; text-transform: uppercase; }
-        .preview-bubble-content { 
-            background: var(--bubble-purple); color: #fff; padding: 18px 22px; 
-            border-radius: 25px 25px 4px 25px; line-height: 1.6; font-size: 16px; 
-        }
-        .preview-footer { display: flex; border-top: 1px solid #F0F0F0; }
-        .prev-btn { flex: 1; padding: 22px; border: none; background: #fff; font-weight: 900; font-size: 16px; cursor: pointer; }
+        .modal-card { background: #fff; width: 88%; border-radius: 35px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+        .modal-body { padding: 30px; }
+        .art-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+        .art-ava { width: 50px; height: 50px; border-radius: 50%; background: #eee; border: 1px solid #f0f0f0; }
+        .art-tag { background: var(--main-theme); color: #fff; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 900; }
+        .p-bubble { background: var(--purple-bubble); color: #fff; padding: 18px; border-radius: 22px 22px 4px 22px; font-size: 16px; line-height: 1.5; }
+        
+        .modal-footer { display: flex; border-top: 0.5px solid #f0f0f0; }
+        .m-btn { flex: 1; padding: 20px; border: none; background: #fff; font-size: 16px; font-weight: 800; }
+        .m-btn.ok { color: var(--main-theme); border-left: 0.5px solid #f0f0f0; }
 
-        /* --- 🎬 側邊選單 (圖四齒輪內容) --- */
-        #settings-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 10000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .settings-menu-box { background: #fff; width: 80%; border-radius: 32px; overflow: hidden; }
-        .s-opt { padding: 22px; text-align: center; font-weight: 800; border-bottom: 1px solid #F8F8F8; color: #333; }
+        /* --- 🎬 個人中心選單 --- */
+        .profile-list { margin: 20px; background: #fff; border-radius: 25px; overflow: hidden; border: 0.5px solid #eee; }
+        .p-opt { padding: 20px; border-bottom: 0.5px solid #f5f5f5; font-weight: 700; display: flex; justify-content: space-between; color: #444; }
 
-        /* 底部導航 (圖一規格，移除數據) */
-        .bottom-nav { 
-            height: 85px; padding-bottom: 25px; display: flex; 
-            background: var(--glass-thick); backdrop-filter: blur(25px); border-top: 1px solid rgba(0,0,0,0.05);
-        }
-        .nav-cell { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #BBB; font-size: 11px; font-weight: 900; }
-        .nav-cell.active { color: var(--main-blue); }
+        /* 導航 */
+        .nav-bar { height: 85px; padding-bottom: 25px; display: flex; background: var(--glass-thick); backdrop-filter: blur(25px); border-top: 0.5px solid rgba(0,0,0,0.1); }
+        .nav-tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #BBB; font-size: 11px; font-weight: 800; }
+        .nav-tab.active { color: var(--main-theme); }
     </style>
 </head>
 <body>
 
-    <header class="nav-header" id="mainNavBar">
-        <div class="header-action-btn" id="leftIcon" onclick="handleLeftAction()">🔔</div>
-        <div class="page-big-title" id="bigTitleText">WEVERSE</div>
-        <div id="center-room-name">聊天室名稱</div>
-        <div class="header-action-btn" id="rightIcon" onclick="toggleSettings(true)" style="visibility: hidden; justify-content: flex-end;">⚙️</div>
+    <header class="app-header" id="mainHeader">
+        <div class="icon-btn" id="header-left" onclick="handleHeaderLeft()">🔔</div>
+        <div id="header-center-title">聊天室名稱</div>
+        <div class="icon-btn" id="header-right" onclick="alert('變更設定')">⚙️</div>
     </header>
 
-    <div class="view-container">
+    <div class="main-container">
         <section id="view-studio" class="view active">
-            <div class="welcome-msg">歡迎藝人回來 ✨</div>
-            <div class="post-card">
-                <textarea class="post-input" id="postInput" placeholder="寫點什麼給粉絲吧..."></textarea>
-                <button class="btn-post-go">發布星球動態</button>
+            <div class="title-group">
+                <h1 class="big-title">Studio</h1>
+                <div class="welcome-back">歡迎藝人回來 ✨</div>
             </div>
-            <div style="display:flex; gap:20px; padding:0 25px 15px;">
-                <button style="font-size:16px; font-weight:900; color:#333; border:none; background:none; border-bottom:3px solid var(--main-blue); padding-bottom:5px;">我的貼文</button>
-                <button style="font-size:16px; font-weight:900; color:#BBB; border:none; background:none;">隊友貼文</button>
+            <div class="post-card">
+                <textarea class="post-input" placeholder="發布星球動態..."></textarea>
+                <button class="btn-post">發布</button>
+            </div>
+            <div class="tab-row">
+                <button class="tab-btn active">我的貼文</button>
+                <button class="tab-btn">隊友貼文</button>
             </div>
         </section>
 
-        <section id="view-dm" class="view">
-            <div class="welcome-msg">與 12,405 位粉絲即時互動中</div>
-            <div class="dm-list-card" onclick="openChatRoom('NEXT’S YOU 星球')">
-                <div class="dm-ava-img"></div>
-                <div>
-                    <div style="font-weight: 900; font-size: 17px;">NEXT’S YOU 星球</div>
-                    <div style="font-size: 13px; color: #999; margin-top: 4px;">已有新訊息等待回覆</div>
-                </div>
+        <section id="view-dm-list" class="view">
+            <div class="title-group"><h1 class="big-title">DM</h1></div>
+            <div style="margin: 0 20px; padding: 20px; background: var(--glass-thick); border-radius: 25px; display: flex; align-items: center; gap: 15px; border: 1px solid #fff;" onclick="openChat('NEXT’S YOU 官方星球')">
+                <div style="width:55px; height:55px; background:#ddd; border-radius:18px;"></div>
+                <div><b>官方星球聊天室</b><br><small style="color:#888;">粉絲正在等待你的 Bubble...</small></div>
             </div>
         </section>
 
         <section id="view-profile" class="view">
-            <div class="welcome-msg">帳號狀態：已認證 Artist</div>
+            <div class="title-group"><h1 class="big-title">Settings</h1></div>
             <div class="profile-list">
-                <div class="list-group">
-                    <div class="list-item"><span>個人資料修改</span><span>❯</span></div>
-                    <div class="list-item"><span>偏好設定</span><span>❯</span></div>
-                    <div class="list-item" style="color:#FF4D4F; border:none;" onclick="handleLogout()"><span>登出 Artists 帳號</span><span>❯</span></div>
-                </div>
+                <div class="p-opt"><span>變更暱稱</span><span>❯</span></div>
+                <div class="p-opt"><span>變更頭像</span><span>❯</span></div>
+                <div class="p-opt" style="color:#FF4D4F; border:none;" onclick="doLogout()"><span>登出 Artist 帳號</span><span>❯</span></div>
             </div>
         </section>
 
         <section id="view-chat-detail" class="view">
-            <div class="bubble-notice-bar"><div class="notice-track" id="track"></div></div>
-            <div class="chat-stream" id="chatWall"></div>
-            <div class="chat-bottom-dock">
-                <div style="font-size:26px; color:#DDD;">＋</div>
-                <input type="text" id="chatMsgInput" class="chat-input-field" placeholder="輸入訊息...">
-                <button class="chat-send-btn" onclick="openPreview()">↑</button>
+            <div class="rolling-notice">
+                <div class="notice-track">
+                    <div class="notice-item">💬 今日共有 12,405 位粉絲留言</div>
+                    <div class="notice-item">⭐ 請記得遵守星球社群守則</div>
+                    <div class="notice-item">✨ 分享你的日常給全世界的粉絲吧</div>
+                </div>
+            </div>
+            <div class="chat-area" id="chatWall"></div>
+            <div class="chat-bottom">
+                <div style="font-size:24px; color:#CCC;">＋</div>
+                <input type="text" id="chatInput" class="chat-input-field" placeholder="輸入訊息...">
+                <button onclick="showPreview()" style="width:40px; height:40px; border-radius:50%; background:var(--main-theme); border:none; color:#fff; display:flex; align-items:center; justify-content:center;">↑</button>
             </div>
         </section>
     </div>
 
-    <div id="bubble-preview-modal">
-        <div class="preview-card">
-            <div class="preview-header">發送 Bubble 確認</div>
-            <div class="preview-body">
-                <div class="art-profile-row">
-                    <div class="art-p-ava"></div>
-                    <div><span class="art-tag-btn">ARTIST</span><br><b>NEXT'S YOU</b></div>
+    <div id="preview-modal">
+        <div class="modal-card">
+            <div class="modal-body">
+                <div style="text-align:center; font-weight:900; margin-bottom:20px; font-size:18px;">發送 Bubble 確認</div>
+                <div class="art-header">
+                    <div class="art-ava"></div>
+                    <div><span class="art-tag">ARTIST</span><br><span style="font-weight:900; font-size:16px;">NEXT'S YOU</span></div>
                 </div>
-                <div id="preview-text-bubble" class="preview-bubble-content"></div>
+                <div id="p-bubble" class="p-bubble"></div>
             </div>
-            <div class="preview-footer">
-                <button class="prev-btn" onclick="closePreview()">取消</button>
-                <button class="prev-btn" style="color:var(--main-blue); border-left:1px solid #F0F0F0;" onclick="confirmSend()">發送</button>
+            <div class="modal-footer">
+                <button class="m-btn" onclick="hidePreview()">取消</button>
+                <button class="m-btn ok" onclick="confirmSend()">發送</button>
             </div>
         </div>
     </div>
 
-    <div id="settings-overlay" onclick="toggleSettings(false)">
-        <div class="settings-menu-box" onclick="event.stopPropagation()">
-            <div class="s-opt">變更聊天室名稱</div>
-            <div class="s-opt">變更暱稱</div>
-            <div class="s-opt" style="color:#BBB;" onclick="toggleSettings(false)">取消</div>
-        </div>
-    </div>
-
-    <nav class="bottom-nav" id="mainFooterNav">
-        <div class="nav-cell active" onclick="navTo('studio', 'WEVERSE', this)">🏠<br>工作室</div>
-        <div class="nav-cell" onclick="navTo('dm', '星球 DM', this)">💬<br>DM</div>
-        <div class="nav-cell" onclick="navTo('profile', '個人中心', this)">👤<br>個人</div>
+    <nav class="nav-bar" id="bottomNav">
+        <div class="nav-tab active" onclick="navTo('studio', this)">🎨<br>工作室</div>
+        <div class="nav-tab" onclick="navTo('dm-list', this)">💬<br>訊息</div>
+        <div class="nav-tab" onclick="navTo('profile', this)">👤<br>個人</div>
     </nav>
 
 <script>
-    let activeTab = 'studio';
+    let currentTab = 'studio';
 
-    function navTo(viewId, title, el) {
-        activeTab = viewId;
+    function navTo(id, el) {
+        currentTab = id;
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.querySelectorAll('.nav-cell').forEach(n => n.classList.remove('active'));
-        document.getElementById('view-' + viewId).classList.add('active');
+        document.querySelectorAll('.nav-tab').forEach(n => n.classList.remove('active'));
+        document.getElementById('view-' + id).classList.add('active');
         el.classList.add('active');
 
-        // Header 狀態還原 (對標圖三/一)
-        const header = document.getElementById('mainNavBar');
+        const header = document.getElementById('mainHeader');
         header.classList.remove('chat-active');
-        document.getElementById('bigTitleText').innerText = title;
-        document.getElementById('bigTitleText').style.display = 'block';
-        document.getElementById('header-left').innerText = (viewId === 'studio') ? "🔔" : "";
+        document.getElementById('header-left').innerText = "🔔";
+        document.getElementById('header-left').style.visibility = (id === 'studio') ? "visible" : "hidden";
         document.getElementById('header-right').style.visibility = "hidden";
     }
 
-    function openChatRoom(name) {
+    function openChat(name) {
         document.getElementById('view-chat-detail').classList.add('active');
-        document.getElementById('mainFooterNav').style.display = 'none'; // 隱藏底部導航 (圖四規格)
+        document.getElementById('bottomNav').style.display = 'none';
         
-        const header = document.getElementById('mainNavBar');
+        const header = document.getElementById('mainHeader');
         header.classList.add('chat-active');
-        document.getElementById('bigTitleText').style.display = 'none';
         document.getElementById('header-left').innerText = "❮";
+        document.getElementById('header-left').style.visibility = "visible";
         document.getElementById('header-right').style.visibility = "visible";
-        document.getElementById('center-room-name').innerText = name;
-
-        // 初始化滾動條
-        const msgs = ["今日在線：12,405人", "已有 3,201 人參與了你的話題", "新訊息：歐巴辛苦了！"];
-        document.getElementById('track').innerHTML = msgs.map(m => `<div class="notice-row">${m}</div>`).join('') + `<div class="notice-row">${msgs[0]}</div>`;
+        document.getElementById('header-center-title').innerText = name;
     }
 
-    function handleLeftAction() {
-        if(document.getElementById('mainNavBar').classList.contains('chat-active')) {
+    function handleHeaderLeft() {
+        if(document.getElementById('mainHeader').classList.contains('chat-active')) {
             document.getElementById('view-chat-detail').classList.remove('active');
-            document.getElementById('mainFooterNav').style.display = 'flex';
-            navTo(activeTab, document.getElementById('bigTitleText').innerText, document.querySelector('.nav-cell.active'));
+            document.getElementById('bottomNav').style.display = 'flex';
+            navTo(currentTab, document.querySelector('.nav-tab.active'));
         }
     }
 
-    function openPreview() {
-        const val = document.getElementById('chatMsgInput').value.trim();
+    function showPreview() {
+        const val = document.getElementById('chatInput').value.trim();
         if(!val) return;
-        document.getElementById('preview-text-bubble').innerText = val;
-        document.getElementById('bubble-preview-modal').style.display = 'flex';
+        document.getElementById('p-bubble').innerText = val;
+        document.getElementById('preview-modal').style.display = 'flex';
     }
 
-    function closePreview() { document.getElementById('bubble-preview-modal').style.display = 'none'; }
+    function hidePreview() { document.getElementById('preview-modal').style.display = 'none'; }
 
     function confirmSend() {
-        const val = document.getElementById('chatMsgInput').value;
-        document.getElementById('chatWall').innerHTML += `<div class="bubble-art">${val}</div>`;
-        document.getElementById('chatMsgInput').value = '';
-        closePreview();
+        const val = document.getElementById('chatInput').value;
+        document.getElementById('chatWall').innerHTML += `<div class="bubble-msg">${val}</div>`;
+        document.getElementById('chatInput').value = '';
+        hidePreview();
         document.getElementById('chatWall').scrollTop = document.getElementById('chatWall').scrollHeight;
     }
 
-    function toggleSettings(s) { document.getElementById('settings-overlay').style.display = s ? 'flex' : 'none'; }
-
-    function handleLogout() {
-        if(confirm("確定要登出並回到粉絲登入頁嗎？")) {
-            localStorage.clear();
+    function doLogout() {
+        if(confirm("確定要登出並返回登入頁嗎？")) {
             window.location.href = 'index.html';
         }
     }
