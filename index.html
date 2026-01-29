@@ -18,137 +18,85 @@
             position: relative;
         }
 
-        /* --- 1. 背景氛圍光 (仿照圖一的柔和漸層) --- */
-        .ambient-light {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: #fff;
-            overflow: hidden;
-        }
-        /* 左上角的紫色光暈 */
-        .light-1 {
-            position: absolute;
-            top: -10%;
-            left: -10%;
-            width: 80vw;
-            height: 80vw;
-            background: radial-gradient(circle, rgba(200, 180, 255, 0.4) 0%, rgba(255,255,255,0) 70%);
-            filter: blur(60px);
-        }
-        /* 右下角的粉色光暈 */
-        .light-2 {
-            position: absolute;
-            bottom: -10%;
-            right: -10%;
-            width: 90vw;
-            height: 90vw;
-            background: radial-gradient(circle, rgba(255, 200, 220, 0.3) 0%, rgba(255,255,255,0) 70%);
-            filter: blur(60px);
-        }
+        /* --- 1. 背景氛圍光 (靜態柔和版) --- */
+        .ambient-light { position: absolute; width: 100%; height: 100%; z-index: -1; background: #fff; overflow: hidden; pointer-events: none; }
+        .light-1 { position: absolute; top: -10%; left: -10%; width: 80vw; height: 80vw; background: radial-gradient(circle, rgba(200, 180, 255, 0.4) 0%, rgba(255,255,255,0) 70%); filter: blur(60px); }
+        .light-2 { position: absolute; bottom: -10%; right: -10%; width: 90vw; height: 90vw; background: radial-gradient(circle, rgba(255, 200, 220, 0.3) 0%, rgba(255,255,255,0) 70%); filter: blur(60px); }
 
-        /* --- 2. 登入卡片 (純白、大圓角、柔和陰影) --- */
+        /* --- 2. 登入卡片 (純白實心風格) --- */
         .login-card {
             width: 85%;
             max-width: 360px;
-            background: #ffffff;
-            border-radius: 35px; /* 圖一的大圓角特徵 */
+            background: #ffffff; /* 純白實心 */
+            border-radius: 35px; /* 大圓角 */
             padding: 40px 30px;
-            box-shadow: 0 20px 60px rgba(170, 170, 200, 0.15); /* 高級感的淡紫陰影 */
+            box-shadow: 0 20px 60px rgba(170, 170, 200, 0.15); /* 高級感陰影 */
             text-align: center;
             display: flex;
             flex-direction: column;
             gap: 20px;
             position: relative;
             z-index: 10;
+            transition: transform 0.3s, opacity 0.3s;
         }
 
-        /* LOGO */
         .logo { 
             font-size: 48px; 
             font-weight: 800; 
-            /* 調整為圖一的紫色漸層 */
-            background: linear-gradient(135deg, #b088f9 0%, #d2aaff 100%); 
+            background: linear-gradient(135deg, #b088f9 0%, #da97f0 100%); /* 柔和紫粉漸層 */
             -webkit-background-clip: text; 
             color: transparent; 
             margin-bottom: 20px; 
             letter-spacing: -1.5px;
         }
 
-        /* 輸入框組 */
         .input-group { position: relative; width: 100%; }
+        .input-group i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 18px; }
         
-        .input-group i { 
-            position: absolute; 
-            left: 20px; 
-            top: 50%; 
-            transform: translateY(-50%); 
-            color: #9ca3af; /* 淺灰圖標 */
-            font-size: 18px;
-        }
-        
-        /* 輸入框本體 (淺灰背景，無邊框) */
-        input { 
+        /* 純淨輸入框樣式 */
+        .clean-input {
             width: 100%; 
-            padding: 18px 18px 18px 50px; /* 加大內距讓高度變高 */
+            padding: 18px 18px 18px 50px; 
             border-radius: 16px; 
             border: none; 
-            background: #f9fafb; /* 極淺灰背景，仿圖一 */
+            background: #f9fafb; /* 淺灰背景 */
             font-size: 15px; 
             color: #333;
             outline: none; 
             transition: all 0.2s;
         }
-        
-        input::placeholder { color: #bdbdbd; }
-        
-        input:focus { 
-            background: #f3f4f6; 
-            box-shadow: inset 0 0 0 2px #e9d5ff; /* 聚焦時微弱紫框 */
-        }
+        .clean-input:focus { background: #f3f4f6; box-shadow: inset 0 0 0 2px #e9d5ff; }
 
-        /* 登入按鈕 (寬大、漸層) */
+        /* 漸層按鈕 */
         .btn-login { 
             width: 100%; 
             padding: 18px; 
             border-radius: 16px; 
-            background: linear-gradient(90deg, #b088f9, #da97f0); /* 柔和紫粉漸層 */
+            background: linear-gradient(90deg, #b088f9, #da97f0); 
             color: white; 
             border: none; 
             font-weight: 600; 
             font-size: 16px; 
             cursor: pointer; 
             margin-top: 10px;
-            box-shadow: 0 8px 20px rgba(180, 140, 250, 0.3); /* 按鈕光暈 */
+            box-shadow: 0 8px 20px rgba(180, 140, 250, 0.3); 
             transition: transform 0.1s;
         }
-        
         .btn-login:active { transform: scale(0.98); }
 
-        .forgot-pwd {
-            font-size: 13px;
-            color: #666;
-            margin-top: 5px;
-            cursor: pointer;
-        }
-
-        /* --- 管理員面板 (保持功能，但樣式配合新風格) --- */
-        #admin-panel { 
+        /* 載入動畫 */
+        .loader { 
             display: none; 
-            width: 85%; max-width: 360px;
-            background: #fff;
-            border-radius: 35px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(170, 170, 200, 0.15);
+            border: 3px solid #f3f3f3; 
+            border-top: 3px solid #b088f9; 
+            border-radius: 50%; 
+            width: 24px; height: 24px; 
+            animation: spin 1s linear infinite; 
+            margin: 10px auto 0;
         }
-        .admin-header { font-size: 18px; font-weight: bold; color: #b088f9; margin-bottom: 15px; border-bottom: 1px solid #f0f0f0; padding-bottom: 10px; }
-        .db-item { background: #f9fafb; padding: 12px; border-radius: 12px; margin-bottom: 8px; font-size: 13px; color: #444; }
-        .tag { padding: 3px 8px; border-radius: 6px; color: white; font-weight: bold; margin-right: 6px; font-size: 10px; }
-        .tag-super { background: #ff7675; }
-        .tag-artist { background: #a29bfe; }
-        .tag-fan { background: #b2bec3; }
-        .btn-outline { background: transparent; border: 1px solid #ddd; color: #666; width: 100%; padding: 12px; border-radius: 12px; margin-top: 10px; cursor: pointer; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .forgot-pwd { font-size: 13px; color: #999; margin-top: 5px; cursor: pointer; }
 
     </style>
 </head>
@@ -159,107 +107,78 @@
         <div class="light-2"></div>
     </div>
 
-    <div id="login-view" class="login-card">
+    <form class="login-card" id="login-form">
         <div class="logo">bubble</div>
         
-        <form onsubmit="handleLogin(event)" style="display: flex; flex-direction: column; gap: 15px;">
-            <div class="input-group">
-                <i class="ri-mail-line"></i>
-                <input id="email" type="email" placeholder="電子郵件" required>
-            </div>
-            
-            <div class="input-group">
-                <i class="ri-lock-2-line"></i>
-                <input id="pwd" type="password" placeholder="密碼" required>
-            </div>
+        <div class="input-group">
+            <i class="ri-mail-line"></i>
+            <input id="email" type="email" class="clean-input" placeholder="電子郵件" required>
+        </div>
+        
+        <div class="input-group">
+            <i class="ri-lock-2-line"></i>
+            <input id="pwd" type="password" class="clean-input" placeholder="密碼" required>
+        </div>
 
-            <button type="submit" class="btn-login">登入</button>
-        </form>
+        <button type="submit" class="btn-login" id="btn-text">登入</button>
+        <div class="loader" id="loader"></div>
         
         <div class="forgot-pwd">忘記密碼?</div>
-    </div>
-
-    <div id="admin-panel">
-        <div class="admin-header">
-            <i class="ri-shield-keyhole-fill"></i> Super Admin
-        </div>
-        <div style="margin-bottom: 15px;">
-            <p style="color: #666; font-size: 14px; margin-bottom: 10px;">歡迎回來，管理員</p>
-            <button class="btn-login" onclick="goToApp()">進入藝人聊天模式</button>
-            <button class="btn-outline" onclick="logout()">登出</button>
-        </div>
-        <div style="max-height: 300px; overflow-y: auto;" id="user-list">
-            </div>
-    </div>
+    </form>
 
     <script>
-        // ==========================================
-        // ⬇️ 資料庫 (帳號密碼設定) ⬇️
-        // ==========================================
-        const USER_DATABASE = {
-            "admin@smtown.com": { pwd: "123", role: "artist", isSuperAdmin: true, name: "Karina (Admin)", avatar: "https://ui-avatars.com/api/?name=Karina&background=random&color=fff" },
-            "partner@smtown.com": { pwd: "123", role: "artist", isSuperAdmin: true, name: "Winter (Admin)", avatar: "https://ui-avatars.com/api/?name=Winter&background=random&color=fff" },
-            "ningning@smtown.com": { pwd: "123", role: "artist", isSuperAdmin: false, name: "NingNing", avatar: "https://ui-avatars.com/api/?name=NingNing&background=random&color=fff" },
-            "fan@my.com": { pwd: "123", role: "fan", isSuperAdmin: false, name: "MY Fan", avatar: null }
+        // ============================================
+        // 🔐 後台管理區：在此設定所有帳號密碼與權限
+        // ============================================
+        const USER_DB = {
+            // 1. 妳 (超級管理員+藝人)
+            "admin@smtown.com": { pwd: "123", role: "admin", name: "Karina (Admin)", avatar: "https://ui-avatars.com/api/?name=Karina&background=random&color=fff" },
+            
+            // 2. 妳的搭檔 (超級管理員+藝人)
+            "partner@smtown.com": { pwd: "123", role: "admin", name: "Winter (Admin)", avatar: "https://ui-avatars.com/api/?name=Winter&background=random&color=fff" },
+            
+            // 3. 普通藝人 (無管理權限)
+            "ningning@smtown.com": { pwd: "123", role: "artist", name: "NingNing", avatar: "https://ui-avatars.com/api/?name=NingNing&background=random&color=fff" },
+            
+            // 4. 粉絲帳號
+            "fan@my.com": { pwd: "123", role: "fan", name: "My Fan", avatar: null }
         };
 
-        function handleLogin(e) {
+        document.getElementById('login-form').addEventListener('submit', function(e) {
             e.preventDefault();
+            
             const email = document.getElementById('email').value.trim();
             const pwd = document.getElementById('pwd').value.trim();
-            const user = USER_DATABASE[email];
+            const btn = document.getElementById('btn-text');
+            const loader = document.getElementById('loader');
+            
+            // UI 狀態：顯示載入中
+            btn.style.display = 'none';
+            loader.style.display = 'block';
 
-            if (user && user.pwd === pwd) {
-                // 存入 LocalStorage
-                user.email = email;
-                localStorage.setItem('currentUser', JSON.stringify(user));
+            setTimeout(() => {
+                const user = USER_DB[email];
 
-                if (user.isSuperAdmin) {
-                    // 超級管理員：顯示後台
-                    document.getElementById('login-view').style.display = 'none';
-                    document.getElementById('admin-panel').style.display = 'block';
-                    renderUserList();
-                } else if (user.role === 'artist') {
-                    // 普通藝人：跳轉藝人端
-                    window.location.href = 'artist.html';
+                if (user && user.pwd === pwd) {
+                    // 登入成功：存儲用戶資訊到 LocalStorage (讓不同頁面都能讀取)
+                    // 注意：這裡我改成 localStorage，因為如果跨分頁有時候 sessionStorage 會失效
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    
+                    // 分流邏輯
+                    if (user.role === 'fan') {
+                        window.location.href = 'fan.html'; // 粉絲 -> fan.html
+                    } else {
+                        // 藝人與管理員 -> artist.html
+                        // (在 artist.html 裡會再判斷是否顯示 Admin 按鈕)
+                        window.location.href = 'artist.html'; 
+                    }
                 } else {
-                    // 粉絲：跳轉粉絲端
-                    window.location.href = 'fan.html';
+                    alert('帳號或密碼錯誤');
+                    btn.style.display = 'block';
+                    loader.style.display = 'none';
                 }
-            } else {
-                alert('帳號或密碼錯誤');
-            }
-        }
-
-        function renderUserList() {
-            const list = document.getElementById('user-list');
-            list.innerHTML = '';
-            for (const [email, u] of Object.entries(USER_DATABASE)) {
-                let tag = `<span class="tag tag-fan">FAN</span>`;
-                if(u.isSuperAdmin) tag = `<span class="tag tag-super">ADMIN</span>`;
-                else if(u.role === 'artist') tag = `<span class="tag tag-artist">ARTIST</span>`;
-
-                list.innerHTML += `
-                    <div class="db-item">
-                        <div style="display:flex; justify-content:space-between;">
-                            <b>${u.name}</b>
-                            ${tag}
-                        </div>
-                        <div style="color:#999; margin-top:4px; font-family:monospace;">${email}</div>
-                        <div style="color:#999; font-family:monospace;">Pwd: ${u.pwd}</div>
-                    </div>
-                `;
-            }
-        }
-
-        function goToApp() {
-            window.location.href = 'artist.html';
-        }
-
-        function logout() {
-            localStorage.removeItem('currentUser');
-            location.reload();
-        }
+            }, 800); // 模擬 0.8秒 連線時間
+        });
     </script>
 </body>
 </html>
