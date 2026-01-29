@@ -9,7 +9,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         
         body { 
-            background: #fcfcfc; /* 極淺灰白底色 */
+            background: #fdfdfd; /* 幾乎純白的底色 */
             height: 100vh; 
             display: flex; 
             justify-content: center; 
@@ -18,68 +18,108 @@
             position: relative;
         }
 
-        /* --- 1. 背景氛圍光 (靜態柔和版) --- */
-        .ambient-light { position: absolute; width: 100%; height: 100%; z-index: -1; background: #fff; overflow: hidden; pointer-events: none; }
-        .light-1 { position: absolute; top: -10%; left: -10%; width: 80vw; height: 80vw; background: radial-gradient(circle, rgba(200, 180, 255, 0.4) 0%, rgba(255,255,255,0) 70%); filter: blur(60px); }
-        .light-2 { position: absolute; bottom: -10%; right: -10%; width: 90vw; height: 90vw; background: radial-gradient(circle, rgba(255, 200, 220, 0.3) 0%, rgba(255,255,255,0) 70%); filter: blur(60px); }
+        /* --- 1. 背景氛圍光 (調整為圖二的夢幻紫粉色調) --- */
+        .ambient-light { position: absolute; width: 100%; height: 100%; z-index: -1; overflow: hidden; pointer-events: none; }
+        
+        /* 左上角：紫色光暈 (加強飽和度與範圍) */
+        .light-1 { 
+            position: absolute; 
+            top: -15%; 
+            left: -15%; 
+            width: 80vw; 
+            height: 80vw; 
+            background: radial-gradient(circle, rgba(180, 160, 255, 0.35) 0%, rgba(255,255,255,0) 65%); 
+            filter: blur(50px); 
+        }
+        
+        /* 右下角：粉色光暈 (加強暖色調) */
+        .light-2 { 
+            position: absolute; 
+            bottom: -10%; 
+            right: -10%; 
+            width: 85vw; 
+            height: 85vw; 
+            background: radial-gradient(circle, rgba(255, 190, 210, 0.3) 0%, rgba(255,255,255,0) 65%); 
+            filter: blur(50px); 
+        }
 
-        /* --- 2. 登入卡片 (純白實心風格) --- */
+        /* --- 2. 登入卡片 (純白、高圓角、柔和陰影) --- */
         .login-card {
             width: 85%;
             max-width: 360px;
             background: #ffffff; /* 純白實心 */
-            border-radius: 35px; /* 大圓角 */
-            padding: 40px 30px;
-            box-shadow: 0 20px 60px rgba(170, 170, 200, 0.15); /* 高級感陰影 */
+            border-radius: 32px; /* 圖二的大圓角 */
+            padding: 45px 30px; /* 增加上下內距，讓版面更舒展 */
+            /* 關鍵陰影：讓卡片浮起來，還原圖二的立體感 */
+            box-shadow: 0 20px 50px rgba(180, 170, 200, 0.12); 
             text-align: center;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 22px;
             position: relative;
             z-index: 10;
-            transition: transform 0.3s, opacity 0.3s;
         }
 
+        /* LOGO */
         .logo { 
-            font-size: 48px; 
+            font-size: 46px; 
             font-weight: 800; 
-            background: linear-gradient(135deg, #b088f9 0%, #da97f0 100%); /* 柔和紫粉漸層 */
+            /* 圖二的漸層：稍微帶點粉紫 */
+            background: linear-gradient(135deg, #b088f9 0%, #e0aaff 100%); 
             -webkit-background-clip: text; 
             color: transparent; 
-            margin-bottom: 20px; 
-            letter-spacing: -1.5px;
+            margin-bottom: 15px; 
+            letter-spacing: -1px;
         }
 
         .input-group { position: relative; width: 100%; }
-        .input-group i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 18px; }
         
-        /* 純淨輸入框樣式 */
+        /* 圖標顏色調整為更深的灰色，增加可讀性 */
+        .input-group i { 
+            position: absolute; 
+            left: 20px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            color: #888; 
+            font-size: 18px; 
+        }
+        
+        /* --- 3. 輸入框 (仿 iOS 風格的淺灰背景) --- */
         .clean-input {
             width: 100%; 
             padding: 18px 18px 18px 50px; 
-            border-radius: 16px; 
+            border-radius: 18px; /* 圓角稍微大一點 */
             border: none; 
-            background: #f9fafb; /* 淺灰背景 */
+            background: #f5f6f8; /* 圖二那種極淺的冷灰色 */
             font-size: 15px; 
             color: #333;
             outline: none; 
             transition: all 0.2s;
         }
-        .clean-input:focus { background: #f3f4f6; box-shadow: inset 0 0 0 2px #e9d5ff; }
+        
+        .clean-input::placeholder { color: #aaa; }
+        
+        /* 聚焦時背景微微變白 */
+        .clean-input:focus { 
+            background: #f0f1f3; 
+            box-shadow: inset 0 0 0 1px #e0e0e0;
+        }
 
-        /* 漸層按鈕 */
+        /* --- 4. 按鈕 (寬大、柔和漸層) --- */
         .btn-login { 
             width: 100%; 
             padding: 18px; 
-            border-radius: 16px; 
-            background: linear-gradient(90deg, #b088f9, #da97f0); 
+            border-radius: 18px; 
+            /* 圖二的按鈕漸層 */
+            background: linear-gradient(90deg, #b088f9, #dea0fd); 
             color: white; 
             border: none; 
             font-weight: 600; 
             font-size: 16px; 
             cursor: pointer; 
             margin-top: 10px;
-            box-shadow: 0 8px 20px rgba(180, 140, 250, 0.3); 
+            /* 增加按鈕下方的彩色光暈 */
+            box-shadow: 0 10px 25px rgba(180, 136, 249, 0.25); 
             transition: transform 0.1s;
         }
         .btn-login:active { transform: scale(0.98); }
@@ -96,7 +136,7 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        .forgot-pwd { font-size: 13px; color: #999; margin-top: 5px; cursor: pointer; }
+        .forgot-pwd { font-size: 13px; color: #888; margin-top: 5px; cursor: pointer; }
 
     </style>
 </head>
@@ -161,7 +201,6 @@
 
                 if (user && user.pwd === pwd) {
                     // 登入成功：存儲用戶資訊到 LocalStorage (讓不同頁面都能讀取)
-                    // 注意：這裡我改成 localStorage，因為如果跨分頁有時候 sessionStorage 會失效
                     localStorage.setItem('currentUser', JSON.stringify(user));
                     
                     // 分流邏輯
@@ -169,7 +208,6 @@
                         window.location.href = 'fan.html'; // 粉絲 -> fan.html
                     } else {
                         // 藝人與管理員 -> artist.html
-                        // (在 artist.html 裡會再判斷是否顯示 Admin 按鈕)
                         window.location.href = 'artist.html'; 
                     }
                 } else {
