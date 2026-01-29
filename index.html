@@ -2,88 +2,199 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bubble Login & Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bubble Login</title>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <style>
-        :root {
-            --glass-bg: rgba(255, 255, 255, 0.25);
-            --glass-border: rgba(255, 255, 255, 0.4);
-            --primary-gradient: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
-            --admin-red: #ff4757;
-            --text-main: #2d3436;
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background: #fcfcfc; /* 極淺灰白底色 */
+            height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            overflow: hidden; 
+            position: relative;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background: #f0f2f5; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-        
-        /* 背景 */
-        .liquid-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); }
-        .blob { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.6; animation: float 10s infinite; }
-        .blob-1 { top: -10%; left: -10%; width: 60vw; height: 60vw; background: #a18cd1; }
-        .blob-2 { bottom: -10%; right: -10%; width: 60vw; height: 60vw; background: #ff9a9e; animation-delay: -5s; }
-        @keyframes float { 0%,100% { transform: translate(0,0); } 50% { transform: translate(20px, 40px); } }
 
-        /* 卡片容器 */
-        .container { width: 100%; max-width: 400px; padding: 20px; }
-        
-        /* 登入卡片 */
-        .glass-card {
-            background: rgba(255,255,255,0.4); backdrop-filter: blur(25px);
-            border-radius: 24px; padding: 40px 30px; border: 1px solid var(--glass-border);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.05); text-align: center;
+        /* --- 1. 背景氛圍光 (仿照圖一的柔和漸層) --- */
+        .ambient-light {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: #fff;
+            overflow: hidden;
         }
-        .logo { font-size: 42px; font-weight: 800; background: var(--primary-gradient); -webkit-background-clip: text; color: transparent; margin-bottom: 20px; }
-        
-        .input-group { position: relative; margin-bottom: 15px; }
-        .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888; }
-        input { width: 100%; padding: 15px 15px 15px 45px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.6); background: rgba(255,255,255,0.3); outline: none; transition: 0.3s; }
-        input:focus { background: rgba(255,255,255,0.8); border-color: #a18cd1; }
-        
-        .btn { width: 100%; padding: 15px; border-radius: 12px; background: var(--primary-gradient); color: white; border: none; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        /* 左上角的紫色光暈 */
+        .light-1 {
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 80vw;
+            height: 80vw;
+            background: radial-gradient(circle, rgba(200, 180, 255, 0.4) 0%, rgba(255,255,255,0) 70%);
+            filter: blur(60px);
+        }
+        /* 右下角的粉色光暈 */
+        .light-2 {
+            position: absolute;
+            bottom: -10%;
+            right: -10%;
+            width: 90vw;
+            height: 90vw;
+            background: radial-gradient(circle, rgba(255, 200, 220, 0.3) 0%, rgba(255,255,255,0) 70%);
+            filter: blur(60px);
+        }
 
-        /* 管理員面板 (預設隱藏) */
-        #admin-panel { display: none; text-align: left; }
-        .admin-header { font-size: 18px; font-weight: bold; color: var(--admin-red); margin-bottom: 15px; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
-        .db-item { background: white; padding: 10px; border-radius: 8px; margin-bottom: 8px; font-size: 12px; }
-        .tag { padding: 2px 6px; border-radius: 4px; color: white; font-weight: bold; margin-right: 5px; }
-        .tag-super { background: var(--admin-red); }
+        /* --- 2. 登入卡片 (純白、大圓角、柔和陰影) --- */
+        .login-card {
+            width: 85%;
+            max-width: 360px;
+            background: #ffffff;
+            border-radius: 35px; /* 圖一的大圓角特徵 */
+            padding: 40px 30px;
+            box-shadow: 0 20px 60px rgba(170, 170, 200, 0.15); /* 高級感的淡紫陰影 */
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* LOGO */
+        .logo { 
+            font-size: 48px; 
+            font-weight: 800; 
+            /* 調整為圖一的紫色漸層 */
+            background: linear-gradient(135deg, #b088f9 0%, #d2aaff 100%); 
+            -webkit-background-clip: text; 
+            color: transparent; 
+            margin-bottom: 20px; 
+            letter-spacing: -1.5px;
+        }
+
+        /* 輸入框組 */
+        .input-group { position: relative; width: 100%; }
+        
+        .input-group i { 
+            position: absolute; 
+            left: 20px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            color: #9ca3af; /* 淺灰圖標 */
+            font-size: 18px;
+        }
+        
+        /* 輸入框本體 (淺灰背景，無邊框) */
+        input { 
+            width: 100%; 
+            padding: 18px 18px 18px 50px; /* 加大內距讓高度變高 */
+            border-radius: 16px; 
+            border: none; 
+            background: #f9fafb; /* 極淺灰背景，仿圖一 */
+            font-size: 15px; 
+            color: #333;
+            outline: none; 
+            transition: all 0.2s;
+        }
+        
+        input::placeholder { color: #bdbdbd; }
+        
+        input:focus { 
+            background: #f3f4f6; 
+            box-shadow: inset 0 0 0 2px #e9d5ff; /* 聚焦時微弱紫框 */
+        }
+
+        /* 登入按鈕 (寬大、漸層) */
+        .btn-login { 
+            width: 100%; 
+            padding: 18px; 
+            border-radius: 16px; 
+            background: linear-gradient(90deg, #b088f9, #da97f0); /* 柔和紫粉漸層 */
+            color: white; 
+            border: none; 
+            font-weight: 600; 
+            font-size: 16px; 
+            cursor: pointer; 
+            margin-top: 10px;
+            box-shadow: 0 8px 20px rgba(180, 140, 250, 0.3); /* 按鈕光暈 */
+            transition: transform 0.1s;
+        }
+        
+        .btn-login:active { transform: scale(0.98); }
+
+        .forgot-pwd {
+            font-size: 13px;
+            color: #666;
+            margin-top: 5px;
+            cursor: pointer;
+        }
+
+        /* --- 管理員面板 (保持功能，但樣式配合新風格) --- */
+        #admin-panel { 
+            display: none; 
+            width: 85%; max-width: 360px;
+            background: #fff;
+            border-radius: 35px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(170, 170, 200, 0.15);
+        }
+        .admin-header { font-size: 18px; font-weight: bold; color: #b088f9; margin-bottom: 15px; border-bottom: 1px solid #f0f0f0; padding-bottom: 10px; }
+        .db-item { background: #f9fafb; padding: 12px; border-radius: 12px; margin-bottom: 8px; font-size: 13px; color: #444; }
+        .tag { padding: 3px 8px; border-radius: 6px; color: white; font-weight: bold; margin-right: 6px; font-size: 10px; }
+        .tag-super { background: #ff7675; }
         .tag-artist { background: #a29bfe; }
         .tag-fan { background: #b2bec3; }
-        
-        .btn-outline { background: transparent; border: 1px solid var(--text-main); color: var(--text-main); margin-top: 5px; }
+        .btn-outline { background: transparent; border: 1px solid #ddd; color: #666; width: 100%; padding: 12px; border-radius: 12px; margin-top: 10px; cursor: pointer; }
+
     </style>
 </head>
 <body>
 
-    <div class="liquid-bg"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
+    <div class="ambient-light">
+        <div class="light-1"></div>
+        <div class="light-2"></div>
+    </div>
 
-    <div class="container">
-        <div id="login-view" class="glass-card">
-            <div class="logo">bubble</div>
-            <form onsubmit="handleLogin(event)">
-                <div class="input-group"><i class="ri-mail-line"></i><input id="email" type="email" placeholder="電子郵件" required></div>
-                <div class="input-group"><i class="ri-lock-2-line"></i><input id="pwd" type="password" placeholder="密碼" required></div>
-                <button type="submit" class="btn">登入</button>
-            </form>
-        </div>
+    <div id="login-view" class="login-card">
+        <div class="logo">bubble</div>
+        
+        <form onsubmit="handleLogin(event)" style="display: flex; flex-direction: column; gap: 15px;">
+            <div class="input-group">
+                <i class="ri-mail-line"></i>
+                <input id="email" type="email" placeholder="電子郵件" required>
+            </div>
+            
+            <div class="input-group">
+                <i class="ri-lock-2-line"></i>
+                <input id="pwd" type="password" placeholder="密碼" required>
+            </div>
 
-        <div id="admin-panel" class="glass-card">
-            <div class="admin-header">
-                <i class="ri-shield-keyhole-fill"></i> 超級管理員後台
-            </div>
-            <div style="margin-bottom: 15px;">
-                <p>歡迎回來, Admin!</p>
-                <button class="btn" onclick="goToApp()">進入藝人聊天模式</button>
-                <button class="btn btn-outline" onclick="logout()">登出</button>
-            </div>
-            <div style="max-height: 300px; overflow-y: auto;" id="user-list">
-                </div>
+            <button type="submit" class="btn-login">登入</button>
+        </form>
+        
+        <div class="forgot-pwd">忘記密碼?</div>
+    </div>
+
+    <div id="admin-panel">
+        <div class="admin-header">
+            <i class="ri-shield-keyhole-fill"></i> Super Admin
         </div>
+        <div style="margin-bottom: 15px;">
+            <p style="color: #666; font-size: 14px; margin-bottom: 10px;">歡迎回來，管理員</p>
+            <button class="btn-login" onclick="goToApp()">進入藝人聊天模式</button>
+            <button class="btn-outline" onclick="logout()">登出</button>
+        </div>
+        <div style="max-height: 300px; overflow-y: auto;" id="user-list">
+            </div>
     </div>
 
     <script>
         // ==========================================
-        // ⬇️ 資料庫 (由 index.html 統一管理) ⬇️
+        // ⬇️ 資料庫 (帳號密碼設定) ⬇️
         // ==========================================
         const USER_DATABASE = {
             "admin@smtown.com": { pwd: "123", role: "artist", isSuperAdmin: true, name: "Karina (Admin)", avatar: "https://ui-avatars.com/api/?name=Karina&background=random&color=fff" },
@@ -99,8 +210,8 @@
             const user = USER_DATABASE[email];
 
             if (user && user.pwd === pwd) {
-                // 將使用者資訊存入 LocalStorage，讓其他頁面讀取
-                user.email = email; // 補上 email
+                // 存入 LocalStorage
+                user.email = email;
                 localStorage.setItem('currentUser', JSON.stringify(user));
 
                 if (user.isSuperAdmin) {
@@ -109,10 +220,10 @@
                     document.getElementById('admin-panel').style.display = 'block';
                     renderUserList();
                 } else if (user.role === 'artist') {
-                    // 普通藝人：直接跳轉
+                    // 普通藝人：跳轉藝人端
                     window.location.href = 'artist.html';
                 } else {
-                    // 粉絲：直接跳轉
+                    // 粉絲：跳轉粉絲端
                     window.location.href = 'fan.html';
                 }
             } else {
@@ -130,8 +241,12 @@
 
                 list.innerHTML += `
                     <div class="db-item">
-                        <div>${tag} <b>${u.name}</b></div>
-                        <div style="color:#666; margin-top:4px;">${email} / Pwd: ${u.pwd}</div>
+                        <div style="display:flex; justify-content:space-between;">
+                            <b>${u.name}</b>
+                            ${tag}
+                        </div>
+                        <div style="color:#999; margin-top:4px; font-family:monospace;">${email}</div>
+                        <div style="color:#999; font-family:monospace;">Pwd: ${u.pwd}</div>
                     </div>
                 `;
             }
