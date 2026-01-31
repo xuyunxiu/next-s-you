@@ -9,49 +9,72 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         
         body { 
-            background: #fdfdfd; /* 幾乎純白的底色 */
             height: 100vh; 
+            width: 100vw;
             display: flex; 
             justify-content: center; 
             align-items: center; 
             overflow: hidden; 
             position: relative;
+            background: #fdfdfd; /* 底色 */
         }
 
-        /* --- 1. 背景氛圍光 (調整為圖二的夢幻紫粉色調) --- */
-        .ambient-light { position: absolute; width: 100%; height: 100%; z-index: -1; overflow: hidden; pointer-events: none; }
-        
-        /* 左上角：紫色光暈 (加強飽和度與範圍) */
-        .light-1 { 
-            position: absolute; 
-            top: -15%; 
-            left: -15%; 
-            width: 80vw; 
-            height: 80vw; 
-            background: radial-gradient(circle, rgba(180, 160, 255, 0.35) 0%, rgba(255,255,255,0) 65%); 
-            filter: blur(50px); 
-        }
-        
-        /* 右下角：粉色光暈 (加強暖色調) */
-        .light-2 { 
-            position: absolute; 
-            bottom: -10%; 
-            right: -10%; 
-            width: 85vw; 
-            height: 85vw; 
-            background: radial-gradient(circle, rgba(255, 190, 210, 0.3) 0%, rgba(255,255,255,0) 65%); 
-            filter: blur(50px); 
+        /* --- 1. 液態流動背景系統 --- */
+        .liquid-container {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
         }
 
-        /* --- 2. 登入卡片 (純白、高圓角、柔和陰影) --- */
+        /* 定義光球 (Blobs) */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px); /* 極致模糊產生液態感 */
+            opacity: 0.8;
+            will-change: transform; /* 優化效能 */
+        }
+
+        /* 紫色光球 */
+        .blob-1 {
+            top: -10%; left: -10%; width: 90vw; height: 90vw;
+            background: radial-gradient(circle, rgba(176, 136, 249, 0.5) 0%, rgba(255,255,255,0) 70%);
+            animation: float 10s ease-in-out infinite alternate;
+        }
+
+        /* 粉色光球 */
+        .blob-2 {
+            bottom: -10%; right: -10%; width: 100vw; height: 100vw;
+            background: radial-gradient(circle, rgba(255, 180, 200, 0.45) 0%, rgba(255,255,255,0) 70%);
+            animation: float 12s ease-in-out infinite alternate-reverse;
+        }
+
+        /* 藍紫色補充光球 (增加層次) */
+        .blob-3 {
+            top: 40%; left: 40%; width: 60vw; height: 60vw;
+            background: radial-gradient(circle, rgba(200, 200, 255, 0.3) 0%, rgba(255,255,255,0) 70%);
+            animation: float 15s ease-in-out infinite alternate;
+            opacity: 0.6;
+        }
+
+        /* 自動流動動畫 (基礎流動) */
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        /* --- 2. 登入卡片 (完美復刻附圖：純白、大圓角) --- */
         .login-card {
             width: 85%;
             max-width: 360px;
             background: #ffffff; /* 純白實心 */
-            border-radius: 32px; /* 圖二的大圓角 */
-            padding: 45px 30px; /* 增加上下內距，讓版面更舒展 */
-            /* 關鍵陰影：讓卡片浮起來，還原圖二的立體感 */
-            box-shadow: 0 20px 50px rgba(180, 170, 200, 0.12); 
+            border-radius: 35px; /* 圖中的大圓角 */
+            padding: 45px 30px;
+            /* 柔和且立體的陰影 */
+            box-shadow: 0 30px 60px rgba(160, 150, 200, 0.15); 
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -62,89 +85,73 @@
 
         /* LOGO */
         .logo { 
-            font-size: 46px; 
+            font-size: 48px; 
             font-weight: 800; 
-            /* 圖二的漸層：稍微帶點粉紫 */
-            background: linear-gradient(135deg, #b088f9 0%, #e0aaff 100%); 
+            background: linear-gradient(135deg, #b088f9 0%, #da97f0 100%); 
             -webkit-background-clip: text; 
             color: transparent; 
-            margin-bottom: 15px; 
-            letter-spacing: -1px;
+            margin-bottom: 20px; 
+            letter-spacing: -1.5px;
         }
 
         .input-group { position: relative; width: 100%; }
         
-        /* 圖標顏色調整為更深的灰色，增加可讀性 */
+        /* 圖標 */
         .input-group i { 
             position: absolute; 
             left: 20px; 
             top: 50%; 
             transform: translateY(-50%); 
-            color: #888; 
-            font-size: 18px; 
+            color: #999; 
+            font-size: 19px; 
         }
         
-        /* --- 3. 輸入框 (仿 iOS 風格的淺灰背景) --- */
+        /* 輸入框 (圖中的淺灰底、無邊框) */
         .clean-input {
             width: 100%; 
-            padding: 18px 18px 18px 50px; 
-            border-radius: 18px; /* 圓角稍微大一點 */
+            padding: 18px 18px 18px 52px; 
+            border-radius: 16px; 
             border: none; 
-            background: #f5f6f8; /* 圖二那種極淺的冷灰色 */
+            background: #f7f7f7; /* 極淺灰 */
             font-size: 15px; 
             color: #333;
             outline: none; 
             transition: all 0.2s;
         }
-        
         .clean-input::placeholder { color: #aaa; }
-        
-        /* 聚焦時背景微微變白 */
-        .clean-input:focus { 
-            background: #f0f1f3; 
-            box-shadow: inset 0 0 0 1px #e0e0e0;
-        }
+        .clean-input:focus { background: #f0f0f0; box-shadow: inset 0 0 0 1px #e0e0e0; }
 
-        /* --- 4. 按鈕 (寬大、柔和漸層) --- */
+        /* 按鈕 (圖中的漸層、圓潤) */
         .btn-login { 
             width: 100%; 
             padding: 18px; 
-            border-radius: 18px; 
-            /* 圖二的按鈕漸層 */
-            background: linear-gradient(90deg, #b088f9, #dea0fd); 
+            border-radius: 16px; 
+            background: linear-gradient(90deg, #b088f9, #da97f0); 
             color: white; 
             border: none; 
             font-weight: 600; 
             font-size: 16px; 
             cursor: pointer; 
-            margin-top: 10px;
-            /* 增加按鈕下方的彩色光暈 */
-            box-shadow: 0 10px 25px rgba(180, 136, 249, 0.25); 
+            margin-top: 15px;
+            box-shadow: 0 10px 25px rgba(180, 140, 250, 0.3); 
             transition: transform 0.1s;
         }
         .btn-login:active { transform: scale(0.98); }
 
+        .forgot-pwd { font-size: 13px; color: #999; margin-top: 5px; cursor: pointer; }
+
         /* 載入動畫 */
-        .loader { 
-            display: none; 
-            border: 3px solid #f3f3f3; 
-            border-top: 3px solid #b088f9; 
-            border-radius: 50%; 
-            width: 24px; height: 24px; 
-            animation: spin 1s linear infinite; 
-            margin: 10px auto 0;
-        }
+        .loader { display: none; width: 24px; height: 24px; border: 3px solid #f3f3f3; border-top: 3px solid #b088f9; border-radius: 50%; animation: spin 1s linear infinite; margin: 10px auto 0; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        .forgot-pwd { font-size: 13px; color: #888; margin-top: 5px; cursor: pointer; }
 
     </style>
 </head>
 <body>
 
-    <div class="ambient-light">
-        <div class="light-1"></div>
-        <div class="light-2"></div>
+    <div class="liquid-container" id="liquid-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
     </div>
 
     <form class="login-card" id="login-form">
@@ -168,19 +175,44 @@
 
     <script>
         // ============================================
-        // 🔐 後台管理區：在此設定所有帳號密碼與權限
+        // 🌀 液態流動邏輯 (陀螺儀 + 滑鼠)
+        // ============================================
+        const container = document.getElementById('liquid-bg');
+        const blobs = document.querySelectorAll('.blob');
+
+        // 1. 手機陀螺儀偵測 (傾斜流動)
+        window.addEventListener('deviceorientation', (e) => {
+            // beta: 前後傾斜 (-180 ~ 180)
+            // gamma: 左右傾斜 (-90 ~ 90)
+            const x = e.gamma / 2; // 減緩移動幅度
+            const y = e.beta / 2;
+
+            requestAnimationFrame(() => {
+                // 讓每個 blob 移動速度稍微不同，產生層次感
+                blobs[0].style.transform = `translate(${x}px, ${y}px)`; 
+                blobs[1].style.transform = `translate(${-x * 1.5}px, ${-y * 1.5}px)`; // 反向移動
+                blobs[2].style.transform = `translate(${x * 0.5}px, ${y * 0.5}px)`;
+            });
+        });
+
+        // 2. 電腦滑鼠偵測 (測試用，滑鼠移動時也會流動)
+        document.addEventListener('mousemove', (e) => {
+            const x = (window.innerWidth - e.pageX) / 20;
+            const y = (window.innerHeight - e.pageY) / 20;
+
+            blobs[0].style.transform = `translate(${x}px, ${y}px)`;
+            blobs[1].style.transform = `translate(${-x}px, ${-y}px)`;
+            blobs[2].style.transform = `translate(${x/2}px, ${y/2}px)`;
+        });
+
+
+        // ============================================
+        // 🔐 後台管理與登入邏輯 (保留不變)
         // ============================================
         const USER_DB = {
-            // 1. 妳 (超級管理員+藝人)
             "admin@smtown.com": { pwd: "123", role: "admin", name: "Karina (Admin)", avatar: "https://ui-avatars.com/api/?name=Karina&background=random&color=fff" },
-            
-            // 2. 妳的搭檔 (超級管理員+藝人)
             "partner@smtown.com": { pwd: "123", role: "admin", name: "Winter (Admin)", avatar: "https://ui-avatars.com/api/?name=Winter&background=random&color=fff" },
-            
-            // 3. 普通藝人 (無管理權限)
             "ningning@smtown.com": { pwd: "123", role: "artist", name: "NingNing", avatar: "https://ui-avatars.com/api/?name=NingNing&background=random&color=fff" },
-            
-            // 4. 粉絲帳號
             "fan@my.com": { pwd: "123", role: "fan", name: "My Fan", avatar: null }
         };
 
@@ -192,7 +224,6 @@
             const btn = document.getElementById('btn-text');
             const loader = document.getElementById('loader');
             
-            // UI 狀態：顯示載入中
             btn.style.display = 'none';
             loader.style.display = 'block';
 
@@ -200,14 +231,11 @@
                 const user = USER_DB[email];
 
                 if (user && user.pwd === pwd) {
-                    // 登入成功：存儲用戶資訊到 LocalStorage (讓不同頁面都能讀取)
                     localStorage.setItem('currentUser', JSON.stringify(user));
                     
-                    // 分流邏輯
                     if (user.role === 'fan') {
-                        window.location.href = 'fan.html'; // 粉絲 -> fan.html
+                        window.location.href = 'fan.html';
                     } else {
-                        // 藝人與管理員 -> artist.html
                         window.location.href = 'artist.html'; 
                     }
                 } else {
@@ -215,7 +243,7 @@
                     btn.style.display = 'block';
                     loader.style.display = 'none';
                 }
-            }, 800); // 模擬 0.8秒 連線時間
+            }, 800);
         });
     </script>
 </body>
