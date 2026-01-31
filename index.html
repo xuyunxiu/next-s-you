@@ -6,47 +6,88 @@
     <title>Bubble Login</title>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <style>
-        /* 重置與字體 */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        /* 1. 背景微調：更乾淨的極淺灰白底，配上更柔和的角落光暈 */
         body {
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #FCFCFE; /* 極淺的冷白底色 */
-            /* 使用兩個極淡的徑向漸層模擬氛圍光 */
-            background-image: 
-                radial-gradient(circle at 0% 0%, rgba(216, 200, 255, 0.4) 0%, transparent 50%),
-                radial-gradient(circle at 100% 100%, rgba(255, 215, 230, 0.4) 0%, transparent 50%);
+            background-color: #fdfdfd;
             overflow: hidden;
+            position: relative;
         }
 
-        /* 2. 卡片微調：純白、大圓角、空氣感陰影 */
+        /* --- 1. 液態流動背景 (回歸 & 優化) --- 
+           使用了 blur(80px) 讓它像圖二那樣呈現「夢幻暈染」的效果，而不是生硬的圓球。
+        */
+        .liquid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background: #fff; /* 基底白 */
+        }
+        
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px); /* 關鍵：高斯模糊創造氛圍感 */
+            opacity: 0.7;
+            animation: float 12s infinite ease-in-out alternate;
+        }
+        
+        /* 左上紫球 */
+        .blob-1 {
+            top: -10%;
+            left: -10%;
+            width: 70vw;
+            height: 70vw;
+            background: #a18cd1;
+            animation-delay: 0s;
+        }
+        
+        /* 右下粉球 */
+        .blob-2 {
+            bottom: -10%;
+            right: -10%;
+            width: 80vw;
+            height: 80vw;
+            background: #ff9a9e;
+            animation-delay: -5s;
+        }
+
+        /* 緩慢流動動畫 */
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, -30px) scale(1.1); }
+        }
+
+        /* --- 2. 登入卡片 --- */
         .login-card {
             width: 86%;
             max-width: 380px;
-            background: #FFFFFF !important; /* 強制純白 */
-            border-radius: 36px; /* 圖一的大圓角 */
+            background: #ffffff;
+            border-radius: 36px;
             padding: 48px 32px;
-            /* 關鍵修正：陰影顏色更淡、擴散範圍更大，模擬「浮起」感 */
-            box-shadow: 0 20px 60px rgba(180, 165, 220, 0.15); 
+            /* 陰影優化：更接近圖二的立體浮動感 */
+            box-shadow: 0 25px 60px rgba(160, 150, 200, 0.15);
             text-align: center;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 22px;
+            position: relative;
+            z-index: 10;
         }
 
-        /* 3. Logo 微調：顏色更粉嫩一點 */
+        /* Logo：使用淡紫色 */
         .logo {
-            font-size: 44px;
+            font-size: 46px;
             font-weight: 800;
-            /* 調整漸層色碼，對齊圖一 */
-            background: linear-gradient(135deg, #B58DF3 0%, #E6A8F5 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 12px;
+            color: #b088f9; /* 圖二的淡紫色 */
+            margin-bottom: 15px;
             letter-spacing: -1.5px;
         }
 
@@ -57,60 +98,60 @@
             left: 20px;
             top: 50%;
             transform: translateY(-50%);
-            color: #9E9E9E; /*圖標顏色調淡 */
+            color: #999;
             font-size: 19px;
             z-index: 2;
         }
 
-        /* 4. 輸入框關鍵修正：顏色改為極淺灰 #F8F8F9 */
+        /* --- 3. 輸入框 (關鍵修正：加深背景色) --- 
+           圖二的輸入框是明顯的灰色，之前給的太白了。
+           這裡改用 #F0F2F5，對比度才夠。
+        */
         .clean-input {
             width: 100%;
-            padding: 18px 18px 18px 52px; /* 增加左側內距 */
+            padding: 18px 18px 18px 52px;
             border-radius: 18px;
             border: none;
-            background: #F8F8F9; /* 這是圖一那種「似白非白」的關鍵色 */
+            background: #F0F2F5; /* 加深！這就是圖二看起來不一樣的原因 */
             font-size: 15px;
             color: #333;
             outline: none;
             transition: all 0.2s;
         }
         
-        .clean-input::placeholder { color: #B0B0B0; font-weight: 500; }
-        
-        /* 聚焦時變稍微亮一點 */
-        .clean-input:focus { background: #F2F2F5; }
+        .clean-input::placeholder { color: #aaa; font-weight: 500; }
+        .clean-input:focus { background: #E8EAED; }
 
-        /* 5. 按鈕微調：漸層與圓角 */
+        /* --- 4. 按鈕 --- */
         .btn-login {
             width: 100%;
             padding: 18px;
             border-radius: 18px;
-            /* 調整漸層角度與顏色 */
-            background: linear-gradient(90deg, #B58DF3, #E09CF5);
+            background: linear-gradient(90deg, #b088f9, #dea0fd);
             color: white;
             border: none;
             font-weight: 600;
             font-size: 16px;
             letter-spacing: 1px;
             cursor: pointer;
-            /* 增加淡紫色光暈 */
-            box-shadow: 0 8px 25px rgba(195, 155, 245, 0.35);
+            box-shadow: 0 10px 25px rgba(176, 136, 249, 0.3);
             margin-top: 10px;
         }
         .btn-login:active { transform: scale(0.98); opacity: 0.9; }
 
-        /* 忘記密碼 */
-        .forgot-pwd { font-size: 13px; color: #999; margin-top: 5px; cursor: pointer; font-weight: 500; }
+        .forgot-pwd { font-size: 13px; color: #888; margin-top: 5px; cursor: pointer; }
 
         /* 載入動畫 */
-        .loader { display: none; width: 22px; height: 22px; border: 3px solid #f3f3f3; border-top: 3px solid #B58DF3; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 10px auto; }
+        .loader { display: none; width: 22px; height: 22px; border: 3px solid #f3f3f3; border-top: 3px solid #b088f9; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 10px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* 隱藏的 Admin 面板 */
-        #admin-panel { display: none; margin-top: 20px; text-align: left; }
     </style>
 </head>
 <body>
+
+    <div class="liquid-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
 
     <form class="login-card" id="login-form">
         <div class="logo">bubble</div>
@@ -129,13 +170,11 @@
         <div class="loader" id="loader"></div>
         
         <div class="forgot-pwd">忘記密碼?</div>
-
-        <div id="admin-panel"></div>
     </form>
 
     <script>
         // ============================================
-        // 🔐 資料庫與邏輯保持不變
+        // 🔐 資料庫與邏輯 (保持不變)
         // ============================================
         const USER_DB = {
             "admin@smtown.com": { pwd: "123", role: "admin", name: "Karina (Admin)", avatar: "https://ui-avatars.com/api/?name=Karina&background=random&color=fff" },
