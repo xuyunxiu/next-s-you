@@ -6,7 +6,7 @@
 const USER_DB = {
     // 🔴 1. 妳 (超級管理員+藝人)
     "woojae0733": { 
-        pwd: "123", 
+        pwd: "jelly33", 
         role: "admin", 
         name: "Karina (Admin)", 
         avatar: "https://ui-avatars.com/api/?name=Karina&background=random&color=fff" 
