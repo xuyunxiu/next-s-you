@@ -124,7 +124,6 @@
                 if(reads.length > 0) reads[reads.length-1].style.display = 'none';
             }, 2000);
         }
-    </script>
         // 1. 頁面顯示檢查
         window.addEventListener('pageshow', function(event) {
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -140,5 +139,6 @@
             localStorage.removeItem('currentUser');
             window.location.href = 'index.html';
         }
+          </script>
 </body>
 </html>
