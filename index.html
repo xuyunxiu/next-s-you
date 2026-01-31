@@ -169,16 +169,6 @@
     </form>
 
     <script>
-        // ============================================
-        // 🔐 資料庫與邏輯
-        // ============================================
-        const USER_DB = {
-            "admin@smtown.com": { pwd: "123", role: "admin", name: "Karina (Admin)", avatar: "https://ui-avatars.com/api/?name=Karina&background=random&color=fff" },
-            "partner@smtown.com": { pwd: "123", role: "admin", name: "Winter (Admin)", avatar: "https://ui-avatars.com/api/?name=Winter&background=random&color=fff" },
-            "ningning@smtown.com": { pwd: "123", role: "artist", name: "NingNing", avatar: "https://ui-avatars.com/api/?name=NingNing&background=random&color=fff" },
-            "fan@my.com": { pwd: "123", role: "fan", name: "My Fan", avatar: null }
-        };
-
         document.getElementById('login-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const email = document.getElementById('email').value.trim();
@@ -190,6 +180,15 @@
             loader.style.display = 'block';
 
             setTimeout(() => {
+                // 這裡會直接去讀取 users.js 裡的 USER_DB
+                // 如果你沒有建立 users.js，這裡會報錯，所以一定要建！
+                if (typeof USER_DB === 'undefined') {
+                    alert('錯誤：找不到資料庫文件 users.js');
+                    btn.style.display = 'block';
+                    loader.style.display = 'none';
+                    return;
+                }
+
                 const user = USER_DB[email];
 
                 if (user && user.pwd === pwd) {
