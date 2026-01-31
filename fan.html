@@ -125,5 +125,26 @@
             }, 2000);
         }
     </script>
+    ============================================
+        // 🛡️ Bug 修復核心
+        // ============================================
+        
+        // 1. 頁面顯示檢查
+        window.addEventListener('pageshow', function(event) {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            // 檢查：沒登入資料 或 角色不是粉絲 -> 踢回首頁
+            if (!currentUser || currentUser.role !== 'fan') {
+                window.location.replace('index.html');
+            }
+        });
+
+        // 2. 登出
+        function handleLogout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }
+
+        // ============================================
 </body>
 </html>
