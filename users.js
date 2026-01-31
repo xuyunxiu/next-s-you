@@ -12,24 +12,24 @@ const USER_DB = {
         avatar: "https://ui-avatars.com/api/?name=Karina&background=random&color=fff" 
     },
     
-    // 🔴 2. 妳的搭檔 (超級管理員+藝人)
-    "partner@smtown.com": { 
+    // 🔴 2. 妳的搭檔
+    "winter": { 
         pwd: "123", 
         role: "admin", 
         name: "Winter (Admin)", 
         avatar: "https://ui-avatars.com/api/?name=Winter&background=random&color=fff" 
     },
     
-    // 🟣 3. 普通藝人 (無管理權限)
-    "ningning@smtown.com": { 
+    // 🟣 3. 普通藝人
+    "ning": { 
         pwd: "123", 
         role: "artist", 
         name: "NingNing", 
         avatar: "https://ui-avatars.com/api/?name=NingNing&background=random&color=fff" 
     },
     
-    // ⚪ 4. 粉絲帳號
-    "fan@my.com": { 
+    // ⚪ 4. 粉絲
+    "my": { 
         pwd: "123", 
         role: "fan", 
         name: "My Fan", 
