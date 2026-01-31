@@ -6,153 +6,111 @@
     <title>Bubble Login</title>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        /* 重置與字體 */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        body { 
-            height: 100vh; 
-            width: 100vw;
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            overflow: hidden; 
-            position: relative;
-            background: #fdfdfd; /* 底色 */
-        }
-
-        /* --- 1. 液態流動背景系統 --- */
-        .liquid-container {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
+        /* 1. 背景微調：更乾淨的極淺灰白底，配上更柔和的角落光暈 */
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #FCFCFE; /* 極淺的冷白底色 */
+            /* 使用兩個極淡的徑向漸層模擬氛圍光 */
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(216, 200, 255, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(255, 215, 230, 0.4) 0%, transparent 50%);
             overflow: hidden;
         }
 
-        /* 定義光球 (Blobs) */
-        .blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px); /* 極致模糊產生液態感 */
-            opacity: 0.8;
-            will-change: transform; /* 優化效能 */
-        }
-
-        /* 紫色光球 */
-        .blob-1 {
-            top: -10%; left: -10%; width: 90vw; height: 90vw;
-            background: radial-gradient(circle, rgba(176, 136, 249, 0.5) 0%, rgba(255,255,255,0) 70%);
-            animation: float 10s ease-in-out infinite alternate;
-        }
-
-        /* 粉色光球 */
-        .blob-2 {
-            bottom: -10%; right: -10%; width: 100vw; height: 100vw;
-            background: radial-gradient(circle, rgba(255, 180, 200, 0.45) 0%, rgba(255,255,255,0) 70%);
-            animation: float 12s ease-in-out infinite alternate-reverse;
-        }
-
-        /* 藍紫色補充光球 (增加層次) */
-        .blob-3 {
-            top: 40%; left: 40%; width: 60vw; height: 60vw;
-            background: radial-gradient(circle, rgba(200, 200, 255, 0.3) 0%, rgba(255,255,255,0) 70%);
-            animation: float 15s ease-in-out infinite alternate;
-            opacity: 0.6;
-        }
-
-        /* 自動流動動畫 (基礎流動) */
-        @keyframes float {
-            0% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(30px, -50px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
-            100% { transform: translate(0, 0) scale(1); }
-        }
-
-        /* --- 2. 登入卡片 (完美復刻附圖：純白、大圓角) --- */
+        /* 2. 卡片微調：純白、大圓角、空氣感陰影 */
         .login-card {
-            width: 85%;
-            max-width: 360px;
-            background: #ffffff; /* 純白實心 */
-            border-radius: 35px; /* 圖中的大圓角 */
-            padding: 45px 30px;
-            /* 柔和且立體的陰影 */
-            box-shadow: 0 30px 60px rgba(160, 150, 200, 0.15); 
+            width: 86%;
+            max-width: 380px;
+            background: #FFFFFF !important; /* 強制純白 */
+            border-radius: 36px; /* 圖一的大圓角 */
+            padding: 48px 32px;
+            /* 關鍵修正：陰影顏色更淡、擴散範圍更大，模擬「浮起」感 */
+            box-shadow: 0 20px 60px rgba(180, 165, 220, 0.15); 
             text-align: center;
             display: flex;
             flex-direction: column;
-            gap: 22px;
-            position: relative;
-            z-index: 10;
+            gap: 20px;
         }
 
-        /* LOGO */
-        .logo { 
-            font-size: 48px; 
-            font-weight: 800; 
-            background: linear-gradient(135deg, #b088f9 0%, #da97f0 100%); 
-            -webkit-background-clip: text; 
-            color: transparent; 
-            margin-bottom: 20px; 
+        /* 3. Logo 微調：顏色更粉嫩一點 */
+        .logo {
+            font-size: 44px;
+            font-weight: 800;
+            /* 調整漸層色碼，對齊圖一 */
+            background: linear-gradient(135deg, #B58DF3 0%, #E6A8F5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
             letter-spacing: -1.5px;
         }
 
         .input-group { position: relative; width: 100%; }
         
-        /* 圖標 */
-        .input-group i { 
-            position: absolute; 
-            left: 20px; 
-            top: 50%; 
-            transform: translateY(-50%); 
-            color: #999; 
-            font-size: 19px; 
+        .input-group i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9E9E9E; /*圖標顏色調淡 */
+            font-size: 19px;
+            z-index: 2;
         }
-        
-        /* 輸入框 (圖中的淺灰底、無邊框) */
+
+        /* 4. 輸入框關鍵修正：顏色改為極淺灰 #F8F8F9 */
         .clean-input {
-            width: 100%; 
-            padding: 18px 18px 18px 52px; 
-            border-radius: 16px; 
-            border: none; 
-            background: #f7f7f7; /* 極淺灰 */
-            font-size: 15px; 
+            width: 100%;
+            padding: 18px 18px 18px 52px; /* 增加左側內距 */
+            border-radius: 18px;
+            border: none;
+            background: #F8F8F9; /* 這是圖一那種「似白非白」的關鍵色 */
+            font-size: 15px;
             color: #333;
-            outline: none; 
+            outline: none;
             transition: all 0.2s;
         }
-        .clean-input::placeholder { color: #aaa; }
-        .clean-input:focus { background: #f0f0f0; box-shadow: inset 0 0 0 1px #e0e0e0; }
+        
+        .clean-input::placeholder { color: #B0B0B0; font-weight: 500; }
+        
+        /* 聚焦時變稍微亮一點 */
+        .clean-input:focus { background: #F2F2F5; }
 
-        /* 按鈕 (圖中的漸層、圓潤) */
-        .btn-login { 
-            width: 100%; 
-            padding: 18px; 
-            border-radius: 16px; 
-            background: linear-gradient(90deg, #b088f9, #da97f0); 
-            color: white; 
-            border: none; 
-            font-weight: 600; 
-            font-size: 16px; 
-            cursor: pointer; 
-            margin-top: 15px;
-            box-shadow: 0 10px 25px rgba(180, 140, 250, 0.3); 
-            transition: transform 0.1s;
+        /* 5. 按鈕微調：漸層與圓角 */
+        .btn-login {
+            width: 100%;
+            padding: 18px;
+            border-radius: 18px;
+            /* 調整漸層角度與顏色 */
+            background: linear-gradient(90deg, #B58DF3, #E09CF5);
+            color: white;
+            border: none;
+            font-weight: 600;
+            font-size: 16px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            /* 增加淡紫色光暈 */
+            box-shadow: 0 8px 25px rgba(195, 155, 245, 0.35);
+            margin-top: 10px;
         }
-        .btn-login:active { transform: scale(0.98); }
+        .btn-login:active { transform: scale(0.98); opacity: 0.9; }
 
-        .forgot-pwd { font-size: 13px; color: #999; margin-top: 5px; cursor: pointer; }
+        /* 忘記密碼 */
+        .forgot-pwd { font-size: 13px; color: #999; margin-top: 5px; cursor: pointer; font-weight: 500; }
 
         /* 載入動畫 */
-        .loader { display: none; width: 24px; height: 24px; border: 3px solid #f3f3f3; border-top: 3px solid #b088f9; border-radius: 50%; animation: spin 1s linear infinite; margin: 10px auto 0; }
+        .loader { display: none; width: 22px; height: 22px; border: 3px solid #f3f3f3; border-top: 3px solid #B58DF3; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 10px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+        /* 隱藏的 Admin 面板 */
+        #admin-panel { display: none; margin-top: 20px; text-align: left; }
     </style>
 </head>
 <body>
-
-    <div class="liquid-container" id="liquid-bg">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
-    </div>
 
     <form class="login-card" id="login-form">
         <div class="logo">bubble</div>
@@ -171,43 +129,13 @@
         <div class="loader" id="loader"></div>
         
         <div class="forgot-pwd">忘記密碼?</div>
+
+        <div id="admin-panel"></div>
     </form>
 
     <script>
         // ============================================
-        // 🌀 液態流動邏輯 (陀螺儀 + 滑鼠)
-        // ============================================
-        const container = document.getElementById('liquid-bg');
-        const blobs = document.querySelectorAll('.blob');
-
-        // 1. 手機陀螺儀偵測 (傾斜流動)
-        window.addEventListener('deviceorientation', (e) => {
-            // beta: 前後傾斜 (-180 ~ 180)
-            // gamma: 左右傾斜 (-90 ~ 90)
-            const x = e.gamma / 2; // 減緩移動幅度
-            const y = e.beta / 2;
-
-            requestAnimationFrame(() => {
-                // 讓每個 blob 移動速度稍微不同，產生層次感
-                blobs[0].style.transform = `translate(${x}px, ${y}px)`; 
-                blobs[1].style.transform = `translate(${-x * 1.5}px, ${-y * 1.5}px)`; // 反向移動
-                blobs[2].style.transform = `translate(${x * 0.5}px, ${y * 0.5}px)`;
-            });
-        });
-
-        // 2. 電腦滑鼠偵測 (測試用，滑鼠移動時也會流動)
-        document.addEventListener('mousemove', (e) => {
-            const x = (window.innerWidth - e.pageX) / 20;
-            const y = (window.innerHeight - e.pageY) / 20;
-
-            blobs[0].style.transform = `translate(${x}px, ${y}px)`;
-            blobs[1].style.transform = `translate(${-x}px, ${-y}px)`;
-            blobs[2].style.transform = `translate(${x/2}px, ${y/2}px)`;
-        });
-
-
-        // ============================================
-        // 🔐 後台管理與登入邏輯 (保留不變)
+        // 🔐 資料庫與邏輯保持不變
         // ============================================
         const USER_DB = {
             "admin@smtown.com": { pwd: "123", role: "admin", name: "Karina (Admin)", avatar: "https://ui-avatars.com/api/?name=Karina&background=random&color=fff" },
@@ -218,7 +146,6 @@
 
         document.getElementById('login-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            
             const email = document.getElementById('email').value.trim();
             const pwd = document.getElementById('pwd').value.trim();
             const btn = document.getElementById('btn-text');
@@ -232,7 +159,6 @@
 
                 if (user && user.pwd === pwd) {
                     localStorage.setItem('currentUser', JSON.stringify(user));
-                    
                     if (user.role === 'fan') {
                         window.location.href = 'fan.html';
                     } else {
