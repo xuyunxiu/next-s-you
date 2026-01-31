@@ -103,7 +103,76 @@
             input.value = '';
             // 這裡可以加入儲存訊息到 localStorage 的邏輯，讓粉絲端也能讀到 (如果是真實後端的話)
         }
+        ============================================
+        // 🚀 核彈級安全檢查
+        // ============================================
+
+        // 1. 頁面加載或從緩存恢復時觸發
+        window.onpageshow = function(event) {
+            // 如果是從緩存(BFCache)讀取的，強制重新整理
+            if (event.persisted) {
+                window.location.reload();
+                return;
+            }
+            
+            checkAuth();
+        };
+
+        function checkAuth() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            // 權限檢查失敗
+            if (!currentUser || currentUser.role !== 'artist') {
+                document.body.innerHTML = ''; // 清空畫面
+                window.location.replace('index.html'); // 踢回首頁
+            } else {
+                // 權限成功，顯示畫面
+                document.getElementById('artist-name').innerText = currentUser.name;
+                document.body.style.visibility = 'visible'; // 解除隱藏
+            }
+        }
+
+        // 2. 登出邏輯 (自毀模式)
+        function handleLogout() {
+            // A. 清除資料
+            localStorage.removeItem('currentUser');
+            
+            // B. 視覺自毀：直接把網頁內容變白，防止上一頁看到殘影
+            document.body.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100vh;">Logging out...</div>';
+            
+            // C. 延遲跳轉 (確保渲染完成)
+            setTimeout(() => {
+                window.location.replace('index.html');
+            }, 100);
+        }
+
+        // ============================================
+
+        function sendMsg() {
+            const input = document.getElementById('msg-input');
+            const text = input.value.trim();
+            if(!text) return;
+            
+            const currentUser = JSON.parse(localStorage.getItem('currentUser')); 
+            const time = new Date().toLocaleTimeString('zh-TW', {hour:'2-digit', minute:'2-digit', hour12:false});
+            
+            const html = `
+                <div class="msg-group me">
+                    <div class="avatar" style="background-image: url('${currentUser ? currentUser.avatar : ''}');"></div>
+                    <div>
+                        <div style="font-size:12px; color:#666; margin-bottom:2px;">${currentUser ? currentUser.name : 'Artist'}</div>
+                        <div class="bubble">${text}</div>
+                    </div>
+                    <span class="msg-time">${time}</span>
+                </div>
+            `;
+            
+            document.getElementById('chat-stream').insertAdjacentHTML('beforeend', html);
+            input.value = '';
+        }
         
+        // 初次執行檢查
+        checkAuth();
     </script>
 </body>
 </html>
