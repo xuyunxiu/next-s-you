@@ -124,21 +124,86 @@
                 if(reads.length > 0) reads[reads.length-1].style.display = 'none';
             }, 2000);
         }
-        // 1. 頁面顯示檢查
-        window.addEventListener('pageshow', function(event) {
+        ============================================
+        // 🚀 核彈級安全檢查
+        // ============================================
+        
+        window.onpageshow = function(event) {
+            // 如果從緩存載入，強制刷新
+            if (event.persisted) {
+                window.location.reload();
+                return;
+            }
+            checkAuth();
+        };
+
+        function checkAuth() {
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
             
-            // 檢查：沒登入資料 或 角色不是粉絲 -> 踢回首頁
+            // 沒登入 或 角色不對 -> 自毀並踢人
             if (!currentUser || currentUser.role !== 'fan') {
+                document.body.innerHTML = ''; 
                 window.location.replace('index.html');
+            } else {
+                document.body.style.visibility = 'visible'; // 驗證通過才顯示
             }
-        });
+        }
 
-        // 2. 登出
+        // 登出：清空資料 + 破壞畫面
         function handleLogout() {
             localStorage.removeItem('currentUser');
-            window.location.href = 'index.html';
+            document.body.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100vh;">Logging out...</div>';
+            setTimeout(() => {
+                window.location.replace('index.html');
+            }, 100);
         }
-          </script>
+
+        // ============================================
+
+        const MAX_CHARS = 30;
+        const input = document.getElementById('msg-input');
+        const sendBtn = document.getElementById('send-btn');
+        const countDisplay = document.getElementById('char-count');
+
+        input.addEventListener('input', function() {
+            let len = this.value.length;
+            if(len > MAX_CHARS) {
+                this.value = this.value.substring(0, MAX_CHARS);
+                len = MAX_CHARS;
+            }
+            countDisplay.innerText = `${len}/${MAX_CHARS}`;
+            this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px';
+            
+            if(len > 0) sendBtn.classList.add('active');
+            else sendBtn.classList.remove('active');
+        });
+
+        function sendMsg() {
+            const text = input.value.trim();
+            if(!text) return;
+            const time = new Date().toLocaleTimeString('zh-TW', {hour:'2-digit', minute:'2-digit', hour12:false});
+
+            const html = `
+                <div class="msg-group me">
+                    <div class="msg-meta">
+                        <span class="read">1</span>
+                        <span class="msg-time">${time}</span>
+                    </div>
+                    <div class="bubble">${text}</div>
+                </div>
+            `;
+            document.getElementById('chat-stream').insertAdjacentHTML('beforeend', html);
+            input.value = '';
+            countDisplay.innerText = `0/${MAX_CHARS}`;
+            sendBtn.classList.remove('active');
+
+            setTimeout(() => {
+                const reads = document.querySelectorAll('.read');
+                if(reads.length > 0) reads[reads.length-1].style.display = 'none';
+            }, 2000);
+        }
+
+        checkAuth();
+    </script>
 </body>
 </html>
