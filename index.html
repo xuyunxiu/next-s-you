@@ -18,9 +18,7 @@
             position: relative;
         }
 
-        /* --- 1. 液態流動背景 (回歸 & 優化) --- 
-           使用了 blur(80px) 讓它像圖二那樣呈現「夢幻暈染」的效果，而不是生硬的圓球。
-        */
+        /* --- 1. 液態流動背景 (加速版) --- */
         .liquid-bg {
             position: fixed;
             top: 0;
@@ -28,15 +26,16 @@
             width: 100vw;
             height: 100vh;
             z-index: -1;
-            background: #fff; /* 基底白 */
+            background: #fff;
         }
         
         .blob {
             position: absolute;
             border-radius: 50%;
-            filter: blur(80px); /* 關鍵：高斯模糊創造氛圍感 */
+            filter: blur(80px);
             opacity: 0.7;
-            animation: float 12s infinite ease-in-out alternate;
+            /* 🚀 修改這裡：原本是 12s，現在改成 6s (速度快一倍) */
+            animation: float 6s infinite ease-in-out alternate;
         }
         
         /* 左上紫球 */
@@ -56,13 +55,14 @@
             width: 80vw;
             height: 80vw;
             background: #ff9a9e;
-            animation-delay: -5s;
+            /* 延遲也稍微縮短，讓交錯感更緊湊 */
+            animation-delay: -3s; 
         }
 
-        /* 緩慢流動動畫 */
+        /* 流動幅度 */
         @keyframes float {
             0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(30px, -30px) scale(1.1); }
+            100% { transform: translate(40px, -40px) scale(1.15); } /*稍微加大移動距離讓動態更明顯*/
         }
 
         /* --- 2. 登入卡片 --- */
@@ -72,7 +72,6 @@
             background: #ffffff;
             border-radius: 36px;
             padding: 48px 32px;
-            /* 陰影優化：更接近圖二的立體浮動感 */
             box-shadow: 0 25px 60px rgba(160, 150, 200, 0.15);
             text-align: center;
             display: flex;
@@ -82,11 +81,11 @@
             z-index: 10;
         }
 
-        /* Logo：使用淡紫色 */
+        /* Logo */
         .logo {
             font-size: 46px;
             font-weight: 800;
-            color: #b088f9; /* 圖二的淡紫色 */
+            color: #b088f9;
             margin-bottom: 15px;
             letter-spacing: -1.5px;
         }
@@ -103,16 +102,13 @@
             z-index: 2;
         }
 
-        /* --- 3. 輸入框 (關鍵修正：加深背景色) --- 
-           圖二的輸入框是明顯的灰色，之前給的太白了。
-           這裡改用 #F0F2F5，對比度才夠。
-        */
+        /* --- 3. 輸入框 --- */
         .clean-input {
             width: 100%;
             padding: 18px 18px 18px 52px;
             border-radius: 18px;
             border: none;
-            background: #F0F2F5; /* 加深！這就是圖二看起來不一樣的原因 */
+            background: #F0F2F5; /* 深淺灰底色 (圖二風格) */
             font-size: 15px;
             color: #333;
             outline: none;
@@ -174,7 +170,7 @@
 
     <script>
         // ============================================
-        // 🔐 資料庫與邏輯 (保持不變)
+        // 🔐 資料庫與邏輯
         // ============================================
         const USER_DB = {
             "admin@smtown.com": { pwd: "123", role: "admin", name: "Karina (Admin)", avatar: "https://ui-avatars.com/api/?name=Karina&background=random&color=fff" },
