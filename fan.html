@@ -125,10 +125,6 @@
             }, 2000);
         }
     </script>
-    ============================================
-        // 🛡️ Bug 修復核心
-        // ============================================
-        
         // 1. 頁面顯示檢查
         window.addEventListener('pageshow', function(event) {
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -144,7 +140,5 @@
             localStorage.removeItem('currentUser');
             window.location.href = 'index.html';
         }
-
-        // ============================================
 </body>
 </html>
