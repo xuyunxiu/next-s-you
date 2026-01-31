@@ -104,5 +104,58 @@
             // 這裡可以加入儲存訊息到 localStorage 的邏輯，讓粉絲端也能讀到 (如果是真實後端的話)
         }
     </script>
+    ============================================
+        // 🛡️ Bug 修復核心：防止「上一頁」回到這裡
+        // ============================================
+        
+        // 1. 頁面顯示時（包含按上一頁回來），強制檢查權限
+        window.addEventListener('pageshow', function(event) {
+            // 讀取登入資訊
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            // 如果沒資料，或者身分不是藝人，直接踢回首頁
+            if (!currentUser || currentUser.role !== 'artist') {
+                // 使用 replace 防止產生歷史紀錄
+                window.location.replace('index.html');
+            } else {
+                // 只有驗證通過才初始化名字
+                document.getElementById('artist-name').innerText = currentUser.name;
+            }
+        });
+
+        // 2. 登出功能
+        function handleLogout() {
+            // 清除資料
+            localStorage.removeItem('currentUser');
+            // 跳轉回登入頁
+            window.location.href = 'index.html';
+        }
+
+        // ============================================
+
+        // 3. 發送邏輯 (不變)
+        function sendMsg() {
+            const input = document.getElementById('msg-input');
+            const text = input.value.trim();
+            if(!text) return;
+            
+            const currentUser = JSON.parse(localStorage.getItem('currentUser')); // 再次確認資料
+            const time = new Date().toLocaleTimeString('zh-TW', {hour:'2-digit', minute:'2-digit', hour12:false});
+            
+            const html = `
+                <div class="msg-group me">
+                    <div class="avatar" style="background-image: url('${currentUser ? currentUser.avatar : ''}');"></div>
+                    <div>
+                        <div style="font-size:12px; color:#666; margin-bottom:2px;">${currentUser ? currentUser.name : 'Artist'}</div>
+                        <div class="bubble">${text}</div>
+                    </div>
+                    <span class="msg-time">${time}</span>
+                </div>
+            `;
+            
+            document.getElementById('chat-stream').insertAdjacentHTML('beforeend', html);
+            input.value = '';
+        }
+    </script>
 </body>
 </html>
