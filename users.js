@@ -5,7 +5,7 @@
 
 const USER_DB = {
     // 🔴 1. 妳 (超級管理員+藝人)
-    "admin@smtown.com": { 
+    "woojae0733": { 
         pwd: "123", 
         role: "admin", 
         name: "Karina (Admin)", 
